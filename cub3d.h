@@ -35,5 +35,11 @@ typedef struct s_vars
 
 //error
 int	err(char *str);
+int	read_map(char **argv, t_vars *vars);
+int	double_counter(char **str);
+char	**reallocate_double(char	***str);
+int	find_longest_line(char **str);
+int	free_doubles(char **str);
+int	parse_init(t_vars *vars, char *map);
 
 #endif

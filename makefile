@@ -1,7 +1,10 @@
 CC = gcc
 RM = rm -f
 CFLAGS = -Wall -Wextra -Werror 
-SRC = src/main.c
+SRC = src/main.c\
+		src/map_reader.c\
+		src/free_errors.c\
+		src/utils.c
 
 LIB = libft/libft.a
 GNL = gnl/gnl.a

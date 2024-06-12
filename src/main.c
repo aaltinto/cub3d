@@ -12,39 +12,7 @@
 
 #include <stdio.h>
 #include "../cub3d.h"
-#include "../gnl/get_next_line.h"
 #include "../libft/libft.h"
-
-int	err(char *str)
-{
-	ft_putendl_fd(str, 2);
-	return (1);
-}
-
-int	double_counter(char **str)
-{
-	int	i;
-
-	if (!str)
-		return (0);
-	i = -1;
-	while (str[i])
-		++i;
-	return (i);
-}
-
-int	free_doubles(char **str)
-{
-	int	i;
-
-	if (!str)
-		return (1);
-	i = -1;
-	while (str[++i])
-		free(str[i]);
-	free(str);	
-	return (0);
-}
 
 int	parse_init(t_vars *vars, char *map)
 {
@@ -56,8 +24,6 @@ int	parse_init(t_vars *vars, char *map)
 	map_tmp = ft_split(map, '\n');
 	if (!map_tmp)
 		return (err("Split error"));
-	for (int i = 0; map_tmp[i]; i++)
-		printf("%s\n", map_tmp[i]);
 	//len = double_counter(map_tmp);
 	i = -1;
 	while (map_tmp[++i])
@@ -119,93 +85,15 @@ int	parse_init(t_vars *vars, char *map)
 		}
 	}
 	free_doubles(map_tmp);
-	printf("%s\n", vars->textures.ceiling);
-	printf("%s\n", vars->textures.north);
-	printf("%s\n", vars->textures.floor);
-	printf("%s\n", vars->textures.south);
-	printf("%s\n", vars->textures.east);
-	printf("%s\n", vars->textures.west);
+	// printf("%s\n", vars->textures.ceiling);
+	// printf("%s\n", vars->textures.north);
+	// printf("%s\n", vars->textures.floor);
+	// printf("%s\n", vars->textures.south);
+	// printf("%s\n", vars->textures.east);
+	// printf("%s\n", vars->textures.west);
 	return (0);
 }
 
-int	check_raw_map(t_vars *vars, char *map)
-{
-	int	i;
-	int	j;
-
-	i = -1;
-	j = 0;
-	while (map[++i])
-	{
-		if (map[i] == ' ' || map[i] == '\t')
-			continue ;
-		if (map[i + 1] != '\0' && map[i] == '\n'
-			&& map[i + 1] == '\n')
-			return (err("Error!\nConsecutive newlines in the map"));
-		if (map[i] != '0' && map[i] != '1' && map[i] != '\n' && map[i] != 'N'
-			&& map[i] != 'S' && map[i] != 'W' && map[i] != 'E')
-			return (printf("%c\n", map[i]), err("Error! Invalid map"));
-		if (map[i] == 'N' || map[i] == 'S' || map[i] == 'W' || map[i] == 'E')
-			j++;
-	}
-	//check spaces and nulls to search borders. 0's cant touch spaces and nulls.
-	if (j > 1 || j == 0)
-		return (err("Error!\nInvalid player"));
-	vars->map = ft_split(map, '\n');
-	return (0);
-}
-
-int	split_map(char *map, t_vars *vars)
-{
-	int	i;
-	int	j;
-	int	spc;
-
-	i = -1;
-	j = 0;
-	spc = 0;
-	while (map[++i])
-	{
-		spc++;
-		if (map[i] == ' ' || map[i] == '\t')
-			continue ;
-		if (j == 0 && map[i] == '1')
-			break;
-		j++;
-		if (map[i] == '\n')
-			j = 0;
-		spc = 0;
-	}
-	vars->raw_map = ft_substr(map, i - spc + 1, ft_strlen(map));
-	if (!vars->raw_map)
-		return (err("Substr error"));
-	if (check_raw_map(vars, vars->raw_map))
-		return (1);
-	return (0);
-}
-
-int	read_map(char **argv, t_vars *vars)
-{
-	size_t	len;
-	int		fd;
-	char	*map;
-
-	(void)vars;
-	len = ft_strlen(argv[1]) - 1;
-	if (argv[1][len] != 'b' || argv[1][len -1] != 'u' || argv[1][len -2] != 'c'
-		|| argv[1][len -3] != '.')
-		return (err(ARG));
-	fd = open(argv[1], O_RDONLY);
-	if (fd < 0)
-		return (perror("Can't open the file"), 1);
-	map = get_next_line(fd);
-	if (!map)
-		return (err("Error while reading the file"));
-	split_map(map, vars);
-	// if (parse_init(vars, map))
-	// 	return (1);
-	return (0);
-}
 
 int	marche(t_vars *vars)
 {
