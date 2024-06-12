@@ -6,7 +6,7 @@
 /*   By: aaltinto <aaltinto@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 04:42:12 by aaltinto          #+#    #+#             */
-/*   Updated: 2024/06/12 04:42:13 by aaltinto         ###   ########.fr       */
+/*   Updated: 2024/06/12 17:26:02 by aaltinto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,30 +16,31 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-static int	check_borders(t_vars *vars)
+static int	check_borders(char	**map)
 {
 	int	i;
 	int	j;
 	int	len;
 
-	vars->map = reallocate_double(&vars->map);
-	len = find_longest_line(vars->map);
+	map = reallocate_double(&map);
+	len = find_longest_line(map);
 	i = -1;
-	while (vars->map[++i])
+	while (map[++i])
 	{
 		j = -1;
-		while (vars->map[i][++j])
+		while (map[i][++j])
 		{
-			if (vars->map[i][j] == '0' && (i == 0 || j == len -1 || (j < len
-				&& (vars->map[i][j + 1] == '\0' || vars->map[i][j + 1] == ' '
-				|| vars->map[i][j + 1] == '\n')) || j == 0 || (j > 0
-				&& vars->map[i][j - 1] == ' ') || vars->map[i + 1] == NULL
-				|| (vars->map[i + 1] != NULL && (vars->map[i + 1][j] == '\0'
-				|| vars->map[i + 1][j] == ' ')) || (i != 0
-				&& (vars->map[i -1][j] == ' ' || vars->map[i -1][j] == '\0'))))
+			if (map[i][j] == '0' && (i == 0 || j == len -1 || (j < len
+				&& (map[i][j + 1] == '\0' || map[i][j + 1] == ' '
+				|| map[i][j + 1] == '\n')) || j == 0 || (j > 0
+				&& map[i][j - 1] == ' ') || map[i + 1] == NULL
+				|| (map[i + 1] != NULL && (map[i + 1][j] == '\0'
+				|| map[i + 1][j] == ' ')) || (i != 0
+				&& (map[i -1][j] == ' ' || map[i -1][j] == '\0'))))
 				return (err("Error!\nMap should be closed by 1's"));
 		}
 	}
+	free_doubles2((void **)map, len);
 	return (0);
 }
 
@@ -97,8 +98,8 @@ static int	split_map(char *map, t_vars *vars)
 	if (!vars->raw_map)
 		return (err("Substr error"));
 	if (check_raw_map(vars, vars->raw_map))
-		return (1);
-	return (0);
+		return (free(vars->raw_map), 1);
+	return (free(vars->raw_map), 0);
 }
 
 int	read_map(char **argv, t_vars *vars)
@@ -119,6 +120,6 @@ int	read_map(char **argv, t_vars *vars)
 	if (!map)
 		return (err("Error while reading the file"));
 	if (split_map(map, vars) || parse_init(vars, map))
-		return (1);
-	return (0);
+		return (free(map), 1);
+	return (free(map), 0);
 }

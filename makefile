@@ -35,4 +35,6 @@ fclean: clean
 
 re: fclean $(NAME)
 
+norm:
+	@norminette $(SRC) cub3d.h
 .PHONY: all clean fclean re
