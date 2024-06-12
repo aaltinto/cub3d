@@ -13,87 +13,38 @@
 #include <stdio.h>
 #include "../cub3d.h"
 #include "../libft/libft.h"
+#include "../minilibx/mlx.h"
+#include <unistd.h>
 
 int	parse_init(t_vars *vars, char *map)
 {
 	char	**map_tmp;
+	char	*tmp;
 	int		i;
-	int		j;
-	//int		len;
 
 	map_tmp = ft_split(map, '\n');
 	if (!map_tmp)
 		return (err("Split error"));
-	//len = double_counter(map_tmp);
 	i = -1;
 	while (map_tmp[++i])
 	{
-		j = -1;
-		while (map_tmp[i][++j])
+		tmp = ft_strdup(map_tmp[i]);
+		while (*tmp != '\0')
 		{
-			if (map_tmp[i][j] == ' ' || map_tmp[i][j] == '\t')
-				continue ;
-			if (map_tmp[i][j] == 'N' && map_tmp[i][j + 1] == 'O' && map_tmp[i][j + 2] == ' ')
-			{
-				if (vars->textures.north)
-					return (free_doubles(map_tmp), err("Duplicating indicators: 'NO'"));
-				vars->textures.north = ft_substr(map_tmp[i], j + 2, ft_strlen(map_tmp[i]));
-				if (!vars->textures.north)
-					return (free_doubles(map_tmp), err("Substr error"));
-			}
-			if (map_tmp[i][j] == 'S' && map_tmp[i][j + 1] == 'O' && map_tmp[i][j + 2] == ' ')
-			{
-				if (vars->textures.south)
-					return (free_doubles(map_tmp), err("Duplicating indicators: 'SO'"));
-				vars->textures.south = ft_substr(map_tmp[i], j + 2, ft_strlen(map_tmp[i]));
-				if (!vars->textures.south)
-					return (free_doubles(map_tmp), err("Substr error"));
-			}
-			if (map_tmp[i][j] == 'W' && map_tmp[i][j + 1] == 'E' && map_tmp[i][j + 2] == ' ')
-			{
-				if (vars->textures.west)
-					return (free_doubles(map_tmp), err("Duplicating indicators: 'WE'"));
-				vars->textures.west = ft_substr(map_tmp[i], j + 2, ft_strlen(map_tmp[i]));
-				if (!vars->textures.west)
-					return (free_doubles(map_tmp), err("Substr error"));
-			}
-			if (map_tmp[i][j] == 'E' && map_tmp[i][j + 1] == 'A' && map_tmp[i][j + 2] == ' ')
-			{
-				if (vars->textures.east)
-					return (free_doubles(map_tmp), err("Duplicating indicators: 'WE'"));
-				vars->textures.east = ft_substr(map_tmp[i], j + 2, ft_strlen(map_tmp[i]));
-				if (!vars->textures.east)
-					return (free_doubles(map_tmp), err("Substr error"));
-			}
-			if (map_tmp[i][j] == 'F' && map_tmp[i][j + 1] == ' ')
-			{
-				if (vars->textures.floor)
-					return (free_doubles(map_tmp), err("Duplicating indicators: 'F'"));
-				vars->textures.floor = ft_substr(map_tmp[i], j + 1, ft_strlen(map_tmp[i]));
-				if (!vars->textures.floor)
-					return (free_doubles(map_tmp), err("Substr error"));
-			}
-			if (map_tmp[i][j] == 'C' && map_tmp[i][j + 1] == ' ')
-			{
-				if (vars->textures.ceiling)
-					return (free_doubles(map_tmp), err("Duplicating indicators: 'C'"));
-				vars->textures.ceiling = ft_substr(map_tmp[i], j + 1, ft_strlen(map_tmp[i]));
-				if (!vars->textures.ceiling)
-					return (free_doubles(map_tmp), err("Substr error"));
-			}
-
+			if ((*tmp != ' ' && *tmp != '\t') && (init_textures(vars, tmp)
+				|| color_init(vars, tmp)))
+				return (free_doubles(map_tmp), free(tmp), 1);
+			tmp++;
 		}
+		free(tmp);
+		tmp = NULL;
 	}
 	free_doubles(map_tmp);
-	// printf("%s\n", vars->textures.ceiling);
-	// printf("%s\n", vars->textures.north);
-	// printf("%s\n", vars->textures.floor);
-	// printf("%s\n", vars->textures.south);
-	// printf("%s\n", vars->textures.east);
-	// printf("%s\n", vars->textures.west);
+	if (!vars->textures.north || !vars->textures.south || !vars->textures.west
+		|| !vars->textures.east || !vars->textures.floor || !vars->textures.ceiling)
+		return (err("Error! Missing indicators"));
 	return (0);
 }
-
 
 int	marche(t_vars *vars)
 {
@@ -104,6 +55,51 @@ int	marche(t_vars *vars)
 	vars->textures.south = NULL;
 	vars->textures.east = NULL;
 	vars->textures.west = NULL;
+	return (0);
+}
+
+int	close_windows(t_vars *vars)
+{
+	mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
+	free_doubles(vars->map);
+	free(vars->textures.ceiling);
+	free(vars->textures.floor);
+	free(vars->textures.north);
+	free(vars->textures.south);
+	free(vars->textures.east);
+	free(vars->textures.west);
+	exit(0);
+}
+
+unsigned int rgb_to_hex(int r, int g, int b)
+{
+    return ((r << 16) | (g << 8) | b);
+}
+
+int	key_capture(int keycode, t_vars *vars)
+{
+	if (keycode == ESC)
+		close_windows(vars);
+	printf("Keycode: %d\n", keycode);
+	return (0);
+}
+
+int	fill_background(t_vars *vars)
+{
+	int		i;
+	int		color_floor;
+	int		color_celing;
+
+	color_floor = rgb_to_hex(vars->textures.floor_rgb[0], vars->textures.floor_rgb[1], vars->textures.floor_rgb[2]);
+	color_celing = rgb_to_hex(vars->textures.ceiling_rgb[0], vars->textures.ceiling_rgb[1], vars->textures.ceiling_rgb[2]);
+	i = -1;
+	while (++i < 1920 * 1080)
+	{
+		if (i < 1920 * 540)
+			mlx_pixel_put(vars->mlx.mlx, vars->mlx.win, i % 1920, i / 1920, color_celing);
+		else
+			mlx_pixel_put(vars->mlx.mlx, vars->mlx.win, i % 1920, i / 1920, color_floor);
+	}
 	return (0);
 }
 
@@ -118,5 +114,16 @@ int	main(int ac, char **argv)
 	if (vars.map)
 		for (int i = 0; vars.map[i]; i++)
 			printf("%s\n", vars.map[i]);
+	vars.mlx.mlx = mlx_init();
+	if (!vars.mlx.mlx)
+		return (err("Mlx init error"));
+	vars.mlx.win = mlx_new_window(vars.mlx.mlx, 1920, 1080, "cub3d");
+	if (!vars.mlx.win)
+		return (err("Mlx window error"), close_windows(&vars), 1);
+	if (fill_background(&vars))
+		return (close_windows(&vars), 1);
+	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);
+	mlx_hook(vars.mlx.win, 02, 0, key_capture, &vars);
+	mlx_loop(vars.mlx.mlx);
 	return (0);
 }

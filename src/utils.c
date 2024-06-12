@@ -59,7 +59,8 @@ char	**reallocate_double(char	***str)
 		j = -1;
 		while ((*str)[i][++j])
 			tmp[i][j] = (*str)[i][j];
+		tmp[i][j] = '\0';
 	}
-	tmp[++i] = NULL;
+	tmp[i] = NULL;
 	return (free_doubles(*str), tmp);
 }
