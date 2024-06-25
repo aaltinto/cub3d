@@ -1,6 +1,6 @@
 CC = gcc
 RM = rm -f
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS =  -g
 OpenGL = -framework OpenGL -framework AppKit
 SRC = src/main.c\
 		src/map_reader.c\
@@ -22,7 +22,7 @@ $(NAME): $(OBJ)
 	@make all -C minilibx
 	@make all -C libft
 	@make all -C gnl
-	$(CC) $(GNL) $(LIB) $(MLX) $(OpenGL) $(OBJ) -o $(NAME)
+	$(CC) $(GNL) $(LIB) $(MLX) $(OpenGL) $(OBJ) -o $(NAME) -g
 
 clean:
 	@make clean -C minilibx

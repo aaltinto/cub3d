@@ -55,13 +55,20 @@ int	east(t_vars *vars, char *tmp)
 
 int	init_textures(t_vars *vars, char *tmp)
 {
-	if (ft_strnstr(tmp, "NO ", 3) != NULL && north(vars, tmp))
+	int	ret;
+
+	ret = -1;
+	if (ft_strnstr(tmp, "NO ", 3) != NULL)
+		ret = north(vars, tmp);
+	else if (ft_strnstr(tmp, "SO ", 3) != NULL)
+		ret = south(vars, tmp);
+	else if (ft_strnstr(tmp, "WE ", 3) != NULL)
+		ret = west(vars, tmp);
+	else if (ft_strnstr(tmp, "EA ", 3) != NULL)
+		ret = east(vars, tmp);
+	if (ret == 0 || (*tmp == 'F' && (*(tmp + 1)) == ' ') || (*tmp == 'C' && (*(tmp + 1)) == ' ') || *tmp == '0' || *tmp == '1')
+		return (2);
+	if (ret == 1)
 		return (1);
-	else if (ft_strnstr(tmp, "SO ", 3) != NULL && south(vars, tmp))
-		return (1);
-	else if (ft_strnstr(tmp, "WE ", 3) != NULL && west(vars, tmp))
-		return (1);
-	else if (ft_strnstr(tmp, "EA ", 3) != NULL && east(vars, tmp))
-		return (1);
-	return (0);
+	return (err("Invalid character: "), 1);
 }

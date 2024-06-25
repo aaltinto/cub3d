@@ -49,13 +49,16 @@ typedef struct s_vars
 	t_mlx		mlx;
 	char		**map;
 	char		*raw_map;
+	int index;
 }	t_vars;
 
 //error
 int		err(char *str);
+int		null_free(void *ptr);
+void	abort_mission(t_vars *vars);
 int		read_map(char **argv, t_vars *vars);
 int		double_counter(char **str);
-char	**reallocate_double(char	***str);
+char	**reallocate_double(char **str);
 int		find_longest_line(char **str);
 int		free_doubles(char **str);
 int		free_doubles2(void **str, int len);

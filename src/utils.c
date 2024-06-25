@@ -6,7 +6,7 @@
 /*   By: aaltinto <aaltinto@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 04:42:18 by aaltinto          #+#    #+#             */
-/*   Updated: 2024/06/12 04:42:21 by aaltinto         ###   ########.fr       */
+/*   Updated: 2024/06/25 15:55:51 by aaltinto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	double_counter(char **str)
 
 	if (!str)
 		return (0);
-	i = -1;
+	i = 0;
 	while (str[i])
 		++i;
 	return (i);
@@ -39,28 +39,30 @@ int	find_longest_line(char **str)
 	return (len);
 }
 
-char	**reallocate_double(char	***str)
+
+
+char	**reallocate_double(char **str)
 {
 	char	**tmp;
 	int		i;
 	int		j;
 	int		len;
 
-	len = find_longest_line(*str);
-	tmp = (char **)malloc(sizeof(char *) * (double_counter(*str) + 1));
+	len = find_longest_line(str);
+	tmp = (char **)malloc(sizeof(char *) * (double_counter(str) + 1));
 	if (!tmp)
 		return (err("Malloc error"), NULL);
 	i = -1;
-	while ((*str)[++i])
+	while ((str)[++i])
 	{
-		tmp[i] = ft_calloc(sizeof(char), len);
+		tmp[i] = ft_calloc(sizeof(char), len + 1);
 		if (!tmp[i])
-			return (free(tmp), err("Malloc error"), NULL);
+			return (null_free(tmp), err("Malloc error"), NULL);
 		j = -1;
-		while ((*str)[i][++j])
-			tmp[i][j] = (*str)[i][j];
+		while ((str)[i][++j])
+			tmp[i][j] = (str)[i][j];
 		tmp[i][j] = '\0';
 	}
 	tmp[i] = NULL;
-	return (free_doubles(*str), tmp);
+	return (free_doubles(str), tmp);
 }

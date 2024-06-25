@@ -17,14 +17,9 @@
 int	extract_rgb(t_vars *vars)
 {
 	char	**tmp;
+	char	**tmp2;
 	int		i;
 
-	vars->textures.ceiling_rgb = (int *)malloc(sizeof(int) * 3);
-	if (!vars->textures.ceiling_rgb)
-		return (err("Malloc error"));
-	vars->textures.floor_rgb = (int *)malloc(sizeof(int) * 3);
-	if (!vars->textures.floor_rgb)
-		return (err("Malloc error"));
 	tmp = ft_split(vars->textures.floor, ',');
 	if (!tmp)
 		return (err("Split error"));
@@ -38,19 +33,19 @@ int	extract_rgb(t_vars *vars)
 		vars->textures.floor_rgb[i] = ft_atoi(tmp[i]);
 	}
 	free_doubles(tmp);
-	tmp = ft_split(vars->textures.ceiling, ',');
-	if (!tmp)
+	tmp2 = ft_split(vars->textures.ceiling, ',');
+	if (!tmp2)
 		return (err("Split error"));
-	if (double_counter(tmp) != 3)
+	if (double_counter(tmp2) != 3)
 		return (err("Error! Invalid color format"));
 	i = -1;
-	while (tmp[++i])
+	while (tmp2[++i])
 	{
-		if (ft_atoi(tmp[i]) < 0 || ft_atoi(tmp[i]) > 255)
+		if (ft_atoi(tmp2[i]) < 0 || ft_atoi(tmp2[i]) > 255)
 			return (err("Error! Invalid ceiling color"));
-		vars->textures.ceiling_rgb[i] = ft_atoi(tmp[i]);
+		vars->textures.ceiling_rgb[i] = ft_atoi(tmp2[i]);
 	}
-	free_doubles(tmp);
+	free_doubles(tmp2);
 	return (0);
 }
 
