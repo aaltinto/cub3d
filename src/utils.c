@@ -57,12 +57,12 @@ char	**reallocate_double(char **str)
 	{
 		tmp[i] = ft_calloc(sizeof(char), len + 1);
 		if (!tmp[i])
-			return (null_free(tmp), err("Malloc error"), NULL);
+			return (free_doubles(tmp), err("Malloc error"), NULL);
 		j = -1;
 		while ((str)[i][++j])
 			tmp[i][j] = (str)[i][j];
 		tmp[i][j] = '\0';
 	}
 	tmp[i] = NULL;
-	return (free_doubles(str), tmp);
+	return (tmp);
 }

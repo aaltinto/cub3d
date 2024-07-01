@@ -25,8 +25,22 @@
 # define ARROW_DOWN 125
 # define ARROW_UP 126
 
+typedef struct s_player
+{
+	double	posX;
+	double	posY;
+	double	dirY;
+	double	dirX;
+	double	planeY;
+	double	planeX;
+}	t_player;
+
 typedef struct s_textures
 {
+	void	*north_img;
+	void	*west_img;
+	void	*south_img;
+	void	*east_img;
 	char	*north;
 	char	*south;
 	char	*west;
@@ -47,9 +61,11 @@ typedef struct s_vars
 {
 	t_textures	textures;
 	t_mlx		mlx;
+	t_player	player;
 	char		**map;
 	char		*raw_map;
-	int index;
+	int			sc_width;
+	int			sc_height;
 }	t_vars;
 
 //error

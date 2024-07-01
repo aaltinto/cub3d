@@ -25,12 +25,12 @@ $(NAME): $(OBJ)
 	$(CC) $(GNL) $(LIB) $(MLX) $(OpenGL) $(OBJ) -o $(NAME) -g
 
 clean:
-	@make clean -C minilibx
 	@make clean -C libft
 	@make clean -C gnl
 	$(RM) $(OBJ)
 
 fclean: clean
+	@make clean -C minilibx
 	$(RM) $(NAME)
 
 re: fclean $(NAME)

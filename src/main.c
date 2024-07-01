@@ -87,7 +87,8 @@ int	marche(t_vars *vars)
 	vars->textures.west = NULL;
 	vars->mlx.mlx = NULL;
 	vars->mlx.win = NULL;
-	vars->index = 0;
+	vars->sc_height = 480;
+	vars->sc_width = 640;
 	vars->textures.ceiling_rgb = (int *)malloc(sizeof(int) * 3);
 	if (!vars->textures.ceiling_rgb)
 		return (err("Malloc error"));
@@ -107,8 +108,7 @@ int	null_free(void *ptr)
 
 void	abort_mission(t_vars *vars)
 {
-	if (vars->map)
-		free_doubles(vars->map);
+	//free_doubles(vars->map);
 	null_free(vars->textures.ceiling);
 	null_free(vars->textures.floor);
 	null_free(vars->textures.north);
@@ -124,6 +124,7 @@ int	close_windows(t_vars *vars)
 	mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
 	null_free(vars->mlx.mlx);
 	abort_mission(vars);
+	system("leaks cub3d");
 	exit(0);
 }
 
@@ -151,16 +152,76 @@ int	fill_background(t_vars *vars)
 	color_celing = rgb_to_hex(vars->textures.ceiling_rgb[0], \
 		vars->textures.ceiling_rgb[1], vars->textures.ceiling_rgb[2]);
 	i = -1;
-	while (++i < 1920 * 1080)
+	while (++i < (vars->sc_height * vars->sc_width))
 	{
-		if (i < 1920 * 540)
-			mlx_pixel_put(vars->mlx.mlx, vars->mlx.win, i % 1920, \
-			i / 1920, color_celing);
+		if (i < vars->sc_width * vars->sc_height/2)
+			mlx_pixel_put(vars->mlx.mlx, vars->mlx.win, i % vars->sc_width, \
+			i / vars->sc_width, color_celing);
 		else
-			mlx_pixel_put(vars->mlx.mlx, vars->mlx.win, i % 1920, \
-			i / 1920, color_floor);
+			mlx_pixel_put(vars->mlx.mlx, vars->mlx.win, i % vars->sc_width, \
+			i / vars->sc_width, color_floor);
 	}
 	return (0);
+}
+
+void strip(char* source)
+{
+    char* i = source;
+    char* j = source;
+
+    while (*j != '\0') {
+        *i = *j++;
+        if (*i != ' ') {
+            i++;
+        }
+    }
+    *i = '\0';
+}
+// printf("-%s-\n", vars->textures.east);
+// strip(vars->textures.east);
+// printf("-%s-\n", vars->textures.east);
+// vars->textures.north_img = mlx_xpm_file_to_image(vars->mlx.mlx, vars->textures.east, &x, &y);
+// if (!vars->textures.north_img)
+// 	return (err("Couldn't init image"), close_windows(vars));
+// mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->textures.north_img, 0, 0);
+
+int	render(void *ptr)
+{
+	t_vars *vars;
+	int	x;
+
+	vars = (t_vars *)ptr; 
+	
+	
+	return (0);
+}
+
+int	detect_player(t_vars *vars)
+{
+	int	_x;
+	int	_y;
+	char	val;
+
+	vars->player.planeX = 0;
+	vars->player.planeY = 0.66;
+	_y = -1;
+	while (vars->map[++_y] != NULL)
+	{
+		_x = -1;
+		while (vars->map[_y][++_x])
+		{
+			val = vars->map[_y][_x];
+			if (val == 'N')
+				return (vars->player.posX = _x, vars->player.posY = _y, vars->player.dirX = 0, vars->player.dirY = 1, 0);
+			if (val == 'E')
+				return (vars->player.posX = _x, vars->player.posY = _y, vars->player.dirX = 1, vars->player.dirY = 0, 0);
+			if (val == 'S')
+				return (vars->player.posX = _x, vars->player.posY = _y, vars->player.dirX = 0, vars->player.dirY = -1, 0);
+			if (val == 'W')
+				return (vars->player.posX = _x, vars->player.posY = _y, vars->player.dirX = -1, vars->player.dirY = 0, 0);
+		}
+	}
+	return (1);
 }
 
 int	main(int ac, char **argv)
@@ -173,16 +234,19 @@ int	main(int ac, char **argv)
 		return (abort_mission(&vars), 1);
 	if (read_map(argv, &vars))
 		return (abort_mission(&vars), 1);
+	if (detect_player(&vars))
+		return (abort_mission(&vars), 1);
 	vars.mlx.mlx = mlx_init();
 	if (!vars.mlx.mlx)
 		return (err("Mlx init error"));
-	vars.mlx.win = mlx_new_window(vars.mlx.mlx, 1920, 1080, "cub3d");
+	vars.mlx.win = mlx_new_window(vars.mlx.mlx, vars.sc_width, vars.sc_height, "cub3d");
 	if (!vars.mlx.win)
 		return (err("Mlx window error"), close_windows(&vars), 1);
 	if (fill_background(&vars))
 		return (close_windows(&vars), 1);
 	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);
 	mlx_hook(vars.mlx.win, 02, 0, key_capture, &vars);
+	mlx_loop_hook(vars.mlx.mlx, render, (void *)(&vars));
 	mlx_loop(vars.mlx.mlx);
 	return (close_windows(&vars), 0);
 }

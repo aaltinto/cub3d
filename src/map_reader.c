@@ -16,33 +16,52 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-static int	check_borders(char	***map)
+int	fill_map(char **map, t_vars *vars)
+{
+	int	i;
+
+	vars->map = (char **)malloc((double_counter(map) + 1) * sizeof(char *));
+	i = -1;
+	while (map[++i])
+	{
+		vars->map[i] = ft_strdup(map[i]);
+		if (!vars->map[i])
+			return (err("Strdup error"));
+	}
+	vars->map[i] = NULL;
+	return (0);
+}
+
+static int	check_borders(char	**map, t_vars *vars)
 {
 	int	i;
 	int	j;
 	int	len;
+	char	**tmp_map;
   
-	(*map) = reallocate_double((*map));
-	if (!(*map))
+	printf("check_borders: 1. %p\n", map);
+	tmp_map = reallocate_double(map);
+	if (!map)
 		return (err("Allocate error"), 1);
-	len = find_longest_line((*map));
+	printf("check_borders: 2. %p\n", map);
+	len = find_longest_line(map);
 	i = -1;
-	while ((*map)[++i])
+	while (map[++i])
 	{
 		j = -1;
-		while ((*map)[i][++j])
+		while (map[i][++j])
 		{
-			if ((*map)[i][j] == '0' && (i == 0 || j == len -1 || (j < len
-				&& ((*map)[i][j + 1] == '\0' || (*map)[i][j + 1] == ' '
-				|| (*map)[i][j + 1] == '\n')) || j == 0 || (j > 0
-				&& (*map)[i][j - 1] == ' ') || (*map)[i + 1] == NULL
-				|| ((*map)[i + 1] != NULL && ((*map)[i + 1][j] == '\0'
-				|| (*map)[i + 1][j] == ' ')) || (i != 0
-				&& ((*map)[i -1][j] == ' ' || (*map)[i -1][j] == '\0'))))
+			if (map[i][j] == '0' && (i == 0 || j == len -1 || (j < len
+				&& (map[i][j + 1] == '\0' || map[i][j + 1] == ' '
+				|| map[i][j + 1] == '\n')) || j == 0 || (j > 0
+				&& map[i][j - 1] == ' ') || map[i + 1] == NULL
+				|| (map[i + 1] != NULL && (map[i + 1][j] == '\0'
+				|| map[i + 1][j] == ' ')) || (i != 0
+				&& (map[i -1][j] == ' ' || map[i -1][j] == '\0'))))
 				return (err("Error!\nMap should be closed by 1's"));
 		}
 	}
-	return (0);
+	return (fill_map(tmp_map, vars), free_doubles(tmp_map));
 }
 
 //check spaces and nulls to search borders. 0's cant touch spaces and nulls.
@@ -50,6 +69,7 @@ static int	check_raw_map(t_vars *vars, char *map)
 {
 	int	i;
 	int	j;
+	char	**splitted_map;
 
 	i = -1;
 	j = 0;
@@ -68,10 +88,12 @@ static int	check_raw_map(t_vars *vars, char *map)
 	}
 	if (j > 1 || j == 0)
 		return (err("Error!\nInvalid player"));
-	vars->map = ft_split(map, '\n');
-	if (!vars->map)
+	splitted_map = ft_split(map, '\n');
+	if (!splitted_map)
 		return (err("Split error"));
-	return (check_borders(&vars->map));
+	if (check_borders(splitted_map, vars))
+		return ( 1);
+	return (printf("origin: %p\n", splitted_map), free_doubles(splitted_map), 0);
 }
 
 static int	split_map(char *map, t_vars *vars)

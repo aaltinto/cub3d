@@ -1,7 +1,7 @@
-NO ./path_to_the_north_texture
-SO ./path_to_the_south_texture
-WE ./path_to_the_west_texture
-EA ./path_to_the_east_texture
+NO ./textures/block.xpm
+SO ./textures/block.xpm
+WE ./textures/block.xpm
+EA ./textures/block.xpm
 C 220,20,235
 F 84,84,84
 
