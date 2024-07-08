@@ -7,6 +7,7 @@ SRC = src/main.c\
 		src/free_errors.c\
 		src/init_textures.c\
 		src/init_colors.c\
+		src/cast_rays.c\
 		src/utils.c
 
 LIB = libft/libft.a

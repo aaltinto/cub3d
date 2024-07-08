@@ -25,14 +25,23 @@
 # define ARROW_DOWN 125
 # define ARROW_UP 126
 
+#include "minilibx/mlx.h"
+
+typedef struct s_render
+{
+	int		sc_width;
+	int		sc_height;
+	double	ray_angle;
+	double	ray_dist;
+	int		flag;
+}	t_render;
+
 typedef struct s_player
 {
 	double	posX;
 	double	posY;
-	double	dirY;
-	double	dirX;
-	double	planeY;
-	double	planeX;
+	double	fov;
+	double	p_angle;
 }	t_player;
 
 typedef struct s_textures
@@ -57,15 +66,23 @@ typedef struct s_mlx
 	void	*win;
 }	t_mlx;
 
+typedef struct	s_data {
+	void	*img;
+	char	*addr;
+	int		bits_per_pixel;
+	int		line_length;
+	int		endian;
+}				t_data;
+
 typedef struct s_vars
 {
 	t_textures	textures;
 	t_mlx		mlx;
+	t_data		img;
 	t_player	player;
+	t_render	render;
 	char		**map;
 	char		*raw_map;
-	int			sc_width;
-	int			sc_height;
 }	t_vars;
 
 //error
@@ -82,5 +99,6 @@ int		parse_init(t_vars *vars, char *map);
 int		init_textures(t_vars *vars, char *tmp);
 int		extract_rgb(t_vars *vars);
 int		color_init(t_vars *vars, char *tmp);
+void	cast_rays(t_vars *vars);
 
 #endif
