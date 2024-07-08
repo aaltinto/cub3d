@@ -25,6 +25,8 @@
 # define ARROW_DOWN 125
 # define ARROW_UP 126
 
+# define FOV 66
+
 #include "minilibx/mlx.h"
 
 typedef struct s_render
@@ -72,7 +74,7 @@ typedef struct	s_data {
 	int		bits_per_pixel;
 	int		line_length;
 	int		endian;
-}				t_data;
+}	t_data;
 
 typedef struct s_vars
 {
@@ -100,5 +102,7 @@ int		init_textures(t_vars *vars, char *tmp);
 int		extract_rgb(t_vars *vars);
 int		color_init(t_vars *vars, char *tmp);
 void	cast_rays(t_vars *vars);
+int	rgb_to_hex(int r, int g, int b);
+void	pixel_put(t_data *data, int x, int y, int color);
 
 #endif

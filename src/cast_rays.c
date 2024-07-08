@@ -2,6 +2,7 @@
 #include "../minilibx/mlx.h"
 #include "../libft/libft.h"
 #include <math.h>
+
 #define TILE_SIZE 30
 
 double	nor_angle(double angle)
@@ -60,7 +61,7 @@ int wall_hit(float x, float y, t_vars *vars)
 		return (0);
 	x_m = floor (x / TILE_SIZE);
 	y_m = floor (y / TILE_SIZE);
-	if ((y_m >= double_counter(vars->map) || x_m >= ft_strlen(vars->map[0])))
+	if ((y_m >= double_counter(vars->map) || x_m >= find_longest_line(vars->map)))
 		return (0);
 	if (vars->map[y_m] && x_m <= (int)ft_strlen(vars->map[y_m]))
 		if (vars->map[y_m][x_m] == '1')
@@ -106,7 +107,7 @@ double	get_v_inter(t_vars *vars, double angle)
 	pixel = inter_check(angle, &v_x, &x_step, 0);
 	if ((unit_circle(angle, 'x') && y_step < 0) || (!unit_circle(angle, 'x') && y_step > 0))
 		y_step *= -1;
-	while (wall_hit(v_x, v_y - pixel, vars))
+	while (wall_hit(v_x - pixel, v_y, vars))
 	{
 		v_x += x_step;
 		v_y += y_step;
@@ -120,16 +121,16 @@ int	get_color(t_vars *vars, int flag)	// get the color of the wall
 	if (flag == 0)
 	{
 		if (vars->render.ray_angle > M_PI / 2 && vars->render.ray_angle < 3 * (M_PI / 2))
-			return (0xB5B5B5FF); // west wall
+			return (rgb_to_hex(200, 200, 200)); // west wall
 		else
-			return (0xB5B5B5FF); // east wall
+			return (rgb_to_hex(200, 200, 200)); // east wall
 	}
 	else
 	{
 		if (vars->render.ray_angle > 0 && vars->render.ray_angle < M_PI)
-			return (0xF5F5F5FF); // south wall
+			return (rgb_to_hex(200, 200, 200)); // south wall
 		else
-			return (0xF5F5F5FF); // north wall
+			return (rgb_to_hex(200, 200, 200)); // north wall
 	}
 }
 #include <stdio.h>
@@ -152,7 +153,7 @@ void	my_mlx_pixel_put(t_vars *vars, int x, int y, int color)	// put the pixel
 		return ;
 	else if (y >= vars->render.sc_height)
 		return ;
-	pixel_put(&vars->img, x, y, color); // put the pixel
+	pixel_put(&vars->img, x, y, color);
 }
 
 void	draw_wall(t_vars *vars, int ray, int t_pix, int b_pix)	// draw the wall
@@ -170,10 +171,11 @@ void	render_wall(t_vars *vars, int ray)	// render the wall
 	double	b_pix;
 	double	t_pix;
 
-	vars->render.ray_dist *= cos(nor_angle(vars->render.ray_angle - vars->player.p_angle)); // fix the fisheye
-	wall_h = (TILE_SIZE / vars->render.ray_dist) * ((vars->render.sc_width / 2) / tan(((60 * M_PI) / 180) / 2)); // get the wall height
+	//vars->render.ray_dist *= cos(nor_angle(vars->render.ray_angle - vars->player.p_angle)); // fix the fisheye
+	wall_h = (TILE_SIZE / vars->render.ray_dist) * ((vars->render.sc_width / 2) / tan(((FOV * M_PI) / 180) / 2)); // get the wall height
 	b_pix = (vars->render.sc_height / 2) + (wall_h / 2); // get the bottom pixel
 	t_pix = (vars->render.sc_height / 2) - (wall_h / 2); // get the top pixel
+	printf("wall_h:%f\nb_pix:%f\nt_pix:%f\n", wall_h, b_pix, t_pix);
 	if (b_pix > vars->render.sc_height) // check the bottom pixel
 		b_pix = vars->render.sc_height;
 	if (t_pix < 0) // check the top pixel
@@ -189,7 +191,7 @@ void	cast_rays(t_vars *vars)
 	int		ray;
 
 	ray = 0;
-	vars->render.ray_angle = vars->player.p_angle - ( ((60 * M_PI) / 180) / 2);
+	vars->render.ray_angle = vars->player.p_angle - ( ((FOV * M_PI) / 180) / 2);
 	while (ray < vars->render.sc_width)
 	{
 		vars->render.flag = 0;
@@ -205,6 +207,6 @@ void	cast_rays(t_vars *vars)
 		mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
 		render_wall(vars, ray);
 		ray++;
-		vars->render.ray_angle += (((60 * M_PI) / 180) / vars->render.sc_width);
+		vars->render.ray_angle += (((FOV * M_PI) / 180) / vars->render.sc_width);
 	}
 }

@@ -88,8 +88,8 @@ int	marche(t_vars *vars)
 	vars->textures.west = NULL;
 	vars->mlx.mlx = NULL;
 	vars->mlx.win = NULL;
-	vars->render.sc_height = 1000;
-	vars->render.sc_width = 1900;
+	vars->render.sc_height = 640;
+	vars->render.sc_width = 800;
 	vars->render.flag = 0;
 	vars->textures.ceiling_rgb = (int *)malloc(sizeof(int) * 3);
 	if (!vars->textures.ceiling_rgb)
@@ -139,7 +139,18 @@ int	key_capture(int keycode, t_vars *vars)
 {
 	if (keycode == ESC)
 		close_windows(vars);
-	printf("Keycode: %d\n", keycode);
+	if (keycode == ARROW_R)
+		vars->player.p_angle += 0.2f;
+	if (keycode == ARROW_L)
+		vars->player.p_angle -= 0.2f;
+	if (keycode == W && vars->map[(int)vars->player.posY + 1][(int)vars->player.posX] != '1')
+		vars->player.posY += 1;
+	if (keycode == S && vars->map[(int)vars->player.posY - 1][(int)vars->player.posX] != '1')
+		vars->player.posY -= 1;
+	if (keycode == A && vars->map[(int)vars->player.posY][(int)vars->player.posX - 1] != '1')
+		vars->player.posX -= 1;
+	if (keycode == D && vars->map[(int)vars->player.posY][(int)vars->player.posX + 1] != '1')
+		vars->player.posX += 1;
 	return (0);
 }
 
@@ -157,11 +168,9 @@ int	fill_background(t_vars *vars)
 	while (++i < (vars->render.sc_height * vars->render.sc_width))
 	{
 		if (i < vars->render.sc_width * vars->render.sc_height/2)
-			mlx_pixel_put(vars->mlx.mlx, vars->mlx.win, i % vars->render.sc_width, \
-			i / vars->render.sc_width, color_celing);
+			pixel_put(&vars->img, i % vars->render.sc_width, i / vars->render.sc_width, color_celing);
 		else
-			mlx_pixel_put(vars->mlx.mlx, vars->mlx.win, i % vars->render.sc_width, \
-			i / vars->render.sc_width, color_floor);
+			pixel_put(&vars->img, i % vars->render.sc_width, i / vars->render.sc_width, color_floor);
 	}
 	return (0);
 }
@@ -184,10 +193,14 @@ int	render(void *ptr)
 {
 	t_vars *vars;
 	int	x;
+	int	y;
 
 	vars = (t_vars *)ptr; 
-	
+
+	if (fill_background(vars))
+		return (close_windows(vars), 1);
 	cast_rays(vars);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
 	return (0);
 }
 
@@ -236,8 +249,6 @@ int	main(int ac, char **argv)
 	vars.mlx.win = mlx_new_window(vars.mlx.mlx, vars.render.sc_width, vars.render.sc_height, "cub3d");
 	if (!vars.mlx.win)
 		return (err("Mlx window error"), close_windows(&vars), 1);
-	if (fill_background(&vars))
-		return (close_windows(&vars), 1);
 	vars.img.img = mlx_new_image(vars.mlx.mlx, vars.render.sc_width, vars.render.sc_height);
 	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.line_length,
 								&vars.img.endian);
