@@ -129,7 +129,7 @@ void draw_wall(t_vars *vars, int ray, int t_pix, int b_pix) {
 void render_wall(t_vars *vars, int ray) {
     double wall_h, b_pix, t_pix;
 
-    //vars->render.ray_dist *= cos(nor_angle(vars->render.ray_angle - vars->player.p_angle)); // fix fisheye effect
+    vars->render.ray_dist *= cos(nor_angle(vars->render.ray_angle - vars->player.p_angle)); // fix fisheye effect
     wall_h = (TILE_SIZE / vars->render.ray_dist) * ((vars->render.sc_width / 2) / tan(FOV / 2));
     b_pix = (vars->render.sc_height / 2) + (wall_h / 2);
     t_pix = (vars->render.sc_height / 2) - (wall_h / 2);

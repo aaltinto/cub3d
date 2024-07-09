@@ -27,7 +27,8 @@
 
 # define FOV 66 * (M_PI / 180)
 # define TILE_SIZE 30
-# define PLAYER_SPEED 0.05f
+# define MAP_TILE 10.85f
+# define PLAYER_SPEED 1
 
 #include "minilibx/mlx.h"
 
