@@ -25,9 +25,9 @@
 # define ARROW_DOWN 125
 # define ARROW_UP 126
 
-# define FOV 60 * (M_PI / 180)
+# define FOV 66 * (M_PI / 180)
 # define TILE_SIZE 30
-# define PLAYER_SPEED 0.15f
+# define PLAYER_SPEED 0.05f
 
 #include "minilibx/mlx.h"
 
@@ -83,6 +83,7 @@ typedef struct s_vars
 	t_textures	textures;
 	t_mlx		mlx;
 	t_data		img;
+	t_data		mini_map;
 	t_player	player;
 	t_render	render;
 	char		**map;

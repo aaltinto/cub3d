@@ -140,16 +140,22 @@ void	move_player(t_vars *vars, double new_x, double new_y)
 	int	grid_x;
 	int	grid_y;
 
-	grid_x = (int)round(vars->player.posX + new_x)/TILE_SIZE;
-	grid_y = (int)round(vars->player.posY + new_y)/TILE_SIZE;
+	// grid_x = (int)round(vars->player.posX + new_x)/TILE_SIZE;
+	// grid_y = (int)round(vars->player.posY + new_y)/TILE_SIZE;
+	grid_x = (int)round((vars->player.posX/TILE_SIZE) + (new_x/PLAYER_SPEED));
+	grid_y = (int)round((vars->player.posY/TILE_SIZE) + (new_y/PLAYER_SPEED));
+	printf("PosX:%f\nnew_x:%f\n", vars->player.posX, new_x);
+	printf("PosY:%f\nnew_y:%f\n", vars->player.posY, new_y);
 	ft_putnbr_fd(grid_x, 1);
 	write(1, "\n", 1);
 	ft_putnbr_fd(grid_y, 1);
 	write(1, "\n", 1);
 	if (vars->map[grid_y][grid_x] == '1')
 		return ;
-	vars->player.posX = (vars->player.posX/TILE_SIZE + new_x) * TILE_SIZE;
-	vars->player.posY = (vars->player.posY/TILE_SIZE + new_y) * TILE_SIZE;
+	vars->player.posX += new_x;
+	vars->player.posY += new_y;
+	printf("L_PosX:%f\nnew_x:%f\n", vars->player.posX, new_x);
+	printf("L_PosY:%f\nnew_y:%f\n", vars->player.posY, new_y);
 }
 
 int	key_capture(int keycode, t_vars *vars)
@@ -163,17 +169,17 @@ int	key_capture(int keycode, t_vars *vars)
 		vars->player.p_angle += 0.2f;
 	if (keycode == ARROW_L)
 		vars->player.p_angle -= 0.2f;
-	if (keycode == W && vars->map[((int)vars->player.posY/30) + 1][((int)vars->player.posX/30)] != '1')
+	if (keycode == W)
 	{
 		new_x = cos(vars->player.p_angle) * PLAYER_SPEED;
 		new_y = sin(vars->player.p_angle) * PLAYER_SPEED;
 	}
-	if (keycode == S && vars->map[((int)vars->player.posY/30) - 1][((int)vars->player.posX/30)] != '1')
+	if (keycode == S)
 	{
 		new_x = -cos(vars->player.p_angle) * PLAYER_SPEED;
 		new_y = -sin(vars->player.p_angle) * PLAYER_SPEED;
 	}
-	if (keycode == A && vars->map[((int)vars->player.posY/30)][((int)vars->player.posX/30) - 1] != '1')
+	if (keycode == A)
 	{
 		new_x = sin(vars->player.p_angle) * PLAYER_SPEED;
 		new_y = -cos(vars->player.p_angle) * PLAYER_SPEED;
@@ -221,7 +227,7 @@ void strip(char* source)
     }
     *i = '\0';
 }
-
+int i = 0;
 int	render(void *ptr)
 {
 	t_vars *vars;
@@ -256,6 +262,7 @@ int	detect_player(t_vars *vars)
 		{
 			vars->player.posX = x * TILE_SIZE;
 			vars->player.posY = y * TILE_SIZE;
+			// printf("F_PosX:%f, F_PosY:%f, F_x:%d, F_y:%d\n", vars->player.posX, vars->player.posY, x, y);
 			if (vars->map[y][x] == 'N')
 				return (vars->player.p_angle = (3*M_PI)/2, 0);
 			else if (vars->map[y][x] == 'E')

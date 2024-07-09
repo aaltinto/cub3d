@@ -38,12 +38,10 @@ static int	check_borders(char	**map, t_vars *vars)
 	int	j;
 	int	len;
 	char	**tmp_map;
-  
-	printf("check_borders: 1. %p\n", map);
+
 	tmp_map = reallocate_double(map);
 	if (!map)
 		return (err("Allocate error"), 1);
-	printf("check_borders: 2. %p\n", map);
 	len = find_longest_line(map);
 	i = -1;
 	while (map[++i])
@@ -93,7 +91,7 @@ static int	check_raw_map(t_vars *vars, char *map)
 		return (err("Split error"));
 	if (check_borders(splitted_map, vars))
 		return ( 1);
-	return (printf("origin: %p\n", splitted_map), free_doubles(splitted_map), 0);
+	return (free_doubles(splitted_map), 0);
 }
 
 static int	split_map(char *map, t_vars *vars)
