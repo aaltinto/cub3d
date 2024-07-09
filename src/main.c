@@ -88,8 +88,8 @@ int	marche(t_vars *vars)
 	vars->textures.west = NULL;
 	vars->mlx.mlx = NULL;
 	vars->mlx.win = NULL;
-	vars->render.sc_height = 640;
-	vars->render.sc_width = 800;
+	vars->render.sc_height = 768;
+	vars->render.sc_width = 1024;
 	vars->render.flag = 0;
 	vars->textures.ceiling_rgb = (int *)malloc(sizeof(int) * 3);
 	if (!vars->textures.ceiling_rgb)
@@ -135,22 +135,55 @@ int	rgb_to_hex(int r, int g, int b)
 	return ((r << 16) | (g << 8) | b);
 }
 
+void	move_player(t_vars *vars, double new_x, double new_y)
+{
+	int	grid_x;
+	int	grid_y;
+
+	grid_x = (int)round(vars->player.posX + new_x)/TILE_SIZE;
+	grid_y = (int)round(vars->player.posY + new_y)/TILE_SIZE;
+	ft_putnbr_fd(grid_x, 1);
+	write(1, "\n", 1);
+	ft_putnbr_fd(grid_y, 1);
+	write(1, "\n", 1);
+	if (vars->map[grid_y][grid_x] == '1')
+		return ;
+	vars->player.posX = (vars->player.posX/TILE_SIZE + new_x) * TILE_SIZE;
+	vars->player.posY = (vars->player.posY/TILE_SIZE + new_y) * TILE_SIZE;
+}
+
 int	key_capture(int keycode, t_vars *vars)
 {
+	double	new_x;
+	double	new_y;
+
 	if (keycode == ESC)
 		close_windows(vars);
 	if (keycode == ARROW_R)
 		vars->player.p_angle += 0.2f;
 	if (keycode == ARROW_L)
 		vars->player.p_angle -= 0.2f;
-	if (keycode == W && vars->map[(int)vars->player.posY + 1][(int)vars->player.posX] != '1')
-		vars->player.posY += 1;
-	if (keycode == S && vars->map[(int)vars->player.posY - 1][(int)vars->player.posX] != '1')
-		vars->player.posY -= 1;
-	if (keycode == A && vars->map[(int)vars->player.posY][(int)vars->player.posX - 1] != '1')
-		vars->player.posX -= 1;
-	if (keycode == D && vars->map[(int)vars->player.posY][(int)vars->player.posX + 1] != '1')
-		vars->player.posX += 1;
+	if (keycode == W && vars->map[((int)vars->player.posY/30) + 1][((int)vars->player.posX/30)] != '1')
+	{
+		new_x = cos(vars->player.p_angle) * PLAYER_SPEED;
+		new_y = sin(vars->player.p_angle) * PLAYER_SPEED;
+	}
+	if (keycode == S && vars->map[((int)vars->player.posY/30) - 1][((int)vars->player.posX/30)] != '1')
+	{
+		new_x = -cos(vars->player.p_angle) * PLAYER_SPEED;
+		new_y = -sin(vars->player.p_angle) * PLAYER_SPEED;
+	}
+	if (keycode == A && vars->map[((int)vars->player.posY/30)][((int)vars->player.posX/30) - 1] != '1')
+	{
+		new_x = sin(vars->player.p_angle) * PLAYER_SPEED;
+		new_y = -cos(vars->player.p_angle) * PLAYER_SPEED;
+	}
+	if (keycode == D && vars->map[((int)vars->player.posY/30)][((int)vars->player.posX/30) + 1] != '1')
+	{
+		new_x = -sin(vars->player.p_angle) * PLAYER_SPEED;
+		new_y = cos(vars->player.p_angle) * PLAYER_SPEED;
+	}
+	move_player(vars, new_x, new_y);
 	return (0);
 }
 
@@ -197,10 +230,16 @@ int	render(void *ptr)
 
 	vars = (t_vars *)ptr; 
 
+	vars->img.img = mlx_new_image(vars->mlx.mlx, vars->render.sc_width, vars->render.sc_height);
+	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length,
+								&vars->img.endian);
+	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
 	if (fill_background(vars))
 		return (close_windows(vars), 1);
 	cast_rays(vars);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
+	mlx_destroy_image(vars->mlx.mlx, vars->img.img);
+	vars->player.p_angle = nor_angle(vars->player.p_angle);
 	return (0);
 }
 
@@ -210,21 +249,20 @@ int	detect_player(t_vars *vars)
 	int	y;
 
 	y = -1;
-	vars->player.fov = 0.66;
 	while (vars->map[++y] != NULL)
 	{
 		x = -1;
 		while (vars->map[y][++x])
 		{
-			vars->player.posX = x;
-			vars->player.posY = y;
+			vars->player.posX = x * TILE_SIZE;
+			vars->player.posY = y * TILE_SIZE;
 			if (vars->map[y][x] == 'N')
 				return (vars->player.p_angle = (3*M_PI)/2, 0);
-			if (vars->map[y][x] == 'E')
+			else if (vars->map[y][x] == 'E')
 				return (vars->player.p_angle = 0, 0);
-			if (vars->map[y][x] == 'S')
+			else if (vars->map[y][x] == 'S')
 				return (vars->player.p_angle = M_PI/2, 0);
-			if (vars->map[y][x] == 'W')
+			else if (vars->map[y][x] == 'W')
 				return (vars->player.p_angle = M_PI, 0);
 		}
 	}
@@ -249,9 +287,6 @@ int	main(int ac, char **argv)
 	vars.mlx.win = mlx_new_window(vars.mlx.mlx, vars.render.sc_width, vars.render.sc_height, "cub3d");
 	if (!vars.mlx.win)
 		return (err("Mlx window error"), close_windows(&vars), 1);
-	vars.img.img = mlx_new_image(vars.mlx.mlx, vars.render.sc_width, vars.render.sc_height);
-	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.line_length,
-								&vars.img.endian);
 	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);
 	mlx_hook(vars.mlx.win, 02, 0, key_capture, &vars);
 	mlx_loop_hook(vars.mlx.mlx, render, (void *)(&vars));

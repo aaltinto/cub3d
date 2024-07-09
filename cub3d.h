@@ -25,7 +25,9 @@
 # define ARROW_DOWN 125
 # define ARROW_UP 126
 
-# define FOV 66
+# define FOV 60 * (M_PI / 180)
+# define TILE_SIZE 30
+# define PLAYER_SPEED 0.15f
 
 #include "minilibx/mlx.h"
 
@@ -104,5 +106,6 @@ int		color_init(t_vars *vars, char *tmp);
 void	cast_rays(t_vars *vars);
 int	rgb_to_hex(int r, int g, int b);
 void	pixel_put(t_data *data, int x, int y, int color);
+double nor_angle(double angle);
 
 #endif
