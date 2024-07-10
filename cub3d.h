@@ -30,7 +30,10 @@
 # define MAP_TILE 10.85f
 # define PLAYER_SPEED 1
 
-#include "minilibx/mlx.h"
+#define X 0
+#define Y 1
+
+#include <stdio.h>
 
 typedef struct s_render
 {
@@ -90,6 +93,14 @@ typedef struct s_vars
 	char		**map;
 	char		*raw_map;
 }	t_vars;
+
+typedef	struct s_ray
+{
+	double  *side_dist;
+    double  *raydir;
+    double  *delta_dist;
+    int     *step;
+}	t_ray;
 
 //error
 int		err(char *str);

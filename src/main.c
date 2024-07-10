@@ -334,6 +334,12 @@ int	render_mini_map(t_vars *vars)
 	return (0);
 }
 
+void pixel_put(t_data *data, int x, int y, int color) {
+    char *dst;
+
+    dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+    *(unsigned int*)dst = color;
+}
 
 int	render(void *ptr)
 {
@@ -357,7 +363,7 @@ int	render(void *ptr)
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->mini_map.img, 0, 0);
 	mlx_destroy_image(vars->mlx.mlx, vars->img.img);
-	vars->player.p_angle = nor_angle(vars->player.p_angle);
+	//vars->player.p_angle = nor_angle(vars->player.p_angle);
 	return (0);
 }
 
@@ -406,9 +412,10 @@ int	main(int ac, char **argv)
 	vars.mlx.win = mlx_new_window(vars.mlx.mlx, vars.render.sc_width, vars.render.sc_height, "cub3d");
 	if (!vars.mlx.win)
 		return (err("Mlx window error"), close_windows(&vars), 1);
-	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);
-	mlx_hook(vars.mlx.win, 02, 0, key_capture, &vars);
-	mlx_loop_hook(vars.mlx.mlx, render, (void *)(&vars));
-	mlx_loop(vars.mlx.mlx);
+	// mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);
+	// mlx_hook(vars.mlx.win, 02, 0, key_capture, &vars);
+	// mlx_loop_hook(vars.mlx.mlx, render, (void *)(&vars));
+	// mlx_loop(vars.mlx.mlx);
+	cast_rays(&vars);
 	return (close_windows(&vars), 0);
 }
