@@ -75,6 +75,50 @@ int	parse_init(t_vars *vars, char *map)
 	return (free_doubles(map_tmp), 0);
 }
 
+int	get_textures(t_vars *vars)
+{
+	int	x;
+	int	y;
+
+	x = 512;
+	y = 512;
+	vars->xpm = (t_data *)malloc(sizeof(t_data) * 4);
+	if (!vars->xpm)
+		return (err("Malloc error"), 1);
+	vars->xpm[NO].img = mlx_xpm_file_to_image(vars->mlx.mlx,
+		strip(vars->textures.north), &x, &y);
+	if (!vars->xpm[NO].img)
+		return (err("can't get texture 'NO'"));
+	vars->xpm[NO].addr = mlx_get_data_addr(vars->xpm[NO].img,
+		&(vars->xpm[NO].bits_per_pixel), &(vars->xpm[NO].line_length),
+		&(vars->xpm[NO].endian));
+	if (!vars->xpm[NO].addr)
+		return (err("Get data addr error: 'NO'"));
+	vars->xpm[SO].img = mlx_xpm_file_to_image(vars->mlx.mlx,
+		strip(vars->textures.south), &x, &y);
+	vars->xpm[SO].addr = mlx_get_data_addr(vars->xpm[SO].img,
+		&(vars->xpm[SO].bits_per_pixel), &(vars->xpm[SO].line_length),
+		&(vars->xpm[SO].endian));
+	if (!vars->xpm[SO].addr)
+		return (err("Get data addr error: 'SO'"));
+	vars->xpm[WE].img = mlx_xpm_file_to_image(vars->mlx.mlx,
+		strip(vars->textures.west), &x, &y);
+	vars->xpm[WE].addr = mlx_get_data_addr(vars->xpm[WE].img,
+		&vars->xpm[WE].bits_per_pixel, &vars->xpm[WE].line_length,
+		&vars->xpm[WE].endian);
+	if (!vars->xpm[WE].addr)
+		return (err("Get data addr error: 'WE'"));
+	vars->xpm[EA].img = mlx_xpm_file_to_image(vars->mlx.mlx,
+		strip(vars->textures.east), &x, &y);
+	vars->xpm[EA].addr = mlx_get_data_addr(vars->xpm[EA].img,
+		&vars->xpm[EA].bits_per_pixel, &vars->xpm[EA].line_length,
+		&vars->xpm[EA].endian);
+	if (!vars->xpm[EA].addr)
+		return (err("Get data addr error: 'EA'"));
+	printf("data: %p\n", vars->xpm[NO].addr);
+	return (0);
+}
+
 int	marche(t_vars *vars)
 {
 	vars->map = NULL;
@@ -135,64 +179,6 @@ int	rgb_to_hex(int r, int g, int b)
 	return ((r << 16) | (g << 8) | b);
 }
 
-void	move_player(t_vars *vars, double new_x, double new_y)
-{
-	int	grid_x;
-	int	grid_y;
-
-	// grid_x = (int)round(vars->player.posX + new_x)/TILE_SIZE;
-	// grid_y = (int)round(vars->player.posY + new_y)/TILE_SIZE;
-	grid_x = (int)round((vars->player.posX/TILE_SIZE) + (new_x/PLAYER_SPEED));
-	grid_y = (int)round((vars->player.posY/TILE_SIZE) + (new_y/PLAYER_SPEED));
-	// printf("PosX:%f\nnew_x:%f\n", vars->player.posX, new_x);
-	// printf("PosY:%f\nnew_y:%f\n", vars->player.posY, new_y);
-	// ft_putnbr_fd(grid_x, 1);
-	// write(1, "\n", 1);
-	// ft_putnbr_fd(grid_y, 1);
-	// write(1, "\n", 1);
-	if (vars->map[grid_y][grid_x] != '0')
-		return ;
-	vars->player.posX += new_x;
-	vars->player.posY += new_y;
-	// printf("L_PosX:%f\nnew_x:%f\n", vars->player.posX, new_x);
-	// printf("L_PosY:%f\nnew_y:%f\n", vars->player.posY, new_y);
-}
-
-int	key_capture(int keycode, t_vars *vars)
-{
-	double	new_x;
-	double	new_y;
-
-	if (keycode == ESC)
-		close_windows(vars);
-	if (keycode == ARROW_R)
-		vars->player.p_angle += 0.02f;
-	if (keycode == ARROW_L)
-		vars->player.p_angle -= 0.02f;
-	if (keycode == W)
-	{
-		new_x = cos(vars->player.p_angle) * PLAYER_SPEED;
-		new_y = sin(vars->player.p_angle) * PLAYER_SPEED;
-	}
-	if (keycode == S)
-	{
-		new_x = -cos(vars->player.p_angle) * PLAYER_SPEED;
-		new_y = -sin(vars->player.p_angle) * PLAYER_SPEED;
-	}
-	if (keycode == A)
-	{
-		new_x = sin(vars->player.p_angle) * PLAYER_SPEED;
-		new_y = -cos(vars->player.p_angle) * PLAYER_SPEED;
-	}
-	if (keycode == D && vars->map[((int)vars->player.posY/30)][((int)vars->player.posX/30) + 1] != '1')
-	{
-		new_x = -sin(vars->player.p_angle) * PLAYER_SPEED;
-		new_y = cos(vars->player.p_angle) * PLAYER_SPEED;
-	}
-	move_player(vars, new_x, new_y);
-	return (0);
-}
-
 int	fill_background(t_vars *vars)
 {
 	int		i;
@@ -206,7 +192,7 @@ int	fill_background(t_vars *vars)
 	i = -1;
 	while (++i < (vars->render.sc_height * vars->render.sc_width))
 	{
-		if (i < vars->render.sc_width * vars->render.sc_height/2)
+		if (i < vars->render.sc_width * vars->render.sc_height / 2)
 			pixel_put(&vars->img, i % vars->render.sc_width, i / vars->render.sc_width, color_celing);
 		else
 			pixel_put(&vars->img, i % vars->render.sc_width, i / vars->render.sc_width, color_floor);
@@ -214,25 +200,37 @@ int	fill_background(t_vars *vars)
 	return (0);
 }
 
-void strip(char* source)
+int	is_space(int c)
 {
-    char* i = source;
-    char* j = source;
-
-    while (*j != '\0') {
-        *i = *j++;
-        if (*i != ' ') {
-            i++;
-        }
-    }
-    *i = '\0';
+	return (c == 32);
 }
 
-void draw_line(t_vars *vars, int x0, int y0, int x1, int y1, int color)
+char *strip(char *str) {
+    char *end;
+
+    // Trim leading space
+	if (!str)
+		return (err("string is null"), NULL);
+    while (is_space((unsigned char)*str)) str++;
+
+    if (*str == 0)  // All spaces?
+        return str;
+
+    // Trim trailing space
+    end = str + ft_strlen(str) - 1;
+    while (end > str && is_space((unsigned char)*end)) end--;
+
+    // Write new null terminator
+    *(end + 1) = '\0';
+
+    return str;
+}
+
+void	draw_line(t_vars *vars, int x0, int y0, int x1, int y1, int color)
 {
-    int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
-    int dy = abs(y1 - y0), sy = y0 < y1 ? 1 : -1; 
-    int err = (dx > dy ? dx : -dy) / 2, e2;
+	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+	int dy = abs(y1 - y0), sy = y0 < y1 ? 1 : -1; 
+	int err = (dx > dy ? dx : -dy) / 2, e2;
 
     while (1)
     {
@@ -244,21 +242,19 @@ void draw_line(t_vars *vars, int x0, int y0, int x1, int y1, int color)
     }
 }
 
-void draw_arrow(t_vars *vars, int centerX, int centerY, int length, double angle, int color)
+void	draw_arrow(t_vars *vars, int centerX, int centerY, int length, double angle, int color)
 {
-    // Calculate the end point of the arrow
-    int endX = centerX + (int)(length * cos(angle));
-    int endY = centerY + (int)(length * sin(angle));
-    
-    // Draw the line representing the arrow
-    draw_line(vars, centerX, centerY, endX, endY, color);
+	int	endX = centerX + (int)(length * cos(angle));
+	int	endY = centerY + (int)(length * sin(angle));	
+
+	draw_line(vars, centerX, centerY, endX, endY, color);
 }
 
 void	draw_circle(t_vars *vars, int color)
 {
-	int x = TILE_SIZE*0.20f;
-	int y = 0;
-	int err = 0;
+	int	x = TILE_SIZE*0.20f;
+	int	y = 0;
+	int	err = 0;
 
 	while (x >= y)
 	{
@@ -300,8 +296,8 @@ int	render_mini_map(t_vars *vars)
 	posX = (int)round(vars->player.posX / TILE_SIZE);
 	posY = (int)round(vars->player.posY / TILE_SIZE);
 
-	int map_height = double_counter(vars->map);
-	int map_width = ft_strlen(vars->map[0]);
+	int	map_height = double_counter(vars->map);
+	int	map_width = ft_strlen(vars->map[0]);
 
 	scale_width = (int)(vars->render.sc_width * 0.20f) / MAP_TILE;
 	scale_height = (int)(vars->render.sc_height * 0.20f) / MAP_TILE;
@@ -334,13 +330,6 @@ int	render_mini_map(t_vars *vars)
 	return (0);
 }
 
-void pixel_put(t_data *data, int x, int y, int color) {
-    char *dst;
-
-    dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-    *(unsigned int*)dst = color;
-}
-
 int	render(void *ptr)
 {
 	t_vars *vars;
@@ -363,6 +352,7 @@ int	render(void *ptr)
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->mini_map.img, 0, 0);
 	mlx_destroy_image(vars->mlx.mlx, vars->img.img);
+	move_player(vars);
 	//vars->player.p_angle = nor_angle(vars->player.p_angle);
 	return (0);
 }
@@ -378,9 +368,8 @@ int	detect_player(t_vars *vars)
 		x = -1;
 		while (vars->map[y][++x])
 		{
-			vars->player.posX = x * TILE_SIZE;
-			vars->player.posY = y * TILE_SIZE;
-			// printf("F_PosX:%f, F_PosY:%f, F_x:%d, F_y:%d\n", vars->player.posX, vars->player.posY, x, y);
+			vars->player.posX = (x * TILE_SIZE) + TILE_SIZE/2;
+			vars->player.posY = (y * TILE_SIZE) + TILE_SIZE/2;
 			if (vars->map[y][x] == 'N')
 				return (vars->player.p_angle = (3*M_PI)/2, 0);
 			else if (vars->map[y][x] == 'E')
@@ -412,10 +401,13 @@ int	main(int ac, char **argv)
 	vars.mlx.win = mlx_new_window(vars.mlx.mlx, vars.render.sc_width, vars.render.sc_height, "cub3d");
 	if (!vars.mlx.win)
 		return (err("Mlx window error"), close_windows(&vars), 1);
-	// mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);
-	// mlx_hook(vars.mlx.win, 02, 0, key_capture, &vars);
-	// mlx_loop_hook(vars.mlx.mlx, render, (void *)(&vars));
-	// mlx_loop(vars.mlx.mlx);
-	cast_rays(&vars);
+	get_textures(&vars);
+	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);
+	mlx_hook(vars.mlx.win, 02, 0, key_capture, &vars);
+	mlx_hook(vars.mlx.win, 03, 0, key_release, &vars);
+	mlx_loop_hook(vars.mlx.mlx, render, (void *)(&vars));
+	//mlx_loop_hook(vars.mlx.mlx, move_player, &vars);
+	mlx_loop(vars.mlx.mlx);
+	// cast_rays(&vars);
 	return (close_windows(&vars), 0);
 }

@@ -9,6 +9,7 @@ SRC = src/main.c\
 		src/init_colors.c\
 		src/render.c\
 		src/utils.c\
+		src/key_pres.c\
 		#src/cast_rays.c
 
 LIB = libft/libft.a
@@ -24,7 +25,7 @@ $(NAME): $(OBJ)
 	@make all -C minilibx
 	@make all -C libft
 	@make all -C gnl
-	$(CC) $(GNL) $(LIB) $(MLX) $(OpenGL) $(OBJ) -o $(NAME) -g
+	$(CC) $(OBJ) $(GNL) $(LIB) $(MLX) $(OpenGL) -o $(NAME) -g
 
 clean:
 	@make clean -C libft

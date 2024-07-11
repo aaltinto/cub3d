@@ -28,10 +28,15 @@
 # define FOV 66 * (M_PI / 180)
 # define TILE_SIZE 30
 # define MAP_TILE 10.85f
-# define PLAYER_SPEED 1
+# define PLAYER_SPEED 1.0f
 
 #define X 0
 #define Y 1
+
+#define NO 0
+#define SO 1
+#define WE 2
+#define EA 3
 
 #include <stdio.h>
 
@@ -54,10 +59,6 @@ typedef struct s_player
 
 typedef struct s_textures
 {
-	void	*north_img;
-	void	*west_img;
-	void	*south_img;
-	void	*east_img;
 	char	*north;
 	char	*south;
 	char	*west;
@@ -74,6 +75,14 @@ typedef struct s_mlx
 	void	*win;
 }	t_mlx;
 
+typedef struct	s_keys {
+	int	keyW;
+	int	keyA;
+	int	keyS;
+	int	keyD;
+	int	keyLA;
+	int	keyRA;
+}	t_keys;
 typedef struct	s_data {
 	void	*img;
 	char	*addr;
@@ -88,8 +97,10 @@ typedef struct s_vars
 	t_mlx		mlx;
 	t_data		img;
 	t_data		mini_map;
+	t_data		*xpm;
 	t_player	player;
 	t_render	render;
+	t_keys		keys;
 	char		**map;
 	char		*raw_map;
 }	t_vars;
@@ -100,6 +111,7 @@ typedef	struct s_ray
     double  *raydir;
     double  *delta_dist;
     int     *step;
+    int     side;
 }	t_ray;
 
 //error
@@ -120,5 +132,10 @@ void	cast_rays(t_vars *vars);
 int	rgb_to_hex(int r, int g, int b);
 void	pixel_put(t_data *data, int x, int y, int color);
 double nor_angle(double angle);
+int	key_capture(int keycode, t_vars *vars);
+int	key_release(int keycode, t_vars *vars);
+int	move_player(t_vars *vars);
+int	close_windows(t_vars *vars);
+char	*strip(char *str);
 
 #endif
