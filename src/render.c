@@ -86,10 +86,6 @@ double euclidean_distance(t_vars *vars, t_ray *ray, int *map_grid)
 
 	posX = vars->player.posX/TILE_SIZE;
 	posY = vars->player.posY/TILE_SIZE;
-	// if (ray->side_dist[X] < ray->side_dist[Y])
-	// 	dist = (map_grid[X] - posX + (1 - ray->step[X]) / 2) / ray->raydir[X];
-	// else
-	// 	dist = (map_grid[Y] - posY + (1 - ray->step[Y]) / 2) / ray->raydir[Y];
     if (ray->side == 0)
         dist = ray->side_dist[X] - ray->delta_dist[X];
     else
@@ -155,6 +151,7 @@ void	wall_height(t_vars *vars, double dist, int ray)
 	b_pix = wall_height / 2 + vars->render.sc_height / 2;
 	if (b_pix > vars->render.sc_height)
 		b_pix = vars->render.sc_height;
+    
     while (t_pix <= b_pix)
         my_mlx_pixel_put(vars, ray, t_pix++, rgb_to_hex(180, 180, 180));
 }

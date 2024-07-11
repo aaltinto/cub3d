@@ -312,7 +312,7 @@ int	render_mini_map(t_vars *vars)
 		{
 			if (tile_x < 0 || tile_x >= ft_strlen(vars->map[tile_y])) continue;
 
-			if (vars->map[tile_y][tile_x] == '1')
+			if (vars->map[tile_y][tile_x] == '1' || vars->map[tile_y][tile_x] == ' ')
 				color = rgb_to_hex(0, 0, 0);
 			else
 				color = rgb_to_hex(255, 255, 255);
