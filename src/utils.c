@@ -14,6 +14,28 @@
 #include "../cub3d.h"
 #include "../libft/libft.h"
 
+int	is_space(int c)
+{
+	return (c == 32);
+}
+
+char	*strip(char *str)
+{
+	char	*end;
+
+	if (!str)
+		return (err("string is null"), NULL);
+	while (is_space((unsigned char)*str))
+		str++;
+	if (*str == 0)
+		return (str);
+	end = str + ft_strlen(str) - 1;
+	while (end > str && is_space((unsigned char)*end))
+		end--;
+	*(end + 1) = '\0';
+	return (str);
+}
+
 int	double_counter(char **str)
 {
 	int	i;
@@ -38,8 +60,6 @@ int	find_longest_line(char **str)
 			len = ft_strlen((str)[i]);
 	return (len);
 }
-
-
 
 char	**reallocate_double(char **str)
 {

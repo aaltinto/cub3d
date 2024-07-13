@@ -66,7 +66,8 @@ int	init_textures(t_vars *vars, char *tmp)
 		ret = west(vars, tmp);
 	else if (ft_strnstr(tmp, "EA ", 3) != NULL)
 		ret = east(vars, tmp);
-	if (ret == 0 || (*tmp == 'F' && (*(tmp + 1)) == ' ') || (*tmp == 'C' && (*(tmp + 1)) == ' ') || *tmp == '0' || *tmp == '1')
+	if (ret == 0 || (*tmp == 'F' && (*(tmp + 1)) == ' ') || (*tmp == 'C'
+			&& (*(tmp + 1)) == ' ') || *tmp == '0' || *tmp == '1')
 		return (2);
 	if (ret == 1)
 		return (1);

@@ -10,7 +10,11 @@ SRC = src/main.c\
 		src/render.c\
 		src/utils.c\
 		src/key_pres.c\
-		#src/cast_rays.c
+		src/mini_map.c\
+		src/ray_utils.c\
+		src/render_utils.c\
+		src/map.c\
+		src/cast_rays.c
 
 LIB = libft/libft.a
 GNL = gnl/gnl.a
@@ -25,7 +29,7 @@ $(NAME): $(OBJ)
 	@make all -C minilibx
 	@make all -C libft
 	@make all -C gnl
-	$(CC) $(OBJ) $(GNL) $(LIB) $(MLX) $(OpenGL) -o $(NAME) -g
+	$(CC) $(CFLAGS) $(OBJ) $(GNL) $(LIB) $(MLX) $(OpenGL) -o $(NAME)
 
 clean:
 	@make clean -C libft
@@ -33,10 +37,13 @@ clean:
 	$(RM) $(OBJ)
 
 fclean: clean
-	@make clean -C minilibx
 	$(RM) $(NAME)
 
 re: fclean $(NAME)
+
+mlx:
+	@make clean -C minilibx
+	@make all -C minilibx
 
 norm:
 	@norminette $(SRC) cub3d.h

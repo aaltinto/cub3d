@@ -2,8 +2,8 @@ NO ./textures/block.xpm
 SO ./textures/block.xpm
 WE ./textures/block.xpm
 EA ./textures/block.xpm
-C 220,220,235
-F 84,84,84
+C 135,206,235
+F 102,165,88
 
         1111111111111111111111111
         1000000000110000000000001

@@ -6,7 +6,7 @@
 /*   By: aaltinto <aaltinto@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 22:29:45 by aaltinto          #+#    #+#             */
-/*   Updated: 2024/06/12 17:22:43 by aaltinto         ###   ########.fr       */
+/*   Updated: 2024/07/13 01:33:23 by aaltinto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,19 +24,22 @@
 # define ARROW_R 124
 # define ARROW_DOWN 125
 # define ARROW_UP 126
+# define SHIFT 257
+
+# define M_PI 3.14159265358979323846
 
 # define FOV 66 * (M_PI / 180)
 # define TILE_SIZE 30
 # define MAP_TILE 10.85f
 # define PLAYER_SPEED 1.0f
 
-#define X 0
-#define Y 1
+# define X 0
+# define Y 1
 
-#define NO 0
-#define SO 1
-#define WE 2
-#define EA 3
+# define NO 0
+# define SO 1
+# define WE 2
+# define EA 3
 
 #include <stdio.h>
 
@@ -51,10 +54,11 @@ typedef struct s_render
 
 typedef struct s_player
 {
-	double	posX;
-	double	posY;
+	double	pos_x;
+	double	pos_y;
 	double	fov;
 	double	p_angle;
+	double	running;
 }	t_player;
 
 typedef struct s_textures
@@ -75,15 +79,18 @@ typedef struct s_mlx
 	void	*win;
 }	t_mlx;
 
-typedef struct	s_keys {
-	int	keyW;
-	int	keyA;
-	int	keyS;
-	int	keyD;
-	int	keyLA;
-	int	keyRA;
+typedef struct s_keys
+{
+	int		key_w;
+	int		key_a;
+	int		key_s;
+	int		key_d;
+	int		key_la;
+	int		key_ra;
 }	t_keys;
-typedef struct	s_data {
+
+typedef struct s_data
+{
 	void	*img;
 	char	*addr;
 	int		bits_per_pixel;
@@ -105,13 +112,13 @@ typedef struct s_vars
 	char		*raw_map;
 }	t_vars;
 
-typedef	struct s_ray
+typedef struct s_ray
 {
-	double  *side_dist;
-    double  *raydir;
-    double  *delta_dist;
-    int     *step;
-    int     side;
+	double	*side_dist;
+	double	*raydir;
+	double	*delta_dist;
+	int		*step;
+	int		side;
 }	t_ray;
 
 //error
@@ -128,14 +135,22 @@ int		parse_init(t_vars *vars, char *map);
 int		init_textures(t_vars *vars, char *tmp);
 int		extract_rgb(t_vars *vars);
 int		color_init(t_vars *vars, char *tmp);
-void	cast_rays(t_vars *vars);
-int	rgb_to_hex(int r, int g, int b);
+int		cast_rays(t_vars *vars);
+int		rgb_to_hex(int r, int g, int b);
 void	pixel_put(t_data *data, int x, int y, int color);
-double nor_angle(double angle);
-int	key_capture(int keycode, t_vars *vars);
-int	key_release(int keycode, t_vars *vars);
-int	move_player(t_vars *vars);
-int	close_windows(t_vars *vars);
+double	nor_angle(double angle);
+int		key_capture(int keycode, t_vars *vars);
+int		key_release(int keycode, t_vars *vars);
+int		move_player(t_vars *vars, double x, double y);
+int		close_windows(t_vars *vars);
 char	*strip(char *str);
+int		render_mini_map(t_vars *vars);
+void	free_ray_map(t_ray *ray);
+int		get_color(t_vars *vars, int flag);
+int		render(void *ptr);
+int		fill_variable(t_vars *vars, t_ray *ray);
+int		detect_player(t_vars *vars);
+int		get_canvas(t_vars *vars);
+
 
 #endif
