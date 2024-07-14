@@ -101,7 +101,8 @@ int	key_capture(int keycode, t_vars *vars)
 		vars->keys.key_a = 1;
 	if (keycode == D)
 		vars->keys.key_d = 1;
-	if (keycode == SHIFT)
+	if ((vars->keys.key_w == 1 || vars->keys.key_s == 1 \
+		|| vars->keys.key_d == 1 || vars->keys.key_a == 1) && keycode == SHIFT)
 		vars->player.running = 2.50;
 	return (0);
 }

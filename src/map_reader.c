@@ -16,21 +16,21 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-int	fill_map(char **map, t_vars *vars)
-{
-	int	i;
+// int	fill_map(char **map, t_vars *vars)
+// {
+// 	int	i;
 
-	vars->map = (char **)malloc((double_counter(map) + 1) * sizeof(char *));
-	i = -1;
-	while (map[++i])
-	{
-		vars->map[i] = ft_strdup(map[i]);
-		if (!vars->map[i])
-			return (err("Strdup error"));
-	}
-	vars->map[i] = NULL;
-	return (0);
-}
+// 	vars->map = (char **)malloc((double_counter(map) + 1) * sizeof(char *));
+// 	i = -1;
+// 	while (map[++i])
+// 	{
+// 		vars->map[i] = ft_strdup(map[i]);
+// 		if (!vars->map[i])
+// 			return (err("Strdup error"));
+// 	}
+// 	vars->map[i] = NULL;
+// 	return (0);
+// }
 
 int	check_border_close(char **map, int i, int j, int len)
 {
@@ -50,21 +50,22 @@ static int	check_borders(char	**map, t_vars *vars)
 	int		len;
 	char	**tmp_map;
 
-	tmp_map = reallocate_double(map);
-	if (!map)
+	free_doubles(vars->map);
+	vars->map = reallocate_double(map);
+	if (!vars->map)
 		return (err("Allocate error"), 1);
 	len = find_longest_line(map);
 	i = -1;
-	while (map[++i])
+	while (vars->map[++i])
 	{
 		j = -1;
-		while (map[i][++j])
+		while (vars->map[i][++j])
 		{
-			if (check_border_close(map, i, j, len))
+			if (check_border_close(vars->map, i, j, len))
 				return (err("Error!\nMap should be closed by 1's"));
 		}
 	}
-	return (fill_map(tmp_map, vars), free_doubles(tmp_map));
+	return (0);
 }
 
 static int	check_raw_map(t_vars *vars, char *map, int player_count)

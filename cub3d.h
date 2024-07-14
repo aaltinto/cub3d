@@ -30,8 +30,8 @@
 
 # define FOV 66 * (M_PI / 180)
 # define TILE_SIZE 30
-# define MAP_TILE 10.85f
-# define PLAYER_SPEED 1.0f
+# define MAP_TILE 10.84f
+# define PLAYER_SPEED 0.5f
 
 # define X 0
 # define Y 1
@@ -109,6 +109,8 @@ typedef struct s_vars
 	t_render	render;
 	t_keys		keys;
 	char		**map;
+	int			map_w;
+	int			map_h;
 	char		*raw_map;
 }	t_vars;
 

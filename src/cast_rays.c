@@ -127,7 +127,7 @@ int	cast_rays(t_vars *vars)
 		if (wall_dist < 0)
 			return (1);
 		if (vars->player.running != 1)
-			wall_dist += (vars->player.running/8);
+			wall_dist += (vars->player.running / 8);
 		wall_height(vars, wall_dist, ray);
 		ray++;
 		vars->render.ray_angle += FOV / vars->render.sc_width;
