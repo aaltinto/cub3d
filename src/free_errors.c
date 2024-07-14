@@ -66,14 +66,12 @@ void	abort_mission(t_vars *vars)
 	null_free(vars->textures.ceiling_rgb);
 	null_free(vars->textures.floor_rgb);
 }
-#include <unistd.h>
+
 int	close_windows(t_vars *vars)
 {
 	system("leaks cub3d");
 	mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
 	null_free(vars->mlx.mlx);
-	// system("leaks cub3d");
-	write(1, "a\n", 2);
 	abort_mission(vars);
 	exit(0);
 	return (0);
