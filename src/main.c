@@ -47,11 +47,11 @@ int	get_textures(t_vars *vars)
 	int	x;
 	int	y;
 
+	x = 64;
+	y = 64;
 	vars->xpm = (t_data *)malloc(sizeof(t_data) * 4);
 	if (!vars->xpm)
 		return (err("Malloc error"), 1);
-	x = 512;
-	y = 512;
 	vars->xpm[NO].img = mlx_xpm_file_to_image(vars->mlx.mlx, \
 		strip(vars->textures.north), &x, &y);
 	if (!vars->xpm[NO].img)
@@ -92,6 +92,8 @@ int	marche(t_vars *vars)
 	vars->keys.key_la = 0;
 	vars->keys.key_ra = 0;
 	vars->player.running = 1;
+	vars->fov_angle = 66;
+	vars->player.fov = vars->fov_angle * (M_PI / 180);
 	vars->textures.ceiling_rgb = (int *)malloc(sizeof(int) * 3);
 	vars->textures.floor_rgb = (int *)malloc(sizeof(int) * 3);
 	if (!vars->textures.ceiling_rgb || !vars->textures.floor_rgb)

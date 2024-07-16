@@ -28,7 +28,6 @@
 
 # define M_PI 3.14159265358979323846
 
-# define FOV 66 * (M_PI / 180)
 # define TILE_SIZE 30
 # define MAP_TILE 10.84f
 # define PLAYER_SPEED 0.5f
@@ -112,6 +111,8 @@ typedef struct s_vars
 	int			map_w;
 	int			map_h;
 	char		*raw_map;
+	int			fov_angle;
+	int			*map_grid;
 }	t_vars;
 
 typedef struct s_ray
@@ -148,7 +149,7 @@ int		close_windows(t_vars *vars);
 char	*strip(char *str);
 int		render_mini_map(t_vars *vars);
 void	free_ray_map(t_ray *ray);
-int		get_color(t_vars *vars, int flag);
+int		get_color(t_vars *vars, int flag, int x, int y);
 int		render(void *ptr);
 int		fill_variable(t_vars *vars, t_ray *ray);
 int		detect_player(t_vars *vars);

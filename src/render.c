@@ -59,7 +59,6 @@ int	fill_background(t_vars *vars)
 	}
 	return (0);
 }
-
 int	render(void *ptr)
 {
 	t_vars	*vars;
@@ -67,6 +66,11 @@ int	render(void *ptr)
 	int		y;
 
 	vars = (t_vars *)ptr;
+	if (vars->player.running != 1 && vars->fov_angle >= 64)
+		vars->fov_angle--;
+	else if (vars->player.running == 1 && vars->fov_angle < 66)
+		vars->fov_angle++;
+	vars->player.fov = vars->fov_angle * (M_PI / 180);
 	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
 	get_canvas(vars);
 	if (fill_background(vars))

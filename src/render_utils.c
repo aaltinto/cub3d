@@ -20,22 +20,32 @@ void	pixel_put(t_data *data, int x, int y, int color)
 	*(unsigned int *)dst = color;
 }
 
-int	get_color(t_vars *vars, int flag)
+int	texture_color(t_vars *vars, t_data *data, int x, int y)
+{
+	int	p_ofset;
+
+	if ((x < 0 || x >= 64) || (y < 0 || y >= 64))
+		return (0);
+	p_ofset = y * data->line_length + x * (data->bits_per_pixel / 8);
+	return (*(int *)(data->addr + p_ofset));
+}
+
+int	get_color(t_vars *vars, int flag, int x, int y)
 {
 	vars->render.ray_angle = nor_angle(vars->render.ray_angle);
 	if (flag == 0)
 	{
 		if (vars->render.ray_angle > M_PI / 2
 			&& vars->render.ray_angle < 3 * M_PI / 2)
-			return (rgb_to_hex(145, 49, 43));
+			return (texture_color(vars, &vars->xpm[SO], x, y));
 		else
-			return (rgb_to_hex(150, 54, 48));
+			return (texture_color(vars, &vars->xpm[NO], x, y));
 	}
 	else
 	{
 		if (vars->render.ray_angle > 0 && vars->render.ray_angle < M_PI)
-			return (rgb_to_hex(150, 54, 48));
+			return (texture_color(vars, &vars->xpm[WE], x, y));
 		else
-			return (rgb_to_hex(170, 74, 68));
+			return (texture_color(vars, &vars->xpm[EA], x, y));
 	}
 }

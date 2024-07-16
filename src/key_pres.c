@@ -78,7 +78,12 @@ int	key_release(int keycode, t_vars *vars)
 	if (keycode == D)
 		vars->keys.key_d = 0;
 	if (keycode == SHIFT)
+	{
+		if (vars->fov_angle < 66)
+			vars->fov_angle++;
+		vars->player.fov = vars->fov_angle * (M_PI / 180);
 		vars->player.running = 1;
+	}
 	return (0);
 }
 
@@ -101,8 +106,9 @@ int	key_capture(int keycode, t_vars *vars)
 		vars->keys.key_a = 1;
 	if (keycode == D)
 		vars->keys.key_d = 1;
-	if ((vars->keys.key_w == 1 || vars->keys.key_s == 1 \
-		|| vars->keys.key_d == 1 || vars->keys.key_a == 1) && keycode == SHIFT)
+	if (keycode == SHIFT)
+	{
 		vars->player.running = 2.50;
+	}
 	return (0);
 }

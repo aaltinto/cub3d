@@ -40,35 +40,35 @@ void	draw_arrow(t_vars *vars, int centerX, int centerY, int length, double angle
 
 void draw_circle(t_vars *vars, int color, int center_x, int center_y)
 {
-    int x;
-    int y;
-    int err;
+	int x;
+	int y;
+	int err;
 
-    y = 0;
-    x = TILE_SIZE * 0.20f;
-    err = 0;
-    while (x >= y)
-    {
-        pixel_put(&vars->mini_map, center_x + x, center_y + y, color);
-        pixel_put(&vars->mini_map, center_x + y, center_y + x, color);
-        pixel_put(&vars->mini_map, center_x - y, center_y + x, color);
-        pixel_put(&vars->mini_map, center_x - x, center_y + y, color);
-        pixel_put(&vars->mini_map, center_x - x, center_y - y, color);
-        pixel_put(&vars->mini_map, center_x - y, center_y - x, color);
-        pixel_put(&vars->mini_map, center_x + y, center_y - x, color);
-        pixel_put(&vars->mini_map, center_x + x, center_y - y, color);
-        if (err <= 0)
-        {
-            y += 1;
-            err += 2 * y + 1;
-        }
-        if (err > 0)
-        {
-            x -= 1;
-            err -= 2 * x + 1;
-        }
-    }
-    draw_arrow(vars, center_x, center_y, TILE_SIZE * 0.40f, vars->player.p_angle, color);
+	y = 0;
+	x = TILE_SIZE * 0.20f;
+	err = 0;
+	while (x >= y)
+	{
+		pixel_put(&vars->mini_map, center_x + x, center_y + y, color);
+		pixel_put(&vars->mini_map, center_x + y, center_y + x, color);
+		pixel_put(&vars->mini_map, center_x - y, center_y + x, color);
+		pixel_put(&vars->mini_map, center_x - x, center_y + y, color);
+		pixel_put(&vars->mini_map, center_x - x, center_y - y, color);
+		pixel_put(&vars->mini_map, center_x - y, center_y - x, color);
+		pixel_put(&vars->mini_map, center_x + y, center_y - x, color);
+		pixel_put(&vars->mini_map, center_x + x, center_y - y, color);
+		if (err <= 0)
+		{
+			y += 1;
+			err += 2 * y + 1;
+		}
+		if (err > 0)
+		{
+			x -= 1;
+			err -= 2 * x + 1;
+		}
+	}
+	draw_arrow(vars, center_x, center_y, TILE_SIZE * 0.40f, vars->player.p_angle, color);
 }
 
 
@@ -139,7 +139,6 @@ int render_mini_map(t_vars *vars)
 	}
 	double	add_x = vars->player.pos_x/TILE_SIZE - pos_x - 8;
 	double	add_y = vars->player.pos_y/TILE_SIZE - pos_y - 8;
-	printf("add_x: %lf\nadd_y: %lf\ncenter: %lf\n", add_x, add_y, vars->render.sc_width*0.10);
 	draw_circle(vars, rgb_to_hex(255, 0, 0), vars->render.sc_width*0.10 + add_x, vars->render.sc_height*0.10 + add_y);
 	return (0);
 }
