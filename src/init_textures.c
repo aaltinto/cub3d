@@ -37,10 +37,10 @@ int	get_sprites(t_vars *vars, int x, int y)
 	int		i;
 	char	*filename;
 
-	i = 0;
-	while (++i <= 10)
+	i = -1;
+	while (++i < 10)
 	{
-		filename = get_xpm_filename("./xpm/Hunter", i);
+		filename = get_xpm_filename("./xpm/Hunter", i + 1);
 		if (!filename)
 			return (1);
 		vars->gun[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,

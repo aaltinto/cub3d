@@ -71,13 +71,27 @@ void draw_circle(t_vars *vars, int color, int center_x, int center_y)
 	draw_arrow(vars, center_x, center_y, TILE_SIZE * 0.40f, vars->player.p_angle, color);
 }
 
-
+#include <unistd.h>
 int	color(t_vars *vars, int tile_x, int tile_y)
 {
-	if (vars->map[tile_y][tile_x] == '1' || vars->map[tile_y][tile_x] == ' ')
+	int	max_x;
+	int	max_y;
+
+	max_y = double_counter(vars->map) * MAP_TILE;
+	if (max_y <= tile_y || tile_y < 0)
 		return (rgb_to_hex(0, 0, 0));
-	else
+	max_x = ft_strlen(vars->map[tile_y / MAP_TILE]) * MAP_TILE;
+	if (max_x < tile_x || tile_x < 0 || max_x == 0)
+		return (rgb_to_hex(0, 0, 0));
+	else if (vars->map[tile_y / MAP_TILE][tile_x / MAP_TILE] == '0'
+	|| vars->map[tile_y / MAP_TILE][tile_x / MAP_TILE] == 'N'
+	|| vars->map[tile_y / MAP_TILE][tile_x / MAP_TILE] == 'S'
+	|| vars->map[tile_y / MAP_TILE][tile_x / MAP_TILE] == 'W'
+	|| vars->map[tile_y / MAP_TILE][tile_x / MAP_TILE] == 'E')
 		return (rgb_to_hex(255, 255, 255));
+	else
+		return (rgb_to_hex(0, 0, 0));
+	// printf("tile_x: %d\ntile_y: %d\nmax_x: %d\nmax_y: %d\n",tile_x, tile_y, max_x, max_y );
 }
 
 void	put_tiles(t_vars *vars, int x, int y, int color)
@@ -105,40 +119,38 @@ void	put_tiles(t_vars *vars, int x, int y, int color)
 
 int render_mini_map(t_vars *vars)
 {
-	int	pos_x;
-	int	pos_y;
 	int	x;
 	int	y;
-	int	tile_x;
-	int	tile_y;
-	int	scale_width;
-	int	scale_height;
+	int	pos_x;
+	int	pos_y;
+	int	map_size_w;
+	int	map_size_h;
 
-	scale_width = (int)(vars->render.sc_width * 0.20f) / MAP_TILE;
-	scale_height = (int)(vars->render.sc_height * 0.20f) / MAP_TILE;
-
-	pos_x = (int)round(vars->player.pos_x / TILE_SIZE);
-	pos_y = (int)round(vars->player.pos_y / TILE_SIZE);
-	vars->map_h = double_counter(vars->map);
-	y = 0;
-	tile_y = pos_y - 5 - 1;
-	while (++tile_y <= pos_y + 5)
+	vars->map_h = double_counter(vars->map) * MAP_TILE;
+	vars->map_w = find_longest_line(vars->map) * MAP_TILE;
+	map_size_h = vars->render.sc_height * 0.20;
+	map_size_w = vars->render.sc_width * 0.20;
+	pos_x = (vars->player.pos_x / TILE_SIZE) * MAP_TILE - map_size_w / 2;
+	pos_y = (vars->player.pos_y / TILE_SIZE) * MAP_TILE - map_size_h / 2;
+	y = -1;
+	while (++y <= map_size_h)
 	{
-		if ((tile_y < 0 || tile_y >= vars->map_h) && ++y)
-			continue ;
-		x = 0;
-		tile_x = pos_x - 5 - 1;
-		while (++tile_x <= pos_x + 5)
-		{
-			if ((tile_x < 0 || tile_x >= ft_strlen(vars->map[tile_y])) && ++x)
-				continue ;
-			put_tiles(vars, x, y, color(vars, tile_x, tile_y));
-			x++;
-		}
-		y++;
+		x = -1;
+		while (++x <= map_size_w)
+			pixel_put(&vars->mini_map, x, y, color(vars, pos_x + x, pos_y + y));
 	}
-	double	add_x = vars->player.pos_x/TILE_SIZE - pos_x - 8;
-	double	add_y = vars->player.pos_y/TILE_SIZE - pos_y - 8;
-	draw_circle(vars, rgb_to_hex(255, 0, 0), vars->render.sc_width*0.10 + add_x, vars->render.sc_height*0.10 + add_y);
-	return (0);
+	return (draw_circle(vars, rgb_to_hex(255, 0, 0), map_size_w / 2,
+			map_size_h / 2), 0);
 }
+
+	// for (int i = 0; vars->map[i]; i++)
+	// {
+	// 	for (int y = 0; y <= find_longest_line(vars->map); y++)
+	// 	{
+	// 		if (vars->map[i][y] == ' ' || vars->map[i][y] == 0)
+	// 			printf("*");
+	// 		else
+	// 			printf("%c", vars->map[i][y]);
+	// 	}
+	// 	printf("\n");
+	// }

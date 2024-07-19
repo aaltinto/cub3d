@@ -79,6 +79,7 @@ int	marche(t_vars *vars)
 	while (++i < 5)
 		vars->textures.walls[i] = NULL;
 	vars->player.shoot = 0;
+	vars->player.ani_i = 0;
 	vars->mlx.mlx = NULL;
 	vars->mlx.win = NULL;
 	vars->render.sc_height = 600;

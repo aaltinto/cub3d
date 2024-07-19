@@ -71,7 +71,6 @@ int	fill_background(t_vars *vars)
 
 void scale_up_image(t_data *data, t_data canvas, int original_width, int original_height, int tile_size)
 {
-	// Loop through each pixel in the original image
 	for (int y = 0; y < original_height; y++)
 	{
 		for (int x = 0; x < original_width; x++)
@@ -86,17 +85,26 @@ void scale_up_image(t_data *data, t_data canvas, int original_width, int origina
 		}
 	}
 }
+#include <unistd.h>
+#include <sys/time.h>
+
+size_t	get_time(void)
+{
+	struct timeval	time;
+
+	if (gettimeofday(&time, NULL) != 0)
+		return (err("gettimeofday() error"), -1);
+	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+}
 
 int	render(void *ptr)
 {
-	static char	*addr = NULL;
-	static int	i = 0;
 	t_vars	*vars;
+	size_t	s_time;
+	int		i;
 	int		x;
 	int		y;
 
-	if (i == 10)
-		i = 0;
 	vars = (t_vars *)ptr;
 	if (vars->player.running != 1 && vars->fov_angle >= 64)
 		vars->fov_angle--;
@@ -108,20 +116,28 @@ int	render(void *ptr)
 		return (close_windows(vars), 1);
 	cast_rays(vars);
 	render_mini_map(vars);
-	addr = vars->img.addr;
-	//mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
+	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->mini_map.img,
 		0, 0);
-	scale_up_image(&vars->gun[1], vars->gun_canvas, 64, 64, TILE_GUN);
+	scale_up_image(&vars->gun[vars->player.ani_i], vars->gun_canvas, 64, 64, TILE_GUN);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->gun_canvas.img,
 		(vars->render.sc_width / 2) - ((64 * TILE_GUN) / 2),
 		vars->render.sc_height - (64 * TILE_GUN));
+	if (vars->player.shoot == 1)
+	{
+		if (get_time() - vars->s_time > 20)
+			vars->player.ani_i++;
+		if (vars->player.ani_i >= 10)
+		{
+			vars->player.ani_i = 0;
+			vars->player.shoot = 0;
+		}
+	}
 	move_player(vars, 0.0, 0.0);
 	vars->player.p_angle = nor_angle(vars->player.p_angle);
 	mlx_destroy_image(vars->mlx.mlx, vars->img.img);
 	mlx_destroy_image(vars->mlx.mlx, vars->mini_map.img);
 	mlx_destroy_image(vars->mlx.mlx, vars->gun_canvas.img);
-	i++;
 	return (0);
 }

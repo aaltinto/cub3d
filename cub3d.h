@@ -30,7 +30,7 @@
 # define M_PI 3.14159265358979323846
 
 # define TILE_SIZE 30
-# define MAP_TILE 10.84f
+# define MAP_TILE 10
 # define PLAYER_SPEED 0.5f
 
 # define X 0
@@ -60,6 +60,7 @@ typedef struct s_player
 	double	p_angle;
 	double	running;
 	int		shoot;
+	int		ani_i;
 }	t_player;
 
 typedef struct s_textures
@@ -103,7 +104,7 @@ typedef struct s_vars
 	t_data		img;
 	t_data		mini_map;
 	t_data		xpm[4];
-	t_data		gun[10];
+	t_data		gun[20];
 	t_data		gun_canvas;
 	t_player	player;
 	t_render	render;
@@ -111,6 +112,7 @@ typedef struct s_vars
 	char		**map;
 	int			map_w;
 	int			map_h;
+	size_t		s_time;
 	char		*raw_map;
 	int			fov_angle;
 	int			*map_grid;
@@ -156,5 +158,6 @@ int		detect_player(t_vars *vars);
 int		get_canvas(t_vars *vars);
 int		texture_color(t_data *data, int x, int y);
 int		get_sprites(t_vars *vars, int x, int y);
+size_t	get_time(void);
 
 #endif
