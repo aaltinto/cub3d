@@ -59,12 +59,10 @@ void	abort_mission(t_vars *vars)
 	free_doubles(vars->map);
 	null_free(vars->textures.ceiling);
 	null_free(vars->textures.floor);
-	null_free(vars->textures.north);
-	null_free(vars->textures.south);
-	null_free(vars->textures.east);
-	null_free(vars->textures.west);
-	null_free(vars->textures.ceiling_rgb);
-	null_free(vars->textures.floor_rgb);
+	null_free(vars->textures.walls[0]);
+	null_free(vars->textures.walls[1]);
+	null_free(vars->textures.walls[2]);
+	null_free(vars->textures.walls[3]);
 }
 
 int	close_windows(t_vars *vars)

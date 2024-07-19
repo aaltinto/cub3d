@@ -15,13 +15,13 @@
 
 static int	detect_missing_ind(t_vars *vars)
 {
-	if (!vars->textures.north)
+	if (!vars->textures.walls[NO])
 		err("North");
-	if (!vars->textures.south)
+	if (!vars->textures.walls[SO])
 		err("South");
-	if (!vars->textures.west)
+	if (!vars->textures.walls[WE])
 		err("West");
-	if (!vars->textures.east)
+	if (!vars->textures.walls[EA])
 		err("East");
 	if (!vars->textures.floor)
 		err("Floor");
@@ -40,7 +40,7 @@ static int	init(t_vars *vars, char *tmp)
 		{
 			if (color_init(vars, tmp))
 				return (1);
-			ret = init_textures(vars, tmp);
+			ret = init_textures(&vars->textures, tmp);
 			if (ret == 2)
 				break ;
 			if (ret == 1)
@@ -72,8 +72,8 @@ int	parse_init(t_vars *vars, char *map)
 			return (free_doubles(map_tmp), null_free(tmp2), 1);
 		null_free(tmp2);
 	}
-	if (!vars->textures.north || !vars->textures.south || !vars->textures.west \
-	|| !vars->textures.east || !vars->textures.floor || !vars->textures.ceiling)
+	if (!vars->textures.walls[NO] || !vars->textures.walls[SO] || !vars->textures.walls[WE] \
+	|| !vars->textures.walls[EA] || !vars->textures.floor || !vars->textures.ceiling)
 		return (free_doubles(map_tmp), err("Error! Missing indicators:"),
 			detect_missing_ind(vars));
 	return (free_doubles(map_tmp), 0);

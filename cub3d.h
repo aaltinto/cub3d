@@ -25,6 +25,7 @@
 # define ARROW_DOWN 125
 # define ARROW_UP 126
 # define SHIFT 257
+# define SPACE 49
 
 # define M_PI 3.14159265358979323846
 
@@ -58,18 +59,16 @@ typedef struct s_player
 	double	fov;
 	double	p_angle;
 	double	running;
+	int		shoot;
 }	t_player;
 
 typedef struct s_textures
 {
-	char	*north;
-	char	*south;
-	char	*west;
-	char	*east;
+	char	*walls[5];
 	char	*floor;
-	int		*floor_rgb;
+	int		floor_rgb[3];
 	char	*ceiling;
-	int		*ceiling_rgb;
+	int		ceiling_rgb[3];
 }	t_textures;
 
 typedef struct s_mlx
@@ -103,7 +102,9 @@ typedef struct s_vars
 	t_mlx		mlx;
 	t_data		img;
 	t_data		mini_map;
-	t_data		*xpm;
+	t_data		xpm[4];
+	t_data		gun[10];
+	t_data		gun_canvas;
 	t_player	player;
 	t_render	render;
 	t_keys		keys;
@@ -117,10 +118,10 @@ typedef struct s_vars
 
 typedef struct s_ray
 {
-	double	*side_dist;
-	double	*raydir;
-	double	*delta_dist;
-	int		*step;
+	double	side_dist[2];
+	double	raydir[2];
+	double	delta_dist[2];
+	int		step[2];
 	int		side;
 }	t_ray;
 
@@ -135,7 +136,7 @@ int		find_longest_line(char **str);
 int		free_doubles(char **str);
 int		free_doubles2(void **str, int len);
 int		parse_init(t_vars *vars, char *map);
-int		init_textures(t_vars *vars, char *tmp);
+int		init_textures(t_textures *textures, char *tmp);
 int		extract_rgb(t_vars *vars);
 int		color_init(t_vars *vars, char *tmp);
 int		cast_rays(t_vars *vars);
@@ -148,12 +149,12 @@ int		move_player(t_vars *vars, double x, double y);
 int		close_windows(t_vars *vars);
 char	*strip(char *str);
 int		render_mini_map(t_vars *vars);
-void	free_ray_map(t_ray *ray);
 int		get_color(t_vars *vars, int flag, int x, int y);
 int		render(void *ptr);
 int		fill_variable(t_vars *vars, t_ray *ray);
 int		detect_player(t_vars *vars);
 int		get_canvas(t_vars *vars);
-
+int		texture_color(t_data *data, int x, int y);
+int		get_sprites(t_vars *vars, int x, int y);
 
 #endif

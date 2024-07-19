@@ -21,9 +21,6 @@ int	find_side_dist(t_vars *vars, t_ray *ray)
 
 	map_x = vars->player.pos_x / TILE_SIZE;
 	map_y = vars->player.pos_y / TILE_SIZE;
-	ray->side_dist = (double *)malloc(sizeof(double) * 2);
-	if (ray->side_dist == NULL)
-		return (1);
 	if (ray->raydir[X] < 0)
 	{
 		ray->step[X] = -1;
@@ -43,11 +40,8 @@ int	find_side_dist(t_vars *vars, t_ray *ray)
 
 int	check_hit(t_vars *vars, t_ray *ray)
 {
-	int	*map_grid;
+	int	map_grid[2];
 
-	map_grid = (int *)malloc(sizeof(int) * 2);
-	if (!map_grid)
-		return (1);
 	map_grid[X] = (int)(vars->player.pos_x / TILE_SIZE);
 	map_grid[Y] = (int)(vars->player.pos_y / TILE_SIZE);
 	while (vars->map[map_grid[Y]][map_grid[X]] != '1')
@@ -65,19 +59,13 @@ int	check_hit(t_vars *vars, t_ray *ray)
 			vars->render.flag = 1;
 		}
 	}
-	return (free(map_grid), 0);
+	return (0);
 }
 
 double	find_wall_distance(t_vars *vars, t_ray *ray)
 {
 	double	dist;
 
-	ray->raydir = (double *)malloc(sizeof(double) * 2);
-	ray->delta_dist = (double *)malloc(sizeof(double) * 2);
-	ray->step = (int *)malloc(sizeof(int) * 2);
-	if (!ray->raydir || !ray->step || !ray->delta_dist)
-		return (null_free(ray->raydir), null_free(ray->step),
-			null_free(ray->delta_dist), -1);
 	if (fill_variable(vars, ray) || find_side_dist(vars, ray))
 		return (-1);
 	if (check_hit(vars, ray))
@@ -86,14 +74,14 @@ double	find_wall_distance(t_vars *vars, t_ray *ray)
 		dist = ray->side_dist[X] - ray->delta_dist[X];
 	else
 		dist = ray->side_dist[Y] - ray->delta_dist[Y];
-	return (dist * cos(vars->render.ray_angle - vars->player.p_angle));
+	return (((dist) * cos(vars->render.ray_angle - vars->player.p_angle)));
 }
 
 int calc_texture(t_vars *vars, t_ray *ray, double dist)
 {
 	double wall_x;
 	int tex_x;
-	int tex_width = 64; // Replace with actual texture width
+	int tex_width = 64;
 
 	if (vars->render.flag == 0)
 		wall_x = vars->player.pos_x + dist * ray->raydir[Y];
@@ -130,12 +118,12 @@ void wall_height(t_vars *vars, double dist, int ray, t_ray *ray_data)
 	if (b_pix > vars->render.sc_height)
 		b_pix = vars->render.sc_height;
 	tex_x = calc_texture(vars, ray_data, dist);
-	printf("%i\n", tex_x);
+	//printf("%i\n", tex_x);
 	step = (double)tex_height / wall_height;
 	tex_pos = (t_pix - vars->render.sc_height / 2 + wall_height / 2) * step;
 	while (t_pix <= b_pix)
 	{
-		tex_y = (int)tex_pos % tex_height; // Use modulo to wrap around
+		tex_y = (int)tex_pos % tex_height;
 		tex_pos += step;
 		pixel_put(&vars->img, ray, t_pix++, get_color(vars, vars->render.flag, tex_x, tex_y));
 	}
@@ -159,7 +147,6 @@ int	cast_rays(t_vars *vars)
 		wall_height(vars, wall_dist, ray, &ray_data);
 		ray++;
 		vars->render.ray_angle += vars->player.fov / vars->render.sc_width;
-		free_ray_map(&ray_data);
 	}
 	return (0);
 }

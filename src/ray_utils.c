@@ -27,14 +27,6 @@ int	rgb_to_hex(int r, int g, int b)
 	return ((r << 16) | (g << 8) | b);
 }
 
-void	free_ray_map(t_ray *ray)
-{
-	null_free(ray->delta_dist);
-	null_free(ray->raydir);
-	null_free(ray->side_dist);
-	null_free(ray->step);
-}
-
 int	fill_variable(t_vars *vars, t_ray *ray)
 {
 	ray->raydir[X] = cos(vars->render.ray_angle);

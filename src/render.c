@@ -14,6 +14,7 @@
 #include "../minilibx/mlx.h"
 #include "../libft/libft.h"
 #include <math.h>
+#define TILE_GUN 8
 
 int	get_canvas(t_vars *vars)
 {
@@ -33,6 +34,14 @@ int	get_canvas(t_vars *vars)
 	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel,
 			&vars->img.line_length, &vars->img.endian);
 	if (!vars->img.addr)
+		return (err("İmage addr error!"), 1);
+	vars->gun_canvas.img = mlx_new_image(vars->mlx.mlx, 64 * TILE_GUN,
+			64 * TILE_GUN);
+	if (!vars->gun_canvas.img)
+		return (err("İmage init error!"), 1);
+	vars->gun_canvas.addr = mlx_get_data_addr(vars->gun_canvas.img, &vars->gun_canvas.bits_per_pixel,
+			&vars->gun_canvas.line_length, &vars->gun_canvas.endian);
+	if (!vars->gun_canvas.addr)
 		return (err("İmage addr error!"), 1);
 	return (0);
 }
@@ -59,30 +68,60 @@ int	fill_background(t_vars *vars)
 	}
 	return (0);
 }
+
+void scale_up_image(t_data *data, t_data canvas, int original_width, int original_height, int tile_size)
+{
+	// Loop through each pixel in the original image
+	for (int y = 0; y < original_height; y++)
+	{
+		for (int x = 0; x < original_width; x++)
+		{
+			for (int ty = 0; ty < tile_size; ty++)
+			{
+				for (int tx = 0; tx < tile_size; tx++)
+				{
+					pixel_put(&canvas, (x * tile_size) + tx, (y * tile_size) + ty, texture_color(data, x, y));
+				}
+			}
+		}
+	}
+}
+
 int	render(void *ptr)
 {
+	static char	*addr = NULL;
+	static int	i = 0;
 	t_vars	*vars;
 	int		x;
 	int		y;
 
+	if (i == 10)
+		i = 0;
 	vars = (t_vars *)ptr;
 	if (vars->player.running != 1 && vars->fov_angle >= 64)
 		vars->fov_angle--;
 	else if (vars->player.running == 1 && vars->fov_angle < 66)
 		vars->fov_angle++;
 	vars->player.fov = vars->fov_angle * (M_PI / 180);
-	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
 	get_canvas(vars);
 	if (fill_background(vars))
 		return (close_windows(vars), 1);
 	cast_rays(vars);
 	render_mini_map(vars);
+	addr = vars->img.addr;
+	//mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->mini_map.img,
 		0, 0);
+	scale_up_image(&vars->gun[1], vars->gun_canvas, 64, 64, TILE_GUN);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->gun_canvas.img,
+		(vars->render.sc_width / 2) - ((64 * TILE_GUN) / 2),
+		vars->render.sc_height - (64 * TILE_GUN));
 	move_player(vars, 0.0, 0.0);
 	vars->player.p_angle = nor_angle(vars->player.p_angle);
 	mlx_destroy_image(vars->mlx.mlx, vars->img.img);
 	mlx_destroy_image(vars->mlx.mlx, vars->mini_map.img);
+	mlx_destroy_image(vars->mlx.mlx, vars->gun_canvas.img);
+	i++;
 	return (0);
 }
