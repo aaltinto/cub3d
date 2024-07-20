@@ -121,7 +121,7 @@ void wall_height(t_vars *vars, double dist, int ray, t_ray *ray_data)
 	//printf("%i\n", tex_x);
 	step = (double)tex_height / wall_height;
 	tex_pos = (t_pix - vars->render.sc_height / 2 + wall_height / 2) * step;
-	while (t_pix <= b_pix)
+	while (t_pix < b_pix)
 	{
 		tex_y = (int)tex_pos % tex_height;
 		tex_pos += step;
