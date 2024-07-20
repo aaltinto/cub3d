@@ -130,8 +130,8 @@ int render_mini_map(t_vars *vars)
 	vars->map_w = find_longest_line(vars->map) * MAP_TILE;
 	map_size_h = vars->render.sc_height * 0.20;
 	map_size_w = vars->render.sc_width * 0.20;
-	pos_x = (vars->player.pos_x / TILE_SIZE) * MAP_TILE - map_size_w / 2;
-	pos_y = (vars->player.pos_y / TILE_SIZE) * MAP_TILE - map_size_h / 2;
+	pos_x = (vars->player.camera[X] / TILE_SIZE) * MAP_TILE - map_size_w / 2;
+	pos_y = (vars->player.camera[Y] / TILE_SIZE) * MAP_TILE - map_size_h / 2;
 	y = -1;
 	while (++y <= map_size_h)
 	{

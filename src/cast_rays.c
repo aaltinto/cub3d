@@ -19,8 +19,8 @@ int	find_side_dist(t_vars *vars, t_ray *ray)
 	double	map_x;
 	double	map_y;
 
-	map_x = vars->player.pos_x / TILE_SIZE;
-	map_y = vars->player.pos_y / TILE_SIZE;
+	map_x = vars->player.camera[X] / TILE_SIZE;
+	map_y = vars->player.camera[Y] / TILE_SIZE;
 	if (ray->raydir[X] < 0)
 	{
 		ray->step[X] = -1;
@@ -42,8 +42,8 @@ int	check_hit(t_vars *vars, t_ray *ray)
 {
 	int	map_grid[2];
 
-	map_grid[X] = (int)(vars->player.pos_x / TILE_SIZE);
-	map_grid[Y] = (int)(vars->player.pos_y / TILE_SIZE);
+	map_grid[X] = (int)(vars->player.camera[X] / TILE_SIZE);
+	map_grid[Y] = (int)(vars->player.camera[Y] / TILE_SIZE);
 	while (vars->map[map_grid[Y]][map_grid[X]] != '1')
 	{
 		if (ray->side_dist[X] < ray->side_dist[Y])
@@ -84,9 +84,9 @@ int calc_texture(t_vars *vars, t_ray *ray, double dist)
 	int tex_width = 64;
 
 	if (vars->render.flag == 0)
-		wall_x = vars->player.pos_x + dist * ray->raydir[Y];
+		wall_x = vars->player.camera[X] + dist * ray->raydir[Y];
 	else
-		wall_x = vars->player.pos_y + dist * ray->raydir[X];
+		wall_x = vars->player.camera[Y] + dist * ray->raydir[X];
 	wall_x -= floor((wall_x));
 	tex_x = (int)(wall_x * (double)tex_width);
 	if (vars->render.flag == 0 && ray->raydir[X] > 0)

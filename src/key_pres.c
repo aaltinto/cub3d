@@ -13,8 +13,9 @@
 #include "../cub3d.h"
 #include "../libft/libft.h"
 #include <math.h>
+#define CAMERA_DISTANCE 10;
 
-static void	calculate_positions(t_vars *vars, double *x, double *y)
+static void	positions(t_vars *vars, double *x, double *y)
 {
 	if (vars->keys.key_w)
 	{
@@ -49,17 +50,34 @@ int	move_player(t_vars *vars, double x, double y)
 		vars->player.p_angle += 0.02f;
 	if (vars->keys.key_la)
 		vars->player.p_angle -= 0.02f;
-	calculate_positions(vars, &x, &y);
-	new_x = (vars->player.pos_x + x) / TILE_SIZE;
-	new_y = (vars->player.pos_y + y) / TILE_SIZE;
-	map_x = (vars->player.pos_x) / TILE_SIZE;
-	map_y = (vars->player.pos_y) / TILE_SIZE;
+
+	positions(vars, &x, &y);
+
+	new_x = (vars->player.pos[X] + x) / TILE_SIZE;
+	new_y = (vars->player.pos[Y] + y) / TILE_SIZE;
+	map_x = (vars->player.pos[X]) / TILE_SIZE;
+	map_y = (vars->player.pos[Y]) / TILE_SIZE;
+
 	if (double_counter(vars->map) < (new_y) || vars->map[new_y][map_x] == '1')
 		y = 0;
 	if (ft_strlen(vars->map[map_y]) < (new_x) || vars->map[map_y][new_x] == '1')
 		x = 0;
-	vars->player.pos_x += x;
-	vars->player.pos_y += y;
+
+	vars->player.pos[X] += x;
+	vars->player.pos[Y] += y;
+
+	vars->player.camera[X] = vars->player.pos[X] - cos(vars->player.p_angle) * CAMERA_DISTANCE;
+	vars->player.camera[Y] = vars->player.pos[Y] - sin(vars->player.p_angle) * CAMERA_DISTANCE;
+
+	int camera_new_x = vars->player.camera[X] / TILE_SIZE;
+	int camera_new_y = vars->player.camera[Y] / TILE_SIZE;
+
+	if (vars->map[camera_new_y][camera_new_x] == '1')
+	{
+		vars->player.camera[X] = vars->player.pos[X];
+		vars->player.camera[Y] = vars->player.pos[Y];
+	}
+
 	return (0);
 }
 

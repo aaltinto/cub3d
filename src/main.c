@@ -82,8 +82,8 @@ int	marche(t_vars *vars)
 	vars->player.ani_i = 0;
 	vars->mlx.mlx = NULL;
 	vars->mlx.win = NULL;
-	vars->render.sc_height = 600;
-	vars->render.sc_width = 840;
+	vars->render.sc_height = 900;
+	vars->render.sc_width = 1090;
 	vars->render.flag = 0;
 	vars->keys.key_a = 0;
 	vars->keys.key_s = 0;
@@ -108,16 +108,21 @@ int	detect_player(t_vars *vars)
 		x = -1;
 		while (vars->map[y][++x])
 		{
-			vars->player.pos_x = (x * TILE_SIZE) + TILE_SIZE / 2;
-			vars->player.pos_y = (y * TILE_SIZE) + TILE_SIZE / 2;
+			vars->player.pos[X] = (x * TILE_SIZE) + TILE_SIZE / 2;
+			vars->player.pos[Y] = (y * TILE_SIZE) + TILE_SIZE / 2;
 			if (vars->map[y][x] == 'N')
-				return (vars->player.p_angle = (3 * M_PI) / 2, 0);
+				return (vars->player.p_angle = (3 * M_PI) / 2, \
+	vars->player.camera[X] = vars->player.pos[X], vars->player.camera[Y] \
+	= vars->player.pos[Y] - 1, 0);
 			else if (vars->map[y][x] == 'E')
-				return (vars->player.p_angle = 0, 0);
+				return (vars->player.p_angle = 0, vars->player.camera[X] = \
+	vars->player.pos[X] - 1, vars->player.camera[Y] = vars->player.pos[Y], 0);
 			else if (vars->map[y][x] == 'S')
-				return (vars->player.p_angle = M_PI / 2, 0);
+				return (vars->player.p_angle = M_PI / 2, vars->player.camera[X] \
+	= vars->player.pos[X], vars->player.camera[Y] = vars->player.pos[Y] + 1, 0);
 			else if (vars->map[y][x] == 'W')
-				return (vars->player.p_angle = M_PI, 0);
+				return (vars->player.p_angle = M_PI, vars->player.camera[X] = \
+	vars->player.pos[X] + 1, vars->player.camera[Y] = vars->player.pos[Y], 0);
 		}
 	}
 	return (1);

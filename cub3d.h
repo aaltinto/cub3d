@@ -54,8 +54,8 @@ typedef struct s_render
 
 typedef struct s_player
 {
-	double	pos_x;
-	double	pos_y;
+	double	pos[2];
+	double	camera[2];
 	double	fov;
 	double	p_angle;
 	double	running;
