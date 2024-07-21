@@ -67,7 +67,6 @@ void	abort_mission(t_vars *vars)
 
 int	close_windows(t_vars *vars)
 {
-	system("leaks cub3d");
 	mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
 	null_free(vars->mlx.mlx);
 	abort_mission(vars);

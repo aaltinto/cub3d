@@ -12,6 +12,7 @@
 
 #include "../cub3d.h"
 #include "../libft/libft.h"
+#include "../minilibx/mlx.h"
 #include <math.h>
 #define CAMERA_DISTANCE 10;
 
@@ -39,6 +40,30 @@ static void	positions(t_vars *vars, double *x, double *y)
 	}
 }
 
+int	mouse_move(t_vars *vars)
+{
+	int	mx;
+	int	my;
+	int	x;
+	int	y;
+	float	angle;
+
+	x =vars->render.sc_width/2;
+	y = vars->render.sc_height/2;
+	angle = vars->player.p_angle;
+	mlx_mouse_get_pos(vars->mlx.win, &mx, &my);
+	printf("x: %d\ny: %d\n", mx, my);
+	if (mx > x + 90 || mx < x - 1)
+	{
+		if (mx < x)
+			angle -= 0.07f;
+		if (mx > x)
+			angle += 0.07f;
+		mlx_mouse_move(vars->mlx.win, x, y);
+	}
+	vars->player.p_angle = nor_angle(angle);
+}
+
 int	move_player(t_vars *vars, double x, double y)
 {
 	int	new_x;
@@ -46,13 +71,9 @@ int	move_player(t_vars *vars, double x, double y)
 	int	map_x;
 	int	map_y;
 
-	if (vars->keys.key_ra)
-		vars->player.p_angle += 0.02f;
-	if (vars->keys.key_la)
-		vars->player.p_angle -= 0.02f;
+	mouse_move(vars);
 
 	positions(vars, &x, &y);
-
 	new_x = (vars->player.pos[X] + x) / TILE_SIZE;
 	new_y = (vars->player.pos[Y] + y) / TILE_SIZE;
 	map_x = (vars->player.pos[X]) / TILE_SIZE;
