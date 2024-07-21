@@ -52,15 +52,11 @@ int	mouse_move(t_vars *vars)
 	y = vars->render.sc_height/2;
 	angle = vars->player.p_angle;
 	mlx_mouse_get_pos(vars->mlx.win, &mx, &my);
-	printf("x: %d\ny: %d\n", mx, my);
-	if (mx > x + 90 || mx < x - 1)
-	{
-		if (mx < x)
-			angle -= 0.07f;
-		if (mx > x)
-			angle += 0.07f;
+	if (mx > x + 361 || mx < x - 361)
 		mlx_mouse_move(vars->mlx.win, x, y);
-	}
+	mx = mx / 2;
+	my = mx / 2;
+	angle = mx * 0.05;
 	vars->player.p_angle = nor_angle(angle);
 }
 
@@ -100,6 +96,15 @@ int	move_player(t_vars *vars, double x, double y)
 	}
 
 	return (0);
+}
+
+int	mouse_func(int button, int x, int y, t_vars *vars)
+{
+	if (button == 1)
+	{
+		vars->s_time = get_time();
+		vars->player.shoot = 1;
+	}
 }
 
 int	key_release(int keycode, t_vars *vars)
@@ -142,10 +147,5 @@ int	key_capture(int keycode, t_vars *vars)
 		vars->keys.key_d = 1;
 	if (keycode == SHIFT)
 		vars->player.running = 2.50;
-	if (keycode == SPACE)
-	{
-		vars->s_time = get_time();
-		vars->player.shoot = 1;
-	}
 	return (0);
 }

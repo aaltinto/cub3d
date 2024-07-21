@@ -29,9 +29,9 @@
 
 # define M_PI 3.14159265358979323846
 
-# define TILE_SIZE 30
-# define MAP_TILE 10
-# define PLAYER_SPEED 0.5f
+# define TILE_SIZE 40
+# define MAP_TILE 20
+# define PLAYER_SPEED 1.0f
 
 # define X 0
 # define Y 1
@@ -104,8 +104,10 @@ typedef struct s_vars
 	t_data		img;
 	t_data		mini_map;
 	t_data		xpm[4];
-	t_data		gun[20];
+	t_data		gun[10];
+	t_data		num[10];
 	t_data		gun_canvas;
+	t_data		ui_canvas;
 	t_player	player;
 	t_render	render;
 	t_keys		keys;
@@ -157,7 +159,9 @@ int		fill_variable(t_vars *vars, t_ray *ray);
 int		detect_player(t_vars *vars);
 int		get_canvas(t_vars *vars);
 int		texture_color(t_data *data, int x, int y);
-int		get_sprites(t_vars *vars, int x, int y);
+int		get_gun_sprites(t_vars *vars, int x, int y);
+int		get_num_sprites(t_vars *vars, int x, int y);
 size_t	get_time(void);
+int	mouse_func(int button, int x, int y, t_vars *vars);
 
 #endif

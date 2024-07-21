@@ -74,7 +74,7 @@ double	find_wall_distance(t_vars *vars, t_ray *ray)
 		dist = ray->side_dist[X] - ray->delta_dist[X];
 	else
 		dist = ray->side_dist[Y] - ray->delta_dist[Y];
-	return (((dist) * cos(vars->render.ray_angle - vars->player.p_angle)));
+	return (dist * cos(vars->render.ray_angle - vars->player.p_angle));
 }
 
 int calc_texture(t_vars *vars, t_ray *ray, double dist)
@@ -84,9 +84,9 @@ int calc_texture(t_vars *vars, t_ray *ray, double dist)
 	int tex_width = 64;
 
 	if (vars->render.flag == 0)
-		wall_x = vars->player.camera[Y] / TILE_SIZE + dist * ray->raydir[Y];
+		wall_x = vars->player.camera[Y] / TILE_SIZE + (dist/cos(vars->render.ray_angle - vars->player.p_angle)) * ray->raydir[Y];
 	else
-		wall_x = vars->player.camera[X] / TILE_SIZE + dist * ray->raydir[X];
+		wall_x = vars->player.camera[X] / TILE_SIZE + (dist/cos(vars->render.ray_angle - vars->player.p_angle)) * ray->raydir[X];
 	wall_x -= floor((wall_x));
 	tex_x = (int)(wall_x * (double)tex_width);
 	if (vars->render.flag == 0 && ray->raydir[X] > 0)

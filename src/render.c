@@ -14,7 +14,7 @@
 #include "../minilibx/mlx.h"
 #include "../libft/libft.h"
 #include <math.h>
-#define TILE_GUN 8
+#define TILE_GUN 13
 
 int	get_canvas(t_vars *vars)
 {
@@ -42,6 +42,14 @@ int	get_canvas(t_vars *vars)
 	vars->gun_canvas.addr = mlx_get_data_addr(vars->gun_canvas.img, &vars->gun_canvas.bits_per_pixel,
 			&vars->gun_canvas.line_length, &vars->gun_canvas.endian);
 	if (!vars->gun_canvas.addr)
+		return (err("İmage addr error!"), 1);
+	vars->ui_canvas.img = mlx_new_image(vars->mlx.mlx, vars->render.sc_width,
+			vars->render.sc_height);
+	if (!vars->ui_canvas.img)
+		return (err("İmage init error!"), 1);
+	vars->ui_canvas.addr = mlx_get_data_addr(vars->ui_canvas.img, &vars->ui_canvas.bits_per_pixel,
+			&vars->ui_canvas.line_length, &vars->ui_canvas.endian);
+	if (!vars->ui_canvas.addr)
 		return (err("İmage addr error!"), 1);
 	return (0);
 }
@@ -124,6 +132,13 @@ int	render(void *ptr)
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->gun_canvas.img,
 		(vars->render.sc_width / 2) - ((64 * TILE_GUN) / 2),
 		vars->render.sc_height - (64 * TILE_GUN));
+	// for (int y = 0; vars->render.sc_height > y; y++)
+	// {
+	// 	for (int x = 0; vars->render.sc_width > x; x++)
+	// 		pixel_put(&vars->ui_canvas, x, y, 0x000000);
+	// }
+	// scale_up_image(&vars->num[1], vars->ui_canvas, 83, 124, 1);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->num[0].img, 300, 300);
 	if (vars->player.shoot == 1)
 	{
 		if (get_time() - vars->s_time > 20)
@@ -139,5 +154,6 @@ int	render(void *ptr)
 	mlx_destroy_image(vars->mlx.mlx, vars->img.img);
 	mlx_destroy_image(vars->mlx.mlx, vars->mini_map.img);
 	mlx_destroy_image(vars->mlx.mlx, vars->gun_canvas.img);
+	mlx_destroy_image(vars->mlx.mlx, vars->ui_canvas.img);
 	return (0);
 }

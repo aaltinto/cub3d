@@ -32,7 +32,33 @@ static char	*get_xpm_filename(char *filename, int i)
 	return (tmp2);
 }
 
-int	get_sprites(t_vars *vars, int x, int y)
+int	get_num_sprites(t_vars *vars, int x, int y)
+{
+
+	int		i;
+	char	*filename;
+
+	i = -1;
+	while (++i < 10)
+	{
+		filename = get_xpm_filename("./textures/num", i);
+		if (!filename)
+			return (1);
+		vars->num[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
+				&x, &y);
+		if (!vars->num[i].img)
+			return (err("Can't find animation sprites"));
+		vars->num[i].addr = mlx_get_data_addr(vars->num[i].img, \
+		&vars->num[i].bits_per_pixel, &vars->num[i].line_length, \
+		&vars->num[i].endian);
+		if (!vars->num[i].addr)
+			return (err("Get data addr error"));
+		null_free(filename);
+	}
+	return (0);
+}
+
+int	get_gun_sprites(t_vars *vars, int x, int y)
 {
 	int		i;
 	char	*filename;

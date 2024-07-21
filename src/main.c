@@ -145,11 +145,14 @@ int	main(int ac, char **argv)
 			vars.render.sc_height, "cub3d");
 	if (!vars.mlx.win)
 		return (err("Mlx window error"), close_windows(&vars), 1);
-	if (get_textures(&vars) || get_sprites(&vars, 64 * TILE_SIZE, 64 * TILE_SIZE))
+	if (get_textures(&vars) || get_gun_sprites(&vars, 64 * TILE_SIZE, 64 * TILE_SIZE)
+		|| get_num_sprites(&vars, 83 * TILE_SIZE, 124 * TILE_SIZE))
 		return (close_windows(&vars), 1);
+	mlx_mouse_hide();
 	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);
 	mlx_hook(vars.mlx.win, 02, 0, key_capture, &vars);
 	mlx_hook(vars.mlx.win, 03, 0, key_release, &vars);
+	mlx_hook(vars.mlx.win, 04, 0, mouse_func, &vars);
 	mlx_loop_hook(vars.mlx.mlx, render, (void *)(&vars));
 	mlx_loop(vars.mlx.mlx);
 	return (close_windows(&vars), 0);
