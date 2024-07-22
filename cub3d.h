@@ -114,6 +114,7 @@ typedef struct s_vars
 	char		**map;
 	int			map_w;
 	int			map_h;
+	int			ammo;
 	size_t		s_time;
 	char		*raw_map;
 	int			fov_angle;

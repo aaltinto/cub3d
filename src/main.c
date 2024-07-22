@@ -79,6 +79,7 @@ int	marche(t_vars *vars)
 	while (++i < 5)
 		vars->textures.walls[i] = NULL;
 	vars->player.shoot = 0;
+	vars->ammo = 10;
 	vars->player.ani_i = 0;
 	vars->mlx.mlx = NULL;
 	vars->mlx.win = NULL;
@@ -146,7 +147,7 @@ int	main(int ac, char **argv)
 	if (!vars.mlx.win)
 		return (err("Mlx window error"), close_windows(&vars), 1);
 	if (get_textures(&vars) || get_gun_sprites(&vars, 64 * TILE_SIZE, 64 * TILE_SIZE)
-		|| get_num_sprites(&vars, 83 * TILE_SIZE, 124 * TILE_SIZE))
+		|| get_num_sprites(&vars, 7, 10))
 		return (close_windows(&vars), 1);
 	mlx_mouse_hide();
 	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);

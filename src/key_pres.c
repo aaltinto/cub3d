@@ -97,13 +97,26 @@ int	move_player(t_vars *vars, double x, double y)
 
 	return (0);
 }
-
+#include <unistd.h>
 int	mouse_func(int button, int x, int y, t_vars *vars)
 {
+	int	pid;
 	if (button == 1)
 	{
+		if (vars->ammo == 0)
+			return (0);
 		vars->s_time = get_time();
-		vars->player.shoot = 1;
+		if (vars->ammo > 0 && vars->player.shoot == 0)
+			vars->ammo--;
+		pid = fork();
+		if (vars->player.shoot == 0)
+		{
+			vars->player.shoot = 1;
+			if (pid == 0)
+				system("afplay xpm/Huntershoot.wav");
+		}
+		if (pid == 0)
+			exit(0);
 	}
 }
 

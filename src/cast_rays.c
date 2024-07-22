@@ -118,7 +118,6 @@ void wall_height(t_vars *vars, double dist, int ray, t_ray *ray_data)
 	if (b_pix > vars->render.sc_height)
 		b_pix = vars->render.sc_height;
 	tex_x = calc_texture(vars, ray_data, dist);
-	//printf("%i\n", tex_x);
 	step = (double)tex_height / wall_height;
 	tex_pos = (t_pix - vars->render.sc_height / 2 + wall_height / 2) * step;
 	while (t_pix < b_pix)

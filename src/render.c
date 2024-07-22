@@ -77,7 +77,7 @@ int	fill_background(t_vars *vars)
 	return (0);
 }
 
-void scale_up_image(t_data *data, t_data canvas, int original_width, int original_height, int tile_size)
+void scale_up_image(t_data *data, t_data canvas, int original_width, int original_height, double tile_size, int s_x, int s_y)
 {
 	for (int y = 0; y < original_height; y++)
 	{
@@ -87,7 +87,7 @@ void scale_up_image(t_data *data, t_data canvas, int original_width, int origina
 			{
 				for (int tx = 0; tx < tile_size; tx++)
 				{
-					pixel_put(&canvas, (x * tile_size) + tx, (y * tile_size) + ty, texture_color(data, x, y));
+					pixel_put(&canvas, (x * tile_size) + tx + s_x, (y * tile_size) + ty + s_y, texture_color(data, x, y));
 				}
 			}
 		}
@@ -95,6 +95,23 @@ void scale_up_image(t_data *data, t_data canvas, int original_width, int origina
 }
 #include <unistd.h>
 #include <sys/time.h>
+
+int	calculate_ammo_count(t_vars *vars, double pos_tile)
+{
+	int	ammo;
+	int	pos;
+
+	ammo = vars->ammo;
+	pos = 0;
+	while (ammo != 0)
+	{
+		scale_up_image(&vars->num[ammo % 10], vars->ui_canvas, 7, 10, pos_tile, vars->render.sc_width * 0.8 - pos * 7, vars->render.sc_height * 0.8);
+		ammo /= 10;
+		pos += pos_tile;
+	}
+	if (vars->ammo == 0)
+		scale_up_image(&vars->num[ammo % 10], vars->ui_canvas, 7, 10, pos_tile, vars->render.sc_width * 0.8 + pos, vars->render.sc_height * 0.8);
+}
 
 size_t	get_time(void)
 {
@@ -128,20 +145,20 @@ int	render(void *ptr)
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->mini_map.img,
 		0, 0);
-	scale_up_image(&vars->gun[vars->player.ani_i], vars->gun_canvas, 64, 64, TILE_GUN);
+	scale_up_image(&vars->gun[vars->player.ani_i], vars->gun_canvas, 64, 64, TILE_GUN, 0, 0);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->gun_canvas.img,
 		(vars->render.sc_width / 2) - ((64 * TILE_GUN) / 2),
 		vars->render.sc_height - (64 * TILE_GUN));
-	// for (int y = 0; vars->render.sc_height > y; y++)
-	// {
-	// 	for (int x = 0; vars->render.sc_width > x; x++)
-	// 		pixel_put(&vars->ui_canvas, x, y, 0x000000);
-	// }
-	// scale_up_image(&vars->num[1], vars->ui_canvas, 83, 124, 1);
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->num[0].img, 300, 300);
+	for (int y = 0; vars->render.sc_height > y; y++)
+	{
+		for (int x = 0; vars->render.sc_width > x; x++)
+			pixel_put(&vars->ui_canvas, x, y, texture_color(&vars->num[0], 0, 0));
+	}
+	calculate_ammo_count(vars, 3.5);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img, 0, 0);
 	if (vars->player.shoot == 1)
 	{
-		if (get_time() - vars->s_time > 20)
+		if (get_time() - vars->s_time > 7 + vars->player.ani_i)
 			vars->player.ani_i++;
 		if (vars->player.ani_i >= 10)
 		{
