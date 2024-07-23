@@ -10,27 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
-#include "../gnl/get_next_line.h"
-#include "../libft/libft.h"
+#include "../../includes/cub3d.h"
+#include "../../gnl/get_next_line.h"
+#include "../../libft/libft.h"
 #include <fcntl.h>
 #include <stdio.h>
-
-// int	fill_map(char **map, t_vars *vars)
-// {
-// 	int	i;
-
-// 	vars->map = (char **)malloc((double_counter(map) + 1) * sizeof(char *));
-// 	i = -1;
-// 	while (map[++i])
-// 	{
-// 		vars->map[i] = ft_strdup(map[i]);
-// 		if (!vars->map[i])
-// 			return (err("Strdup error"));
-// 	}
-// 	vars->map[i] = NULL;
-// 	return (0);
-// }
 
 int	check_border_close(char **map, int i, int j, int len)
 {

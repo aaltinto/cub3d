@@ -139,7 +139,6 @@ int		double_counter(char **str);
 char	**reallocate_double(char **str);
 int		find_longest_line(char **str);
 int		free_doubles(char **str);
-int		free_doubles2(void **str, int len);
 int		parse_init(t_vars *vars, char *map);
 int		init_textures(t_textures *textures, char *tmp);
 int		extract_rgb(t_vars *vars);

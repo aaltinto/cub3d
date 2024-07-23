@@ -1,6 +1,6 @@
-#include "../cub3d.h"
-#include "../minilibx/mlx.h"
-#include "../libft/libft.h"
+#include "../../includes/cub3d.h"
+#include "../../minilibx/mlx.h"
+#include "../../libft/libft.h"
 #include <math.h>
 
 double nor_angle(double angle) {

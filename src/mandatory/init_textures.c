@@ -10,78 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
-#include "../libft/libft.h"
-#include "../minilibx/mlx.h"
-
-static char	*get_xpm_filename(char *filename, int i)
-{
-	char	*tmp;
-	char	*tmp2;
-	char	*num;
-
-	num = ft_itoa(i);
-	if (!num)
-		return (err("Itoa error"), NULL);
-	tmp = ft_strjoin(filename, num);
-	if (null_free(num), !tmp)
-		return (err("Strjoin err"), NULL);
-	tmp2 = ft_strjoin(tmp, ".xpm");
-	if (null_free(tmp), !tmp2)
-		return (err("Strjoin err"), NULL);
-	return (tmp2);
-}
-
-int	get_num_sprites(t_vars *vars, int x, int y)
-{
-
-	int		i;
-	char	*filename;
-
-	i = -1;
-	while (++i < 10)
-	{
-		filename = get_xpm_filename("./textures/num", i);
-		if (!filename)
-			return (1);
-		vars->num[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
-				&x, &y);
-		if (!vars->num[i].img)
-			return (err("Can't find animation sprites"));
-		vars->num[i].addr = mlx_get_data_addr(vars->num[i].img, \
-		&vars->num[i].bits_per_pixel, &vars->num[i].line_length, \
-		&vars->num[i].endian);
-		if (!vars->num[i].addr)
-			return (err("Get data addr error"));
-		null_free(filename);
-	}
-	return (0);
-}
-
-int	get_gun_sprites(t_vars *vars, int x, int y)
-{
-	int		i;
-	char	*filename;
-
-	i = -1;
-	while (++i < 10)
-	{
-		filename = get_xpm_filename("./xpm/Hunter", i + 1);
-		if (!filename)
-			return (1);
-		vars->gun[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
-				&x, &y);
-		if (!vars->gun[i].img)
-			return (err("Can't find animation sprites"));
-		vars->gun[i].addr = mlx_get_data_addr(vars->gun[i].img, \
-		&vars->gun[i].bits_per_pixel, &vars->gun[i].line_length, \
-		&vars->gun[i].endian);
-		if (!vars->gun[i].addr)
-			return (err("Get data addr error"));
-		null_free(filename);
-	}
-	return (0);
-}
+#include "../../includes/cub3d.h"
+#include "../../libft/libft.h"
+#include "../../minilibx/mlx.h"
 
 int	get_walls(t_textures *textures, char *tmp, int dir)
 {

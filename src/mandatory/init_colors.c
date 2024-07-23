@@ -10,14 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
-#include "../libft/libft.h"
+#include "../../includes/cub3d.h"
+#include "../../libft/libft.h"
 #include <stdio.h>
 
-int	extract_rgb(t_vars *vars)
+int	extract_floor_rgb(t_vars *vars)
 {
 	char	**tmp;
-	char	**tmp2;
 	int		i;
 
 	tmp = ft_split(vars->textures.floor, ',');
@@ -33,20 +32,28 @@ int	extract_rgb(t_vars *vars)
 		vars->textures.floor_rgb[i] = ft_atoi(tmp[i]);
 	}
 	free_doubles(tmp);
-	tmp2 = ft_split(vars->textures.ceiling, ',');
-	if (!tmp2)
+	return (0);
+}
+
+int	extract_rgb(t_vars *vars)
+{
+	char	**tmp;
+	int		i;
+
+	tmp = ft_split(vars->textures.ceiling, ',');
+	if (!tmp)
 		return (err("Split error"));
-	if (double_counter(tmp2) != 3)
+	if (double_counter(tmp) != 3)
 		return (err("Error! Invalid color format"));
 	i = -1;
-	while (tmp2[++i])
+	while (tmp[++i])
 	{
-		if (ft_atoi(tmp2[i]) < 0 || ft_atoi(tmp2[i]) > 255)
+		if (ft_atoi(tmp[i]) < 0 || ft_atoi(tmp[i]) > 255)
 			return (err("Error! Invalid ceiling color"));
-		vars->textures.ceiling_rgb[i] = ft_atoi(tmp2[i]);
+		vars->textures.ceiling_rgb[i] = ft_atoi(tmp[i]);
 	}
-	free_doubles(tmp2);
-	return (0);
+	free_doubles(tmp);
+	return (extract_floor_rgb(vars));
 }
 
 int	color_init(t_vars *vars, char *tmp)

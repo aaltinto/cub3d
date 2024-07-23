@@ -2,19 +2,19 @@ CC = gcc
 RM = rm -f
 CFLAGS =  -g
 OpenGL = -framework OpenGL -framework AppKit
-SRC = src/main.c\
-		src/map_reader.c\
-		src/free_errors.c\
-		src/init_textures.c\
-		src/init_colors.c\
-		src/render.c\
-		src/utils.c\
-		src/key_pres.c\
-		src/mini_map.c\
-		src/ray_utils.c\
-		src/render_utils.c\
-		src/map.c\
-		src/cast_rays.c
+SRC = src/mandatory/main.c\
+		src/mandatory/map_reader.c\
+		src/mandatory/free_errors.c\
+		src/mandatory/init_textures.c\
+		src/mandatory/init_colors.c\
+		src/mandatory/render.c\
+		src/mandatory/utils.c\
+		src/mandatory/key_pres.c\
+		src/mandatory/ray_utils.c\
+		src/mandatory/render_utils.c\
+		src/mandatory/map.c\
+		src/mandatory/set_up.c\
+		src/mandatory/cast_rays.c
 
 LIB = libft/libft.a
 GNL = gnl/gnl.a
@@ -35,6 +35,7 @@ clean:
 	@make clean -C libft
 	@make clean -C gnl
 	$(RM) $(OBJ)
+	$(RM) $(OBJ_BNS)
 
 fclean: clean
 	$(RM) $(NAME)

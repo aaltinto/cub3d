@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
-#include "../libft/libft.h"
+#include "../../includes/cub3d.h"
+#include "../../libft/libft.h"
 
 static int	detect_missing_ind(t_vars *vars)
 {
@@ -72,8 +72,9 @@ int	parse_init(t_vars *vars, char *map)
 			return (free_doubles(map_tmp), null_free(tmp2), 1);
 		null_free(tmp2);
 	}
-	if (!vars->textures.walls[NO] || !vars->textures.walls[SO] || !vars->textures.walls[WE] \
-	|| !vars->textures.walls[EA] || !vars->textures.floor || !vars->textures.ceiling)
+	if (!vars->textures.walls[NO] || !vars->textures.walls[SO] \
+	|| !vars->textures.walls[WE] || !vars->textures.walls[EA] \
+	|| !vars->textures.floor || !vars->textures.ceiling)
 		return (free_doubles(map_tmp), err("Error! Missing indicators:"),
 			detect_missing_ind(vars));
 	return (free_doubles(map_tmp), 0);
