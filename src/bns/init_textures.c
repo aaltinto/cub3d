@@ -23,9 +23,11 @@ static char	*get_xpm_filename(char *filename, int i)
 	num = ft_itoa(i);
 	if (!num)
 		return (err("Itoa error"), NULL);
+	ft_putendl_fd(num, 1);
 	tmp = ft_strjoin(filename, num);
 	if (null_free(num), !tmp)
 		return (err("Strjoin err"), NULL);
+	ft_putendl_fd(tmp, 1);
 	tmp2 = ft_strjoin(tmp, ".xpm");
 	if (null_free(tmp), !tmp2)
 		return (err("Strjoin err"), NULL);
@@ -65,22 +67,21 @@ int	get_magnum_sprites(t_vars *vars, int x, int y)
 	int		ani_count;
 	char	*filename;
 
-	vars->gun[0] = (t_data *)malloc(sizeof(t_data) * 10);
-	if (!vars->gun[0])
-		return (err("Malloc error"));
 	j = -1;
 	while (++j < 3)
 	{
 		ani_count = 0;
 		if (j == 1)
 			ani_count = 5;
+		vars->gun[j] = (t_data *)malloc(sizeof(t_data) * (10 + ani_count));
+		if (!vars->gun[j])
+			return (err("Malloc error"));
 		i = -1;
 		while (++i < 10 + ani_count)
 		{
 			filename = get_xpm_filename(vars->gun_name[j], i + 1);
 			if (!filename)
 				return (1);
-			ft_putendl_fd(filename, 1);
 			vars->gun[j][i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
 					&x, &y);
 			if (!vars->gun[j][i].img)
@@ -95,32 +96,6 @@ int	get_magnum_sprites(t_vars *vars, int x, int y)
 	}
 	return (0);
 }
-
-// int	get_shotgun_sprites(t_vars *vars, int x, int y)
-// {
-// 	int		i;
-// 	char	*filename;
-
-// 	vars->gun[1] = (t_data *)malloc(sizeof(t_data) * 15);
-// 	i = -1;
-// 	while (++i < 15)
-// 	{
-// 		filename = get_xpm_filename("./xpm/Talon", i + 1);
-// 		if (!filename)
-// 			return (1);
-// 		vars->gun[1][i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
-// 				&x, &y);
-// 		if (!vars->gun[1][i].img)
-// 			return (err("Can't find animation sprites"));
-// 		vars->gun[1][i].addr = mlx_get_data_addr(vars->gun[1][i].img, \
-// 		&vars->gun[1][i].bits_per_pixel, &vars->gun[1][i].line_length, \
-// 		&vars->gun[1][i].endian);
-// 		if (!vars->gun[1][i].addr)
-// 			return (err("Get data addr error"));
-// 		null_free(filename);
-// 	}
-// 	return (0);
-// }
 
 int	get_walls(t_textures *textures, char *tmp, int dir)
 {

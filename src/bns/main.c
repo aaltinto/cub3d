@@ -94,6 +94,9 @@ int	marche(t_vars *vars)
 	while (++i < 5)
 		vars->textures.walls[i] = NULL;
 	vars->player.shoot = 0;
+	vars->gun_name = malloc(sizeof(char *) * 4);
+	if (!vars->gun_name)
+		return(err("Malloc error"));
 	vars->gun_name[0] = ft_strdup("./xpm/Hunter");
 	vars->gun_name[1] = ft_strdup("./xpm/Talon");
 	vars->gun_name[2] = ft_strdup("./xpm/Therm");

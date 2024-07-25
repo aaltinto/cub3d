@@ -114,7 +114,7 @@ typedef struct s_vars
 	t_render	render;
 	t_keys		keys;
 	char		**map;
-	char		*gun_name[4];
+	char		**gun_name;
 	int			map_w;
 	int			map_h;
 	int			ammo;
