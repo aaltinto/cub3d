@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
-#include "../libft/libft.h"
+#include "../../includes/bonus.h"
+#include "../../libft/libft.h"
 
 static int	detect_missing_ind(t_vars *vars)
 {

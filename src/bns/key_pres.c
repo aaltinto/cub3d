@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
-#include "../libft/libft.h"
-#include "../minilibx/mlx.h"
+#include "../../includes/bonus.h"
+#include "../../libft/libft.h"
+#include "../../minilibx/mlx.h"
 #include <math.h>
 #define CAMERA_DISTANCE 10;
 
@@ -54,8 +54,6 @@ int	mouse_move(t_vars *vars)
 	mlx_mouse_get_pos(vars->mlx.win, &mx, &my);
 	if (mx > x + 361 || mx < x - 361)
 		mlx_mouse_move(vars->mlx.win, x, y);
-	mx = mx / 2;
-	my = mx / 2;
 	angle = mx * 0.05;
 	vars->player.p_angle = nor_angle(angle);
 }
@@ -113,7 +111,14 @@ int	mouse_func(int button, int x, int y, t_vars *vars)
 		{
 			vars->player.shoot = 1;
 			if (pid == 0)
-				system("afplay xpm/Huntershoot.wav");
+			{
+				if (!vars->player.gun_type)
+					system("afplay xpm/Huntershoot.wav");
+				else if (vars->player.gun_type == 1)
+					system("afplay xpm/Talonshoot.wav");
+				else
+					system("afplay xpm/Thermshoot.wav");
+			}
 		}
 		if (pid == 0)
 			exit(0);
@@ -144,6 +149,7 @@ int	key_capture(int keycode, t_vars *vars)
 	double	x;
 	double	y;
 
+	printf("%d\n", keycode);
 	if (keycode == ESC)
 		close_windows(vars);
 	if (keycode == ARROW_R)
@@ -160,5 +166,11 @@ int	key_capture(int keycode, t_vars *vars)
 		vars->keys.key_d = 1;
 	if (keycode == SHIFT)
 		vars->player.running = 2.50;
+	if (keycode == 18)
+		vars->player.gun_type = 0;
+	if (keycode == 19)
+		vars->player.gun_type = 1;
+	if (keycode == 20)
+		vars->player.gun_type = 2;
 	return (0);
 }

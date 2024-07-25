@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
-#include "../libft/libft.h"
-#include "../minilibx/mlx.h"
+#include "../../includes/bonus.h"
+#include "../../libft/libft.h"
+#include "../../minilibx/mlx.h"
 
 static char	*get_xpm_filename(char *filename, int i)
 {
@@ -58,30 +58,69 @@ int	get_num_sprites(t_vars *vars, int x, int y)
 	return (0);
 }
 
-int	get_gun_sprites(t_vars *vars, int x, int y)
+int	get_magnum_sprites(t_vars *vars, int x, int y)
 {
 	int		i;
+	int		j;
+	int		ani_count;
 	char	*filename;
 
-	i = -1;
-	while (++i < 10)
+	vars->gun[0] = (t_data *)malloc(sizeof(t_data) * 10);
+	if (!vars->gun[0])
+		return (err("Malloc error"));
+	j = -1;
+	while (++j < 3)
 	{
-		filename = get_xpm_filename("./xpm/Hunter", i + 1);
-		if (!filename)
-			return (1);
-		vars->gun[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
-				&x, &y);
-		if (!vars->gun[i].img)
-			return (err("Can't find animation sprites"));
-		vars->gun[i].addr = mlx_get_data_addr(vars->gun[i].img, \
-		&vars->gun[i].bits_per_pixel, &vars->gun[i].line_length, \
-		&vars->gun[i].endian);
-		if (!vars->gun[i].addr)
-			return (err("Get data addr error"));
-		null_free(filename);
+		ani_count = 0;
+		if (j == 1)
+			ani_count = 5;
+		i = -1;
+		while (++i < 10 + ani_count)
+		{
+			filename = get_xpm_filename(vars->gun_name[j], i + 1);
+			if (!filename)
+				return (1);
+			ft_putendl_fd(filename, 1);
+			vars->gun[j][i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
+					&x, &y);
+			if (!vars->gun[j][i].img)
+				return (err("Can't find animation sprites"));
+			vars->gun[j][i].addr = mlx_get_data_addr(vars->gun[j][i].img, \
+			&vars->gun[j][i].bits_per_pixel, &vars->gun[j][i].line_length, \
+			&vars->gun[j][i].endian);
+			if (!vars->gun[j][i].addr)
+				return (err("Get data addr error"));
+			null_free(filename);
+		}
 	}
 	return (0);
 }
+
+// int	get_shotgun_sprites(t_vars *vars, int x, int y)
+// {
+// 	int		i;
+// 	char	*filename;
+
+// 	vars->gun[1] = (t_data *)malloc(sizeof(t_data) * 15);
+// 	i = -1;
+// 	while (++i < 15)
+// 	{
+// 		filename = get_xpm_filename("./xpm/Talon", i + 1);
+// 		if (!filename)
+// 			return (1);
+// 		vars->gun[1][i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
+// 				&x, &y);
+// 		if (!vars->gun[1][i].img)
+// 			return (err("Can't find animation sprites"));
+// 		vars->gun[1][i].addr = mlx_get_data_addr(vars->gun[1][i].img, \
+// 		&vars->gun[1][i].bits_per_pixel, &vars->gun[1][i].line_length, \
+// 		&vars->gun[1][i].endian);
+// 		if (!vars->gun[1][i].addr)
+// 			return (err("Get data addr error"));
+// 		null_free(filename);
+// 	}
+// 	return (0);
+// }
 
 int	get_walls(t_textures *textures, char *tmp, int dir)
 {

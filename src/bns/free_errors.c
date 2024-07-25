@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft/libft.h"
-#include "../cub3d.h"
-#include "../minilibx/mlx.h"
+#include "../../libft/libft.h"
+#include "../../includes/bonus.h"
+#include "../../minilibx/mlx.h"
 
 int	err(char *str)
 {
@@ -56,7 +56,7 @@ int	null_free(void *ptr)
 
 void	abort_mission(t_vars *vars)
 {
-	free_doubles(vars->map);
+	// free_doubles(vars->map);
 	null_free(vars->textures.ceiling);
 	null_free(vars->textures.floor);
 	null_free(vars->textures.walls[0]);

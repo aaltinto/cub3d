@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
+#include "../../includes/bonus.h"
 #include <math.h>
 
 double	nor_angle(double angle)

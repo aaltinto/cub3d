@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
-#include "../libft/libft.h"
+#include "../../includes/bonus.h"
+#include "../../libft/libft.h"
 #include <stdio.h>
 
 int	extract_rgb(t_vars *vars)

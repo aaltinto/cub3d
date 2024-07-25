@@ -11,60 +11,75 @@
 /* ************************************************************************** */
 
 #include <stdio.h>
-#include "../cub3d.h"
-#include "../libft/libft.h"
-#include "../minilibx/mlx.h"
+#include "../../includes/bonus.h"
+#include "../../libft/libft.h"
+#include "../../minilibx/mlx.h"
 #include <unistd.h>
 #include <math.h>
 
 static int	get_images(t_vars *vars)
 {
-	vars->xpm[NO].addr = mlx_get_data_addr(vars->xpm[NO].img, \
-		&(vars->xpm[NO].bits_per_pixel), &(vars->xpm[NO].line_length), \
-		&(vars->xpm[NO].endian));
-	if (!vars->xpm[NO].addr)
+	t_data	*xpm;
+
+	xpm = vars->xpm;
+	xpm[NO].addr = mlx_get_data_addr(xpm[NO].img, &(xpm[NO].bits_per_pixel),
+		&(xpm[NO].line_length), &(xpm[NO].endian));
+	if (!xpm[NO].addr)
 		return (err("Get data addr error: 'NO'"));
-	vars->xpm[SO].addr = mlx_get_data_addr(vars->xpm[SO].img, \
-		&(vars->xpm[SO].bits_per_pixel), &(vars->xpm[SO].line_length), \
-		&(vars->xpm[SO].endian));
-	if (!vars->xpm[SO].addr)
+	xpm[SO].addr = mlx_get_data_addr(xpm[SO].img, &(xpm[SO].bits_per_pixel),
+		&(xpm[SO].line_length), &(xpm[SO].endian));
+	if (!xpm[SO].addr)
 		return (err("Get data addr error: 'SO'"));
-	vars->xpm[WE].addr = mlx_get_data_addr(vars->xpm[WE].img, \
-		&vars->xpm[WE].bits_per_pixel, &vars->xpm[WE].line_length, \
-		&vars->xpm[WE].endian);
-	if (!vars->xpm[WE].addr)
+	xpm[WE].addr = mlx_get_data_addr(xpm[WE].img, &xpm[WE].bits_per_pixel,
+		&xpm[WE].line_length, &xpm[WE].endian);
+	if (!xpm[WE].addr)
 		return (err("Get data addr error: 'WE'"));
-	vars->xpm[EA].addr = mlx_get_data_addr(vars->xpm[EA].img, \
-		&vars->xpm[EA].bits_per_pixel, &vars->xpm[EA].line_length, \
-		&vars->xpm[EA].endian);
-	if (!vars->xpm[EA].addr)
+	xpm[EA].addr = mlx_get_data_addr(xpm[EA].img, &xpm[EA].bits_per_pixel,
+		&xpm[EA].line_length, &xpm[EA].endian);
+	if (!xpm[EA].addr)
 		return (err("Get data addr error: 'EA'"));
+	vars->map_arrow.addr = mlx_get_data_addr(vars->map_arrow.img, \
+	&vars->map_arrow.bits_per_pixel, &vars->map_arrow.line_length, \
+	&vars->map_arrow.endian);
+	if (!vars->map_arrow.addr)
+		return (err("Get data addr error: map arrow"));
 	return (0);
+}
+
+int	wall_err(int i)
+{
+	if (i == NO)
+		return (err("can't get texture 'NO'"));
+	if (i == SO)
+		return (err("can't get texture 'SO'"));
+	if (i == WE)
+		return (err("can't get texture 'WE'"));
+	if (i == EA)
+		return (err("can't get texture 'EA'"));
 }
 
 int	get_textures(t_vars *vars)
 {
 	int	x;
 	int	y;
+	int	i;
 
 	x = 64;
 	y = 64;
-	vars->xpm[NO].img = mlx_xpm_file_to_image(vars->mlx.mlx, \
-		strip(vars->textures.walls[NO]), &x, &y);
-	if (!vars->xpm[NO].img)
-		return (err("can't get texture 'NO'"));
-	vars->xpm[SO].img = mlx_xpm_file_to_image(vars->mlx.mlx, \
-		strip(vars->textures.walls[SO]), &x, &y);
-	if (!vars->xpm[SO].img)
-		return (err("can't get texture 'SO'"));
-	vars->xpm[WE].img = mlx_xpm_file_to_image(vars->mlx.mlx, \
-		strip(vars->textures.walls[WE]), &x, &y);
-	if (!vars->xpm[WE].img)
-		return (err("can't get texture 'WE'"));
-	vars->xpm[EA].img = mlx_xpm_file_to_image(vars->mlx.mlx, \
-		strip(vars->textures.walls[EA]), &x, &y);
-	if (!vars->xpm[EA].img)
-		return (err("can't get texture 'EA'"));
+	i = -1;
+	while (++i < 4)
+	{
+		vars->xpm[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, \
+			strip(vars->textures.walls[i]), &x, &y);
+		if (!vars->xpm[i].img)
+			return (wall_err(i));
+	}
+	x = 48;
+	y = 48;
+	vars->map_arrow.img = mlx_xpm_file_to_image(vars->mlx.mlx,
+		"./textures/map_arrow.xpm", &x, &y);
+	if (!vars->map_arrow.img)
+		return (err("can't get texture map arrow"));
 	return (get_images(vars));
 }
 
@@ -79,6 +94,11 @@ int	marche(t_vars *vars)
 	while (++i < 5)
 		vars->textures.walls[i] = NULL;
 	vars->player.shoot = 0;
+	vars->gun_name[0] = ft_strdup("./xpm/Hunter");
+	vars->gun_name[1] = ft_strdup("./xpm/Talon");
+	vars->gun_name[2] = ft_strdup("./xpm/Therm");
+	vars->gun_name[3] = NULL;
+	vars->player.gun_type = 0;
 	vars->ammo = 10;
 	vars->player.ani_i = 0;
 	vars->mlx.mlx = NULL;
@@ -129,6 +149,8 @@ int	detect_player(t_vars *vars)
 	return (1);
 }
 
+
+
 int	main(int ac, char **argv)
 {
 	t_vars	vars;
@@ -146,7 +168,7 @@ int	main(int ac, char **argv)
 			vars.render.sc_height, "cub3d");
 	if (!vars.mlx.win)
 		return (err("Mlx window error"), close_windows(&vars), 1);
-	if (get_textures(&vars) || get_gun_sprites(&vars, 64 * TILE_SIZE, 64 * TILE_SIZE)
+	if (get_textures(&vars) || get_magnum_sprites(&vars, 64 * TILE_SIZE, 64 * TILE_SIZE)
 		|| get_num_sprites(&vars, 7, 10))
 		return (close_windows(&vars), 1);
 	mlx_mouse_hide();
