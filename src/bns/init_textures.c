@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
-#include "../libft/libft.h"
-#include "../minilibx/mlx.h"
+#include "../../includes/bonus.h"
+#include "../../libft/libft.h"
+#include "../../minilibx/mlx.h"
 
 static char	*get_xpm_filename(char *filename, int i)
 {
@@ -34,7 +34,6 @@ static char	*get_xpm_filename(char *filename, int i)
 
 int	get_num_sprites(t_vars *vars, int x, int y)
 {
-
 	int		i;
 	char	*filename;
 

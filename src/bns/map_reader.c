@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
-#include "../gnl/get_next_line.h"
-#include "../libft/libft.h"
+#include "../../includes/bonus.h"
+#include "../../gnl/get_next_line.h"
+#include "../../libft/libft.h"
 #include <fcntl.h>
 #include <stdio.h>
 
@@ -48,7 +48,6 @@ static int	check_borders(char	**map, t_vars *vars)
 	int		i;
 	int		j;
 	int		len;
-	char	**tmp_map;
 
 	free_doubles(vars->map);
 	vars->map = reallocate_double(map);

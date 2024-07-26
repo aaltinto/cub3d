@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
+#include "../../includes/bonus.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -62,31 +62,19 @@ int	check_hit(t_vars *vars, t_ray *ray)
 	return (0);
 }
 
-double	find_wall_distance(t_vars *vars, t_ray *ray)
+int	calc_texture(t_vars *vars, t_ray *ray, double dist)
 {
-	double	dist;
+	double	wall_x;
+	int		tex_x;
+	int		tex_width;
 
-	if (fill_variable(vars, ray) || find_side_dist(vars, ray))
-		return (-1);
-	if (check_hit(vars, ray))
-		return (-1);
+	tex_width = 64;
 	if (vars->render.flag == 0)
-		dist = ray->side_dist[X] - ray->delta_dist[X];
+		wall_x = vars->player.camera[Y] / TILE_SIZE + (dist / \
+		cos(vars->render.ray_angle - vars->player.p_angle)) * ray->raydir[Y];
 	else
-		dist = ray->side_dist[Y] - ray->delta_dist[Y];
-	return (dist * cos(vars->render.ray_angle - vars->player.p_angle));
-}
-
-int calc_texture(t_vars *vars, t_ray *ray, double dist)
-{
-	double wall_x;
-	int tex_x;
-	int tex_width = 64;
-
-	if (vars->render.flag == 0)
-		wall_x = vars->player.camera[Y] / TILE_SIZE + (dist/cos(vars->render.ray_angle - vars->player.p_angle)) * ray->raydir[Y];
-	else
-		wall_x = vars->player.camera[X] / TILE_SIZE + (dist/cos(vars->render.ray_angle - vars->player.p_angle)) * ray->raydir[X];
+		wall_x = vars->player.camera[X] / TILE_SIZE + (dist / \
+		cos(vars->render.ray_angle - vars->player.p_angle)) * ray->raydir[X];
 	wall_x -= floor((wall_x));
 	tex_x = (int)(wall_x * (double)tex_width);
 	if (vars->render.flag == 0 && ray->raydir[X] > 0)
@@ -96,54 +84,56 @@ int calc_texture(t_vars *vars, t_ray *ray, double dist)
 	return (tex_x);
 }
 
-void wall_height(t_vars *vars, double dist, int ray, t_ray *ray_data)
+void	print_wall(t_vars *vars, double dist, int ray, t_ray *ray_data)
 {
-	int wall_height;
-	int t_pix;
-	int b_pix;
-	int tex_x;
-	int tex_y;
-	double step;
-	double tex_pos;
-	int tex_height = 64;
-	int tex_width = 64;
+	int		wall_height;
+	int		pix[2];
+	int		tex[2];
+	double	step;
+	double	tex_pos;
 
 	if (dist == 0.0f)
 		dist += 0.000001f;
 	wall_height = (int)(vars->render.sc_height / dist);
-	t_pix = -wall_height / 2 + vars->render.sc_height / 2;
-	if (t_pix < 0)
-		t_pix = 0;
-	b_pix = wall_height / 2 + vars->render.sc_height / 2;
-	if (b_pix > vars->render.sc_height)
-		b_pix = vars->render.sc_height;
-	tex_x = calc_texture(vars, ray_data, dist);
-	step = (double)tex_height / wall_height;
-	tex_pos = (t_pix - vars->render.sc_height / 2 + wall_height / 2) * step;
-	while (t_pix < b_pix)
+	pix[TOP] = -wall_height / 2 + vars->render.sc_height / 2;
+	if (pix[TOP] < 0)
+		pix[TOP] = 0;
+	pix[BOT] = wall_height / 2 + vars->render.sc_height / 2;
+	if (pix[BOT] > vars->render.sc_height)
+		pix[BOT] = vars->render.sc_height;
+	tex[X] = calc_texture(vars, ray_data, dist);
+	step = (double)64 / wall_height;
+	tex_pos = (pix[TOP] - vars->render.sc_height / 2 + wall_height / 2) * step;
+	while (pix[TOP] < pix[BOT])
 	{
-		tex_y = (int)tex_pos % tex_height;
+		tex[Y] = (int)tex_pos % 64;
 		tex_pos += step;
-		pixel_put(&vars->img, ray, t_pix++, get_color(vars, vars->render.flag, tex_x, tex_y));
+		pixel_put(&vars->img, ray, pix[TOP]++,
+			get_color(vars, vars->render.flag, tex[X], tex[Y]));
 	}
 }
-
 
 int	cast_rays(t_vars *vars)
 {
 	int		ray;
 	t_ray	ray_data;
 	double	wall_dist;
-	int		*side_dist;
 
 	vars->render.ray_angle = vars->player.p_angle - (vars->player.fov / 2);
 	ray = 0;
 	while (ray < vars->render.sc_width)
 	{
-		wall_dist = find_wall_distance(vars, &ray_data);
+		if (fill_variable(vars, &ray_data) || find_side_dist(vars, &ray_data))
+			return (-1);
+		if (check_hit(vars, &ray_data))
+			return (-1);
+		if (vars->render.flag == 0)
+			wall_dist = ray_data.side_dist[X] - ray_data.delta_dist[X];
+		else
+			wall_dist = ray_data.side_dist[Y] - ray_data.delta_dist[Y];
 		if (wall_dist < 0)
 			return (1);
-		wall_height(vars, wall_dist, ray, &ray_data);
+		print_wall(vars, wall_dist, ray, &ray_data);
 		ray++;
 		vars->render.ray_angle += vars->player.fov / vars->render.sc_width;
 	}

@@ -35,6 +35,8 @@
 
 # define X 0
 # define Y 1
+# define TOP 1
+# define BOT 0
 
 # define NO 0
 # define SO 1
@@ -162,6 +164,10 @@ int		texture_color(t_data *data, int x, int y);
 int		get_gun_sprites(t_vars *vars, int x, int y);
 int		get_num_sprites(t_vars *vars, int x, int y);
 size_t	get_time(void);
-int	mouse_func(int button, int x, int y, t_vars *vars);
+int		mouse_func(int button, int x, int y, t_vars *vars);
+int		detect_player(t_vars *vars);
+int		get_textures(t_vars *vars);
+int		mouse_move(t_vars *vars);
+int		mouse_func(int button, int x, int y, t_vars *vars);
 
 #endif

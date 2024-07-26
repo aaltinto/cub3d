@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/cub3d.h"
+#include "../../includes/bonus.h"
 #include "../../minilibx/mlx.h"
 
 static int	get_images(t_vars *vars)

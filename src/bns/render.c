@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
-#include "../minilibx/mlx.h"
-#include "../libft/libft.h"
+#include "../../includes/bonus.h"
+#include "../../minilibx/mlx.h"
+#include "../../libft/libft.h"
 #include <math.h>
 #define TILE_GUN 13
 
@@ -111,6 +111,7 @@ int	calculate_ammo_count(t_vars *vars, double pos_tile)
 	}
 	if (vars->ammo == 0)
 		scale_up_image(&vars->num[ammo % 10], vars->ui_canvas, 7, 10, pos_tile, vars->render.sc_width * 0.8 + pos, vars->render.sc_height * 0.8);
+	return (0);
 }
 
 size_t	get_time(void)
@@ -125,10 +126,6 @@ size_t	get_time(void)
 int	render(void *ptr)
 {
 	t_vars	*vars;
-	size_t	s_time;
-	int		i;
-	int		x;
-	int		y;
 
 	vars = (t_vars *)ptr;
 	if (vars->player.running != 1 && vars->fov_angle >= 64)
@@ -158,7 +155,7 @@ int	render(void *ptr)
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img, 0, 0);
 	if (vars->player.shoot == 1)
 	{
-		if (get_time() - vars->s_time > 7 + vars->player.ani_i)
+		if ((int)(get_time() - vars->s_time) > 7 + vars->player.ani_i)
 			vars->player.ani_i++;
 		if (vars->player.ani_i >= 10)
 		{

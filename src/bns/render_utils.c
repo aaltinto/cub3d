@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
+#include "../../includes/bonus.h"
 
 void	pixel_put(t_data *data, int x, int y, int color)
 {

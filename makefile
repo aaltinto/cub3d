@@ -1,6 +1,6 @@
 CC = gcc
 RM = rm -f
-CFLAGS =  -g
+CFLAGS =  -Wall -Werror -Wextra -g
 OpenGL = -framework OpenGL -framework AppKit
 SRC = src/mandatory/main.c\
 		src/mandatory/map_reader.c\
@@ -15,11 +15,27 @@ SRC = src/mandatory/main.c\
 		src/mandatory/map.c\
 		src/mandatory/set_up.c\
 		src/mandatory/cast_rays.c
+SRC_BNS = src/bns/main.c\
+		src/bns/map_reader.c\
+		src/bns/set_up.c\
+		src/bns/free_errors.c\
+		src/bns/init_textures.c\
+		src/bns/init_colors.c\
+		src/bns/render.c\
+		src/bns/utils.c\
+		src/bns/key_pres.c\
+		src/bns/ray_utils.c\
+		src/bns/render_utils.c\
+		src/bns/map.c\
+		src/bns/mouse.c\
+		src/bns/mini_map.c\
+		src/bns/cast_rays.c
 
 LIB = libft/libft.a
 GNL = gnl/gnl.a
 MLX = minilibx/libmlx.a
 OBJ = $(SRC:.c=.o)
+OBJ_BNS = $(SRC_BNS:.c=.o)
 
 NAME = cub3d
 
@@ -30,6 +46,12 @@ $(NAME): $(OBJ)
 	@make all -C libft
 	@make all -C gnl
 	$(CC) $(CFLAGS) $(OBJ) $(GNL) $(LIB) $(MLX) $(OpenGL) -o $(NAME)
+
+bonus : $(OBJ_BNS)
+	@make all -C minilibx
+	@make all -C libft
+	@make all -C gnl
+	$(CC) $(CFLAGS) $(OBJ_BNS) $(GNL) $(LIB) $(MLX) $(OpenGL) -o $(NAME)
 
 clean:
 	@make clean -C libft

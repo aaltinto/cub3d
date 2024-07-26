@@ -10,27 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft/libft.h"
-#include "../cub3d.h"
-#include "../minilibx/mlx.h"
+#include "../../libft/libft.h"
+#include "../../includes/bonus.h"
+#include "../../minilibx/mlx.h"
 
 int	err(char *str)
 {
 	ft_putendl_fd(str, 2);
 	return (1);
-}
-
-int	free_doubles2(void **str, int len)
-{
-	int	i;
-
-	if (!str)
-		return (1);
-	i = -1;
-	while (++i < len)
-		free(str[i]);
-	free(str);
-	return (0);
 }
 
 int	free_doubles(char **str)
