@@ -32,7 +32,6 @@ static int	check_borders(char	**map, t_vars *vars)
 	int		i;
 	int		j;
 	int		len;
-	char	**tmp_map;
 
 	free_doubles(vars->map);
 	vars->map = reallocate_double(map);

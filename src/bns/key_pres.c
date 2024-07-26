@@ -12,9 +12,8 @@
 
 #include "../../includes/bonus.h"
 #include "../../libft/libft.h"
-#include "../../minilibx/mlx.h"
 #include <math.h>
-#define CAMERA_DISTANCE 10;
+#define CAMERA_DISTANCE 10
 
 static void	positions(t_vars *vars, double *x, double *y)
 {
@@ -40,22 +39,22 @@ static void	positions(t_vars *vars, double *x, double *y)
 	}
 }
 
-int	mouse_move(t_vars *vars)
+void	check_camera(t_vars *vars)
 {
-	int	mx;
-	int	my;
-	int	x;
-	int	y;
-	float	angle;
+	int	pos_x;
+	int	pos_y;
 
-	x =vars->render.sc_width/2;
-	y = vars->render.sc_height/2;
-	angle = vars->player.p_angle;
-	mlx_mouse_get_pos(vars->mlx.win, &mx, &my);
-	if (mx > x + 361 || mx < x - 361)
-		mlx_mouse_move(vars->mlx.win, x, y);
-	angle = mx * 0.05;
-	vars->player.p_angle = nor_angle(angle);
+	vars->player.camera[X] = vars->player.pos[X] - cos(vars->player.p_angle)
+		* CAMERA_DISTANCE;
+	vars->player.camera[Y] = vars->player.pos[Y] - sin(vars->player.p_angle)
+		* CAMERA_DISTANCE;
+	pos_x = vars->player.camera[X] / TILE_SIZE;
+	pos_y = vars->player.camera[Y] / TILE_SIZE;
+	if (vars->map[pos_y][pos_x] == '1')
+	{
+		vars->player.camera[X] = vars->player.pos[X];
+		vars->player.camera[Y] = vars->player.pos[Y];
+	}
 }
 
 int	move_player(t_vars *vars, double x, double y)
@@ -66,63 +65,20 @@ int	move_player(t_vars *vars, double x, double y)
 	int	map_y;
 
 	mouse_move(vars);
-
 	positions(vars, &x, &y);
 	new_x = (vars->player.pos[X] + x) / TILE_SIZE;
 	new_y = (vars->player.pos[Y] + y) / TILE_SIZE;
 	map_x = (vars->player.pos[X]) / TILE_SIZE;
 	map_y = (vars->player.pos[Y]) / TILE_SIZE;
-
 	if (double_counter(vars->map) < (new_y) || vars->map[new_y][map_x] == '1')
 		y = 0;
-	if (ft_strlen(vars->map[map_y]) < (new_x) || vars->map[map_y][new_x] == '1')
+	if ((int)ft_strlen(vars->map[map_y]) < (new_x)
+		|| vars->map[map_y][new_x] == '1')
 		x = 0;
-
 	vars->player.pos[X] += x;
 	vars->player.pos[Y] += y;
-
-	vars->player.camera[X] = vars->player.pos[X] - cos(vars->player.p_angle) * CAMERA_DISTANCE;
-	vars->player.camera[Y] = vars->player.pos[Y] - sin(vars->player.p_angle) * CAMERA_DISTANCE;
-
-	int camera_new_x = vars->player.camera[X] / TILE_SIZE;
-	int camera_new_y = vars->player.camera[Y] / TILE_SIZE;
-
-	if (vars->map[camera_new_y][camera_new_x] == '1')
-	{
-		vars->player.camera[X] = vars->player.pos[X];
-		vars->player.camera[Y] = vars->player.pos[Y];
-	}
-
+	check_camera(vars);
 	return (0);
-}
-#include <unistd.h>
-int	mouse_func(int button, int x, int y, t_vars *vars)
-{
-	int	pid;
-	if (button == 1)
-	{
-		if (vars->ammo == 0)
-			return (0);
-		vars->s_time = get_time();
-		if (vars->ammo > 0 && vars->player.shoot == 0)
-			vars->ammo--;
-		pid = fork();
-		if (vars->player.shoot == 0)
-		{
-			vars->player.shoot = 1;
-			if (pid == 0)
-			{
-				if (!vars->player.gun_type)
-					system("afplay xpm/Huntershoot.wav");
-				else if (vars->player.gun_type == 1)
-					system("afplay xpm/Talonshoot.wav");
-				else
-					system("afplay xpm/Thermshoot.wav");
-			}
-		}
-		if (pid == 0)
-			exit(0);
-	}
 }
 
 int	key_release(int keycode, t_vars *vars)
@@ -146,10 +102,6 @@ int	key_release(int keycode, t_vars *vars)
 
 int	key_capture(int keycode, t_vars *vars)
 {
-	double	x;
-	double	y;
-
-	printf("%d\n", keycode);
 	if (keycode == ESC)
 		close_windows(vars);
 	if (keycode == ARROW_R)

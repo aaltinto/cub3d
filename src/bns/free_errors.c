@@ -20,19 +20,6 @@ int	err(char *str)
 	return (1);
 }
 
-int	free_doubles2(void **str, int len)
-{
-	int	i;
-
-	if (!str)
-		return (1);
-	i = -1;
-	while (++i < len)
-		free(str[i]);
-	free(str);
-	return (0);
-}
-
 int	free_doubles(char **str)
 {
 	int	i;

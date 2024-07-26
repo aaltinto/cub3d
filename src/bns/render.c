@@ -126,10 +126,6 @@ size_t	get_time(void)
 int	render(void *ptr)
 {
 	t_vars	*vars;
-	size_t	s_time;
-	int		i;
-	int		x;
-	int		y;
 
 	vars = (t_vars *)ptr;
 	if (vars->player.running != 1 && vars->fov_angle >= 64)
@@ -161,7 +157,7 @@ int	render(void *ptr)
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img, 0, 0);
 	if (vars->player.shoot == 1)
 	{
-		if (get_time() - vars->s_time > 7 + vars->player.ani_i)
+		if ((int)(get_time() - vars->s_time) > 7 + vars->player.ani_i)
 			vars->player.ani_i++;
 		if (vars->player.gun_type != 1 && vars->player.ani_i >= 10)
 		{

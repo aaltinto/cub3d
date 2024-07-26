@@ -1,6 +1,6 @@
 CC = gcc
 RM = rm -f
-CFLAGS =  -g
+CFLAGS =  -Wall -Werror -Wextra -g
 OpenGL = -framework OpenGL -framework AppKit
 SRC = src/mandatory/main.c\
 		src/mandatory/map_reader.c\
@@ -17,6 +17,7 @@ SRC = src/mandatory/main.c\
 		src/mandatory/cast_rays.c
 SRC_BNS = src/bns/main.c\
 		src/bns/map_reader.c\
+		src/bns/set_up.c\
 		src/bns/free_errors.c\
 		src/bns/init_textures.c\
 		src/bns/init_colors.c\
@@ -26,9 +27,9 @@ SRC_BNS = src/bns/main.c\
 		src/bns/ray_utils.c\
 		src/bns/render_utils.c\
 		src/bns/map.c\
+		src/bns/mouse.c\
 		src/bns/mini_map.c\
-		src/bns/cast_rays.c\
-		#src/bns/set_up.c
+		src/bns/cast_rays.c
 
 LIB = libft/libft.a
 GNL = gnl/gnl.a

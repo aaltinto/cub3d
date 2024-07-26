@@ -36,29 +36,6 @@ int	color(t_vars *vars, int tile_x, int tile_y)
 		return (rgb_to_hex(0, 0, 0));
 }
 
-void	put_tiles(t_vars *vars, int x, int y, int color)
-{
-	int	i;
-	int	j;
-	int	scale_width;
-	int	scale_height;
-
-	scale_width = (int)(vars->render.sc_width * 0.20f) / MAP_TILE;
-	scale_height = (int)(vars->render.sc_height * 0.20f) / MAP_TILE;
-	j = 0;
-	while (j < scale_height)
-	{
-		i = 0;
-		while (i < scale_width)
-		{
-			pixel_put(&(vars->mini_map), x * scale_width + i, y * scale_height
-				+ j, color);
-			i++;
-		}
-		j++;
-	}
-}
-
 int render_mini_map(t_vars *vars)
 {
     int x, y;
