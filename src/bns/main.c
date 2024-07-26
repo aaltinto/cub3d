@@ -28,6 +28,14 @@ int	marche(t_vars *vars)
 	while (++i < 5)
 		vars->textures.walls[i] = NULL;
 	vars->player.shoot = 0;
+	vars->gun_name = malloc(sizeof(char *) * 4);
+	if (!vars->gun_name)
+		return(err("Malloc error"));
+	vars->gun_name[0] = ft_strdup("./xpm/Hunter");
+	vars->gun_name[1] = ft_strdup("./xpm/Talon");
+	vars->gun_name[2] = ft_strdup("./xpm/Therm");
+	vars->gun_name[3] = NULL;
+	vars->player.gun_type = 0;
 	vars->ammo = 10;
 	vars->player.ani_i = 0;
 	vars->mlx.mlx = NULL;
@@ -62,8 +70,8 @@ int	main(int ac, char **argv)
 			vars.render.sc_height, "cub3d");
 	if (!vars.mlx.win)
 		return (err("Mlx window error"), close_windows(&vars), 1);
-	if (get_textures(&vars) || get_gun_sprites(&vars, 64 * TILE_SIZE, 64 \
-		* TILE_SIZE) || get_num_sprites(&vars, 7, 10))
+	if (get_textures(&vars) || get_magnum_sprites(&vars, 64 * TILE_SIZE, 64 * TILE_SIZE)
+		|| get_num_sprites(&vars, 7, 10))
 		return (close_windows(&vars), 1);
 	mlx_mouse_hide();
 	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);

@@ -23,9 +23,11 @@ static char	*get_xpm_filename(char *filename, int i)
 	num = ft_itoa(i);
 	if (!num)
 		return (err("Itoa error"), NULL);
+	ft_putendl_fd(num, 1);
 	tmp = ft_strjoin(filename, num);
 	if (null_free(num), !tmp)
 		return (err("Strjoin err"), NULL);
+	ft_putendl_fd(tmp, 1);
 	tmp2 = ft_strjoin(tmp, ".xpm");
 	if (null_free(tmp), !tmp2)
 		return (err("Strjoin err"), NULL);
@@ -57,27 +59,39 @@ int	get_num_sprites(t_vars *vars, int x, int y)
 	return (0);
 }
 
-int	get_gun_sprites(t_vars *vars, int x, int y)
+int	get_magnum_sprites(t_vars *vars, int x, int y)
 {
 	int		i;
+	int		j;
+	int		ani_count;
 	char	*filename;
 
-	i = -1;
-	while (++i < 10)
+	j = -1;
+	while (++j < 3)
 	{
-		filename = get_xpm_filename("./xpm/Hunter", i + 1);
-		if (!filename)
-			return (1);
-		vars->gun[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
-				&x, &y);
-		if (!vars->gun[i].img)
-			return (err("Can't find animation sprites"));
-		vars->gun[i].addr = mlx_get_data_addr(vars->gun[i].img, \
-		&vars->gun[i].bits_per_pixel, &vars->gun[i].line_length, \
-		&vars->gun[i].endian);
-		if (!vars->gun[i].addr)
-			return (err("Get data addr error"));
-		null_free(filename);
+		ani_count = 0;
+		if (j == 1)
+			ani_count = 5;
+		vars->gun[j] = (t_data *)malloc(sizeof(t_data) * (10 + ani_count));
+		if (!vars->gun[j])
+			return (err("Malloc error"));
+		i = -1;
+		while (++i < 10 + ani_count)
+		{
+			filename = get_xpm_filename(vars->gun_name[j], i + 1);
+			if (!filename)
+				return (1);
+			vars->gun[j][i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
+					&x, &y);
+			if (!vars->gun[j][i].img)
+				return (err("Can't find animation sprites"));
+			vars->gun[j][i].addr = mlx_get_data_addr(vars->gun[j][i].img, \
+			&vars->gun[j][i].bits_per_pixel, &vars->gun[j][i].line_length, \
+			&vars->gun[j][i].endian);
+			if (!vars->gun[j][i].addr)
+				return (err("Get data addr error"));
+			null_free(filename);
+		}
 	}
 	return (0);
 }

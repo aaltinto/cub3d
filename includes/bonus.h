@@ -31,7 +31,7 @@
 
 # define TILE_SIZE 40
 # define MAP_TILE 20
-# define PLAYER_SPEED 1.0f
+# define PLAYER_SPEED 5.0f
 
 # define X 0
 # define Y 1
@@ -63,6 +63,7 @@ typedef struct s_player
 	double	running;
 	int		shoot;
 	int		ani_i;
+	int		gun_type;
 }	t_player;
 
 typedef struct s_textures
@@ -106,14 +107,16 @@ typedef struct s_vars
 	t_data		img;
 	t_data		mini_map;
 	t_data		xpm[4];
-	t_data		gun[10];
+	t_data		*gun[3];
 	t_data		num[10];
 	t_data		gun_canvas;
 	t_data		ui_canvas;
+	t_data		map_arrow;
 	t_player	player;
 	t_render	render;
 	t_keys		keys;
 	char		**map;
+	char		**gun_name;
 	int			map_w;
 	int			map_h;
 	int			ammo;
@@ -161,13 +164,14 @@ int		fill_variable(t_vars *vars, t_ray *ray);
 int		detect_player(t_vars *vars);
 int		get_canvas(t_vars *vars);
 int		texture_color(t_data *data, int x, int y);
-int		get_gun_sprites(t_vars *vars, int x, int y);
+int	get_shotgun_sprites(t_vars *vars, int x, int y);
+int	get_magnum_sprites(t_vars *vars, int x, int y);
 int		get_num_sprites(t_vars *vars, int x, int y);
 size_t	get_time(void);
 int		mouse_func(int button, int x, int y, t_vars *vars);
 int		detect_player(t_vars *vars);
 int		get_textures(t_vars *vars);
 int		mouse_move(t_vars *vars);
-int		mouse_func(int button, int x, int y, t_vars *vars);
+void scale_up_image(t_data *data, t_data canvas, int original_width, int original_height, double tile_size, int s_x, int s_y);
 
 #endif

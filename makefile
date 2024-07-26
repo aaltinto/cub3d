@@ -47,7 +47,7 @@ $(NAME): $(OBJ)
 	@make all -C gnl
 	$(CC) $(CFLAGS) $(OBJ) $(GNL) $(LIB) $(MLX) $(OpenGL) -o $(NAME)
 
-bonus : $(OBJ_BNS)
+bonus: $(OBJ_BNS)
 	@make all -C minilibx
 	@make all -C libft
 	@make all -C gnl
@@ -63,6 +63,8 @@ fclean: clean
 	$(RM) $(NAME)
 
 re: fclean $(NAME)
+
+bore: fclean $(OBJ_BNS) bonus
 
 mlx:
 	@make clean -C minilibx

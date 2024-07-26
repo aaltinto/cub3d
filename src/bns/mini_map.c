@@ -12,64 +12,8 @@
 
 #include "../../includes/bonus.h"
 #include "../../libft/libft.h"
+#include "../../minilibx/mlx.h"
 #include <math.h>
-
-void	draw_line(t_vars *vars, int x0, int y0, int x1, int y1, int color)
-{
-	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
-	int dy = abs(y1 - y0), sy = y0 < y1 ? 1 : -1; 
-	int err = (dx > dy ? dx : -dy) / 2, e2;
-
-	while (1)
-	{
-		pixel_put(&vars->mini_map, x0, y0, color);
-		if (x0 == x1 && y0 == y1) break;
-		e2 = err;
-		if (e2 > -dx) { err -= dy; x0 += sx; }
-		if (e2 < dy) { err += dx; y0 += sy; }
-	}
-}
-
-void	draw_arrow(t_vars *vars, int centerX, int centerY, int length, double angle, int color)
-{
-	int	endX = centerX + (int)(length * cos(angle));
-	int	endY = centerY + (int)(length * sin(angle));	
-
-	draw_line(vars, centerX, centerY, endX, endY, color);
-}
-
-void draw_circle(t_vars *vars, int color, int center_x, int center_y)
-{
-	int x;
-	int y;
-	int err;
-
-	y = 0;
-	x = TILE_SIZE * 0.20f;
-	err = 0;
-	while (x >= y)
-	{
-		pixel_put(&vars->mini_map, center_x + x, center_y + y, color);
-		pixel_put(&vars->mini_map, center_x + y, center_y + x, color);
-		pixel_put(&vars->mini_map, center_x - y, center_y + x, color);
-		pixel_put(&vars->mini_map, center_x - x, center_y + y, color);
-		pixel_put(&vars->mini_map, center_x - x, center_y - y, color);
-		pixel_put(&vars->mini_map, center_x - y, center_y - x, color);
-		pixel_put(&vars->mini_map, center_x + y, center_y - x, color);
-		pixel_put(&vars->mini_map, center_x + x, center_y - y, color);
-		if (err <= 0)
-		{
-			y += 1;
-			err += 2 * y + 1;
-		}
-		if (err > 0)
-		{
-			x -= 1;
-			err -= 2 * x + 1;
-		}
-	}
-	draw_arrow(vars, center_x, center_y, TILE_SIZE * 0.40f, vars->player.p_angle, color);
-}
 
 int	color(t_vars *vars, int tile_x, int tile_y)
 {
@@ -94,26 +38,42 @@ int	color(t_vars *vars, int tile_x, int tile_y)
 
 int render_mini_map(t_vars *vars)
 {
-	int	x;
-	int	y;
-	int	pos[2];
-	int	map_size_w;
-	int	map_size_h;
+    int x, y;
+    int pos_x, pos_y;
+    int map_size_w, map_size_h;
+    double angle_rad = nor_angle(vars->player.p_angle + M_PI / 2);
+    double cos_angle = cos(angle_rad);
+    double sin_angle = sin(angle_rad);
 
-	vars->map_h = double_counter(vars->map) * MAP_TILE;
-	vars->map_w = find_longest_line(vars->map) * MAP_TILE;
-	map_size_h = vars->render.sc_height * 0.20;
-	map_size_w = vars->render.sc_width * 0.20;
-	pos[X] = (vars->player.camera[X] / TILE_SIZE) * MAP_TILE - map_size_w / 2;
-	pos[Y] = (vars->player.camera[Y] / TILE_SIZE) * MAP_TILE - map_size_h / 2;
-	y = -1;
-	while (++y <= map_size_h)
-	{
-		x = -1;
-		while (++x <= map_size_w)
-			pixel_put(&vars->mini_map, x, y, color(vars, pos[X] + x,
-					pos[Y] + y));
-	}
-	return (draw_circle(vars, rgb_to_hex(255, 0, 0), map_size_w / 2,
-			map_size_h / 2), 0);
+    vars->map_h = double_counter(vars->map) * MAP_TILE;
+    vars->map_w = find_longest_line(vars->map) * MAP_TILE;
+    map_size_h = vars->render.sc_height * 0.20;
+    map_size_w = vars->render.sc_width * 0.20;
+    pos_x = (vars->player.camera[X] / TILE_SIZE) * MAP_TILE - map_size_w / 2;
+    pos_y = (vars->player.camera[Y] / TILE_SIZE) * MAP_TILE - map_size_h / 2;
+
+    int center_x = pos_x + map_size_w / 2;
+    int center_y = pos_y + map_size_h / 2;
+
+    for (y = 0; y <= map_size_h; ++y)
+    {
+        for (x = 0; x <= map_size_w; ++x)
+        {
+            // Translate point to origin
+            int translated_x = x - map_size_w / 2;
+            int translated_y = y - map_size_h / 2;
+
+            // Rotate point
+            int rotated_x = translated_x * cos_angle - translated_y * sin_angle;
+            int rotated_y = translated_x * sin_angle + translated_y * cos_angle;
+
+            // Translate point back
+            int final_x = rotated_x + center_x;
+            int final_y = rotated_y + center_y;
+
+            pixel_put(&vars->mini_map, x, y, color(vars, final_x, final_y));
+        }
+    }
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->mini_map.img, 0, 0);
+    return 0;
 }

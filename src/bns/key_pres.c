@@ -118,5 +118,11 @@ int	key_capture(int keycode, t_vars *vars)
 		vars->keys.key_d = 1;
 	if (keycode == SHIFT)
 		vars->player.running = 2.50;
+	if (keycode == 18)
+		vars->player.gun_type = 0;
+	if (keycode == 19)
+		vars->player.gun_type = 1;
+	if (keycode == 20)
+		vars->player.gun_type = 2;
 	return (0);
 }

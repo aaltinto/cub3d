@@ -14,7 +14,7 @@
 #include "../../minilibx/mlx.h"
 #include "../../libft/libft.h"
 #include <math.h>
-#define TILE_GUN 13
+#define TILE_GUN 9
 
 int	get_canvas(t_vars *vars)
 {
@@ -136,13 +136,14 @@ int	render(void *ptr)
 	get_canvas(vars);
 	if (fill_background(vars))
 		return (close_windows(vars), 1);
-	cast_rays(vars);
-	render_mini_map(vars);
 	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
+	cast_rays(vars);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->mini_map.img,
-		0, 0);
-	scale_up_image(&vars->gun[vars->player.ani_i], vars->gun_canvas, 64, 64, TILE_GUN, 0, 0);
+	render_mini_map(vars);
+	if (!vars->player.gun_type)
+		scale_up_image(&vars->gun[vars->player.gun_type][vars->player.ani_i], vars->gun_canvas, 64, 64, TILE_GUN, 0, 0);
+	else
+		scale_up_image(&vars->gun[vars->player.gun_type][vars->player.ani_i], vars->gun_canvas, 64, 64, TILE_GUN, 0, 0);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->gun_canvas.img,
 		(vars->render.sc_width / 2) - ((64 * TILE_GUN) / 2),
 		vars->render.sc_height - (64 * TILE_GUN));
@@ -151,13 +152,19 @@ int	render(void *ptr)
 		for (int x = 0; vars->render.sc_width > x; x++)
 			pixel_put(&vars->ui_canvas, x, y, texture_color(&vars->num[0], 0, 0));
 	}
+	scale_up_image(&vars->map_arrow, vars->ui_canvas, 48, 48, 0.5, vars->render.sc_width * 0.2 / 2 - 12, vars->render.sc_height * 0.2 / 2 - 12);
 	calculate_ammo_count(vars, 3.5);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img, 0, 0);
 	if (vars->player.shoot == 1)
 	{
 		if ((int)(get_time() - vars->s_time) > 7 + vars->player.ani_i)
 			vars->player.ani_i++;
-		if (vars->player.ani_i >= 10)
+		if (vars->player.gun_type != 1 && vars->player.ani_i >= 10)
+		{
+			vars->player.ani_i = 0;
+			vars->player.shoot = 0;
+		}
+		else if (vars->player.gun_type == 1 && vars->player.ani_i >= 15)
 		{
 			vars->player.ani_i = 0;
 			vars->player.shoot = 0;
