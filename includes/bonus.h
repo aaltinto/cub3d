@@ -31,6 +31,7 @@
 
 # define TILE_SIZE 40
 # define MAP_TILE 20
+# define TILE_GUN 9
 # define PLAYER_SPEED 5.0f
 
 # define X 0
@@ -135,6 +136,16 @@ typedef struct s_ray
 	int		side;
 }	t_ray;
 
+typedef struct s_args
+{
+	int		original_width;
+	int		original_height;
+	double	tile_size;
+	int		pos_x;
+	int		pos_y;
+}	t_img_args;
+
+
 //error
 int		err(char *str);
 int		null_free(void *ptr);
@@ -164,14 +175,17 @@ int		fill_variable(t_vars *vars, t_ray *ray);
 int		detect_player(t_vars *vars);
 int		get_canvas(t_vars *vars);
 int		texture_color(t_data *data, int x, int y);
-int	get_shotgun_sprites(t_vars *vars, int x, int y);
-int	get_magnum_sprites(t_vars *vars, int x, int y);
+int		get_magnum_sprites(t_vars *vars);
 int		get_num_sprites(t_vars *vars, int x, int y);
 size_t	get_time(void);
 int		mouse_func(int button, int x, int y, t_vars *vars);
 int		detect_player(t_vars *vars);
 int		get_textures(t_vars *vars);
 int		mouse_move(t_vars *vars);
-void scale_up_image(t_data *data, t_data canvas, int original_width, int original_height, double tile_size, int s_x, int s_y);
+int		render_gun(t_vars *vars);
+void	calculate_ammo_count(t_vars *vars, double pos_tile);
+void	render_ui(t_vars *vars);
+t_data	*fill_t_data(t_data *data, t_vars *vars, int width, int height);
+char	*get_xpm_filename(char *filename, int i);
 
 #endif

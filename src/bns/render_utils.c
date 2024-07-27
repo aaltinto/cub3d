@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../includes/bonus.h"
+#include <sys/time.h>
 
 void	pixel_put(t_data *data, int x, int y, int color)
 {
@@ -48,4 +49,13 @@ int	get_color(t_vars *vars, int flag, int x, int y)
 		else
 			return (texture_color(&vars->xpm[EA], x, y));
 	}
+}
+
+size_t	get_time(void)
+{
+	struct timeval	time;
+
+	if (gettimeofday(&time, NULL) != 0)
+		return (err("gettimeofday() error"), -1);
+	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }

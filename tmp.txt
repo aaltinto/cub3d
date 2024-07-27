@@ -1,0 +1,18 @@
+
+
+y = -1;
+	while (++y < len[Y])
+	{
+		x = -1;
+		while (++x < len[X])
+		{
+			tile[Y] = -1;
+			while (++tile[Y] < tile_size)
+			{
+				tile[X] = -1;
+				while (++tile[X] < tile_size)
+					pixel_put(&test, (x * tile_size) + tile[X], (y * tile_size)
+						+ tile[Y], texture_color(data, x, y));
+			}
+		}
+	}

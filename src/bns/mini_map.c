@@ -15,7 +15,7 @@
 #include "../../minilibx/mlx.h"
 #include <math.h>
 
-int	color(t_vars *vars, int tile_x, int tile_y)
+static int	color(t_vars *vars, int tile_x, int tile_y)
 {
 	int	max_x;
 	int	max_y;
@@ -36,44 +36,50 @@ int	color(t_vars *vars, int tile_x, int tile_y)
 		return (rgb_to_hex(0, 0, 0));
 }
 
-int render_mini_map(t_vars *vars)
+static void	put_tiles(t_vars *vars, int *pos, double cos_angle,
+	double sin_angle)
 {
-    int x, y;
-    int pos_x, pos_y;
-    int map_size_w, map_size_h;
-    double angle_rad = nor_angle(vars->player.p_angle + M_PI / 2);
-    double cos_angle = cos(angle_rad);
-    double sin_angle = sin(angle_rad);
+	int	x;
+	int	y;
+	int	map_size[2];
+	int	rotated[2];
+	int	center[2];
 
-    vars->map_h = double_counter(vars->map) * MAP_TILE;
-    vars->map_w = find_longest_line(vars->map) * MAP_TILE;
-    map_size_h = vars->render.sc_height * 0.20;
-    map_size_w = vars->render.sc_width * 0.20;
-    pos_x = (vars->player.camera[X] / TILE_SIZE) * MAP_TILE - map_size_w / 2;
-    pos_y = (vars->player.camera[Y] / TILE_SIZE) * MAP_TILE - map_size_h / 2;
+	map_size[Y] = vars->render.sc_height * 0.20;
+	map_size[X] = vars->render.sc_width * 0.20;
+	center[X] = pos[X] + map_size[X] / 2;
+	center[Y] = pos[Y] + map_size[Y] / 2;
+	y = -1;
+	while (++y <= map_size[Y])
+	{
+		x = -1;
+		while (++x <= map_size[X])
+		{
+			rotated[X] = (x - map_size[X] / 2) * cos_angle
+				- (y - map_size[Y] / 2) * sin_angle;
+			rotated[Y] = (x - map_size[X] / 2) * sin_angle + (y - map_size[Y]
+					/ 2) * cos_angle;
+			pixel_put(&vars->mini_map, x, y, color(vars, rotated[X] + center[X],
+					rotated[Y] + center[Y]));
+		}
+	}
+}
 
-    int center_x = pos_x + map_size_w / 2;
-    int center_y = pos_y + map_size_h / 2;
+int	render_mini_map(t_vars *vars)
+{
+	int		pos[2];
+	double	cos_angle;
+	double	sin_angle;
 
-    for (y = 0; y <= map_size_h; ++y)
-    {
-        for (x = 0; x <= map_size_w; ++x)
-        {
-            // Translate point to origin
-            int translated_x = x - map_size_w / 2;
-            int translated_y = y - map_size_h / 2;
-
-            // Rotate point
-            int rotated_x = translated_x * cos_angle - translated_y * sin_angle;
-            int rotated_y = translated_x * sin_angle + translated_y * cos_angle;
-
-            // Translate point back
-            int final_x = rotated_x + center_x;
-            int final_y = rotated_y + center_y;
-
-            pixel_put(&vars->mini_map, x, y, color(vars, final_x, final_y));
-        }
-    }
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->mini_map.img, 0, 0);
-    return 0;
+	cos_angle = cos(nor_angle(vars->player.p_angle + M_PI / 2));
+	sin_angle = sin(nor_angle(vars->player.p_angle + M_PI / 2));
+	vars->map_h = double_counter(vars->map) * MAP_TILE;
+	vars->map_w = find_longest_line(vars->map) * MAP_TILE;
+	pos[X] = (vars->player.camera[X] / TILE_SIZE) * MAP_TILE
+		- vars->render.sc_width * 0.10;
+	pos[Y] = (vars->player.camera[Y] / TILE_SIZE) * MAP_TILE
+		- vars->render.sc_height * 0.10;
+	put_tiles(vars, pos, cos_angle, sin_angle);
+	return (mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
+			vars->mini_map.img, 0, 0), 0);
 }

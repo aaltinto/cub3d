@@ -117,7 +117,6 @@ int	cast_rays(t_vars *vars)
 	int		ray;
 	t_ray	ray_data;
 	double	wall_dist;
-	int		*side_dist;
 
 	vars->render.ray_angle = vars->player.p_angle - (vars->player.fov / 2);
 	ray = 0;
@@ -133,6 +132,7 @@ int	cast_rays(t_vars *vars)
 			wall_dist = ray_data.side_dist[Y] - ray_data.delta_dist[Y];
 		if (wall_dist < 0)
 			return (1);
+		wall_dist *= cos(vars->render.ray_angle - vars->player.p_angle);
 		print_wall(vars, wall_dist, ray, &ray_data);
 		ray++;
 		vars->render.ray_angle += vars->player.fov / vars->render.sc_width;

@@ -55,10 +55,6 @@ int	fill_background(t_vars *vars)
 int	render(void *ptr)
 {
 	t_vars	*vars;
-	size_t	s_time;
-	int		i;
-	int		x;
-	int		y;
 
 	vars = (t_vars *)ptr;
 	if (vars->player.running != 1 && vars->fov_angle >= 64)

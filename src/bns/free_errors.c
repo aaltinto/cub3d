@@ -43,7 +43,6 @@ int	null_free(void *ptr)
 
 void	abort_mission(t_vars *vars)
 {
-	// free_doubles(vars->map);
 	null_free(vars->textures.ceiling);
 	null_free(vars->textures.floor);
 	null_free(vars->textures.walls[0]);

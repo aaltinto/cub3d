@@ -22,9 +22,11 @@ SRC_BNS = src/bns/main.c\
 		src/bns/init_textures.c\
 		src/bns/init_colors.c\
 		src/bns/render.c\
+		src/bns/render_things.c\
 		src/bns/utils.c\
 		src/bns/key_pres.c\
 		src/bns/ray_utils.c\
+		src/bns/init_text_utils.c\
 		src/bns/render_utils.c\
 		src/bns/map.c\
 		src/bns/mouse.c\

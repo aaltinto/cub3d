@@ -74,7 +74,8 @@ int	move_player(t_vars *vars, double x, double y)
 	map_y = (vars->player.pos[Y]) / TILE_SIZE;
 	if (double_counter(vars->map) < (new_y) || vars->map[new_y][map_x] == '1')
 		y = 0;
-	if (ft_strlen(vars->map[map_y]) < (new_x) || vars->map[map_y][new_x] == '1')
+	if ((int)ft_strlen(vars->map[map_y]) < (new_x)
+		|| vars->map[map_y][new_x] == '1')
 		x = 0;
 	vars->player.pos[X] += x;
 	vars->player.pos[Y] += y;
@@ -103,9 +104,6 @@ int	key_release(int keycode, t_vars *vars)
 
 int	key_capture(int keycode, t_vars *vars)
 {
-	double	x;
-	double	y;
-
 	if (keycode == ESC)
 		close_windows(vars);
 	if (keycode == ARROW_R)

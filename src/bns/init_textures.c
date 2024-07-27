@@ -14,26 +14,6 @@
 #include "../../libft/libft.h"
 #include "../../minilibx/mlx.h"
 
-static char	*get_xpm_filename(char *filename, int i)
-{
-	char	*tmp;
-	char	*tmp2;
-	char	*num;
-
-	num = ft_itoa(i);
-	if (!num)
-		return (err("Itoa error"), NULL);
-	ft_putendl_fd(num, 1);
-	tmp = ft_strjoin(filename, num);
-	if (null_free(num), !tmp)
-		return (err("Strjoin err"), NULL);
-	ft_putendl_fd(tmp, 1);
-	tmp2 = ft_strjoin(tmp, ".xpm");
-	if (null_free(tmp), !tmp2)
-		return (err("Strjoin err"), NULL);
-	return (tmp2);
-}
-
 int	get_num_sprites(t_vars *vars, int x, int y)
 {
 	int		i;
@@ -59,7 +39,26 @@ int	get_num_sprites(t_vars *vars, int x, int y)
 	return (0);
 }
 
-int	get_magnum_sprites(t_vars *vars, int x, int y)
+static int	set_gun_data(t_vars *vars, int i, int j, char *filename)
+{
+	int	x;
+	int	y;
+
+	x = 64;
+	y = 64;
+	vars->gun[j][i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
+			&x, &y);
+	if (!vars->gun[j][i].img)
+		return (err("Can't find animation sprites"));
+	vars->gun[j][i].addr = mlx_get_data_addr(vars->gun[j][i].img, \
+	&vars->gun[j][i].bits_per_pixel, &vars->gun[j][i].line_length, \
+	&vars->gun[j][i].endian);
+	if (!vars->gun[j][i].addr)
+		return (err("Get data addr error"));
+	return (0);
+}
+
+int	get_magnum_sprites(t_vars *vars)
 {
 	int		i;
 	int		j;
@@ -79,17 +78,8 @@ int	get_magnum_sprites(t_vars *vars, int x, int y)
 		while (++i < 10 + ani_count)
 		{
 			filename = get_xpm_filename(vars->gun_name[j], i + 1);
-			if (!filename)
+			if (!filename || set_gun_data(vars, i, j, filename))
 				return (1);
-			vars->gun[j][i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
-					&x, &y);
-			if (!vars->gun[j][i].img)
-				return (err("Can't find animation sprites"));
-			vars->gun[j][i].addr = mlx_get_data_addr(vars->gun[j][i].img, \
-			&vars->gun[j][i].bits_per_pixel, &vars->gun[j][i].line_length, \
-			&vars->gun[j][i].endian);
-			if (!vars->gun[j][i].addr)
-				return (err("Get data addr error"));
 			null_free(filename);
 		}
 	}
