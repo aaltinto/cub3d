@@ -107,7 +107,7 @@ static void	assign_player(t_vars *vars, int dir)
 		vars->player.camera[Y] = vars->player.pos[Y];
 	}
 }
-
+#include <math.h>
 int	detect_player(t_vars *vars)
 {
 	int	x;
@@ -131,5 +131,14 @@ int	detect_player(t_vars *vars)
 				return (assign_player(vars, 3), 0);
 		}
 	}
+	vars->player.dir[X] = cos(vars->player.p_angle);
+	vars->player.dir[Y] = sin(vars->player.p_angle);
 	return (1);
 }
+	// double odx = vars->player.dir[X];
+	// vars->player.dir[X] = vars->player.dir[X] * cos((mx - x) * 0.005) - vars->player.dir[Y] * sin(-((mx - x) * 0.005));
+	// vars->player.dir[Y] = odx * sin(-(mx - x) * 0.005) + vars->player.dir[Y] * cos((mx - x) * 0.005);
+	// double opx = vars->player.plane[X];
+	// vars->player.plane[X] = vars->player.plane[X] * cos((mx - x) * 0.005) - vars->player.plane[Y] * sin((mx - x) * 0.005);
+	// vars->player.plane[Y] = opx * sin((mx - x) * 0.005) + vars->player.plane[Y] * cos((mx - x) * 0.005);
+	// printf("px:%lf, py:%lf\n", vars->player.plane[X], vars->player.plane[Y]);

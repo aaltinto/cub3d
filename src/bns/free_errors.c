@@ -49,6 +49,7 @@ void	abort_mission(t_vars *vars)
 	null_free(vars->textures.walls[1]);
 	null_free(vars->textures.walls[2]);
 	null_free(vars->textures.walls[3]);
+	null_free(vars->sprites);
 }
 
 int	close_windows(t_vars *vars)

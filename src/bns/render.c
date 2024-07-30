@@ -69,6 +69,17 @@ int	fill_background(t_vars *vars)
 	return (0);
 }
 
+#include <math.h>
+
+double calculate_angle(double *cam, double *pos)
+{
+    double dx = cam[X] - pos[X];
+    double dy = cam[Y] - pos[Y];
+    double angle = atan2(dy, dx);
+    double angle_degrees = angle * (180.0 / M_PI);
+    return (angle_degrees);
+}
+
 int	render(void *ptr)
 {
 	t_vars		*vars;
@@ -99,6 +110,34 @@ int	render(void *ptr)
 	render_gun(vars);
 	render_ui(vars);
 	move_player(vars, 0.0, 0.0);
+	if (vars->spr_count)
+	{
+		int i = -1;
+		double x;
+		double y;
+	
+		while (++i < vars->spr_count)
+		{
+			x = 0;
+			y = 0;
+			if (euclid_dist(vars->player.camera, vars->sprites[i].spr_pos) < 7)
+			{
+				if (vars->sprites->spr_pos[X] > (vars->player.camera[X] / TILE_SIZE))
+					x -= 0.1;
+				else
+					x += 0.1;
+				if (vars->sprites->spr_pos[Y] > (vars->player.camera[Y] / TILE_SIZE))
+					y -= 0.1;
+				else
+					y += 0.1;
+				//if (vars->map[(int)(vars->sprites->spr_pos[Y] + y)][(int)vars->sprites->spr_pos[X]] != '1')
+				vars->sprites[i].spr_pos[Y] += y;
+				//if (vars->map[(int)(vars->sprites->spr_pos[Y])][(int)(vars->sprites->spr_pos[X] + x)] != '1')
+				vars->sprites[i].spr_pos[X] += x;
+			}
+
+		}
+	}
 	vars->player.p_angle = nor_angle(vars->player.p_angle);
 	mlx_destroy_image(vars->mlx.mlx, vars->img.img);
 	mlx_destroy_image(vars->mlx.mlx, vars->mini_map.img);

@@ -61,7 +61,10 @@ int	marche(t_vars *vars)
 	vars->keys.key_la = 0;
 	vars->keys.key_ra = 0;
 	vars->player.running = 1;
-	vars->fov_angle = 0.66;
+	vars->fov_angle = 60;
+	vars->spr_count = 0;
+	vars->player.plane[X] = 0.0;
+	vars->player.plane[Y] = 0.60;
 	vars->player.fov = vars->fov_angle * (M_PI / 180);
 	if (set_guns(vars))
 		return (1);
@@ -94,6 +97,7 @@ int	main(int ac, char **argv)
 	vars.sprite.addr = mlx_get_data_addr(vars.sprite.img, &vars.sprite.bits_per_pixel, &vars.sprite.line_length, &vars.sprite.endian);
 	if (!vars.sprite.addr)
 		return (err("something bad"));
+	vars.sprites = detect_barrels(&vars);
 	mlx_mouse_hide();
 	mlx_mouse_move(vars.mlx.win, vars.render.sc_width / 2, vars.render.sc_height / 2);
 	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);

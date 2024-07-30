@@ -50,7 +50,7 @@ int	mouse_move(t_vars *vars)
 	vars->player.p_angle += nor_angle((mx - x) * 0.005);
 	vars->player.dir[X] = cos(vars->player.p_angle);
 	vars->player.dir[Y] = sin(vars->player.p_angle);
-	vars->player.plane[X] = (-1 * sin(vars->player.p_angle)) * tan((vars->player.fov / 2));;
+	vars->player.plane[X] = (-1 * sin(vars->player.p_angle)) * tan((vars->player.fov / 2));
 	vars->player.plane[Y] = cos(vars->player.p_angle) * tan(vars->player.fov / 2);
 	x = mx;
 	return (0);

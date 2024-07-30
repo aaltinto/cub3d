@@ -103,6 +103,11 @@ typedef struct s_data
 	int		endian;
 }	t_data;
 
+typedef struct s_sprite
+{
+	double	spr_pos[2];
+}	t_sprite;
+
 typedef struct s_vars
 {
 	t_textures	textures;
@@ -115,6 +120,7 @@ typedef struct s_vars
 	t_data		*gun[3];
 	t_data		num[10];
 	t_data		gun_canvas;
+	t_sprite	*sprites;
 	t_data		ui_canvas;
 	t_data		map_arrow;
 	t_player	player;
@@ -141,10 +147,6 @@ typedef struct s_ray
 	int		side;
 }	t_ray;
 
-typedef struct s_sprite
-{
-	double	spr_pos[2];
-}	t_sprite;
 
 typedef struct s_args
 {
@@ -157,46 +159,48 @@ typedef struct s_args
 
 
 //error
-int		err(char *str);
-int		null_free(void *ptr);
-void	abort_mission(t_vars *vars);
-int		read_map(char **argv, t_vars *vars);
-int		double_counter(char **str);
-char	**reallocate_double(char **str);
-int		find_longest_line(char **str);
-int		free_doubles(char **str);
-int		parse_init(t_vars *vars, char *map);
-int		init_textures(t_textures *textures, char *tmp);
-int		extract_rgb(t_vars *vars);
-int		color_init(t_vars *vars, char *tmp);
-int		cast_rays(t_vars *vars);
-int		rgb_to_hex(int r, int g, int b);
-void	pixel_put(t_data *data, int x, int y, int color);
-double	nor_angle(double angle);
-int		key_capture(int keycode, t_vars *vars);
-int		key_release(int keycode, t_vars *vars);
-int		move_player(t_vars *vars, double x, double y);
-int		close_windows(t_vars *vars);
-char	*strip(char *str);
-int		render_mini_map(t_vars *vars);
-int		get_color(t_vars *vars, int flag, int x, int y);
-int		render(void *ptr);
-int		fill_variable(t_vars *vars, t_ray *ray);
-int		detect_player(t_vars *vars);
-int		get_canvas(t_vars *vars);
-int		texture_color(t_data *data, int x, int y);
-int		get_magnum_sprites(t_vars *vars);
-int		get_num_sprites(t_vars *vars, int x, int y);
-size_t	get_time(void);
-int		mouse_func(int button, int x, int y, t_vars *vars);
-int		detect_player(t_vars *vars);
-int		get_textures(t_vars *vars);
-int		mouse_move(t_vars *vars);
-int		render_gun(t_vars *vars);
-void	calculate_ammo_count(t_vars *vars, double pos_tile);
-void	render_ui(t_vars *vars);
-t_data	*fill_t_data(t_data *data, t_vars *vars, int width, int height);
-char	*get_xpm_filename(char *filename, int i);
-int	cast_spr(t_vars *vars, double *ddist);
+int			err(char *str);
+int			null_free(void *ptr);
+void		abort_mission(t_vars *vars);
+int			read_map(char **argv, t_vars *vars);
+int			double_counter(char **str);
+char		**reallocate_double(char **str);
+int			find_longest_line(char **str);
+int			free_doubles(char **str);
+int			parse_init(t_vars *vars, char *map);
+int			init_textures(t_textures *textures, char *tmp);
+int			extract_rgb(t_vars *vars);
+int			color_init(t_vars *vars, char *tmp);
+int			cast_rays(t_vars *vars);
+int			rgb_to_hex(int r, int g, int b);
+void		pixel_put(t_data *data, int x, int y, int color);
+double		nor_angle(double angle);
+int			key_capture(int keycode, t_vars *vars);
+int			key_release(int keycode, t_vars *vars);
+int			move_player(t_vars *vars, double x, double y);
+int			close_windows(t_vars *vars);
+char		*strip(char *str);
+int			render_mini_map(t_vars *vars);
+int			get_color(t_vars *vars, int flag, int x, int y);
+int			render(void *ptr);
+int			fill_variable(t_vars *vars, t_ray *ray);
+int			detect_player(t_vars *vars);
+int			get_canvas(t_vars *vars);
+int			texture_color(t_data *data, int x, int y);
+int			get_magnum_sprites(t_vars *vars);
+int			get_num_sprites(t_vars *vars, int x, int y);
+size_t		get_time(void);
+int			mouse_func(int button, int x, int y, t_vars *vars);
+int			detect_player(t_vars *vars);
+int			get_textures(t_vars *vars);
+int			mouse_move(t_vars *vars);
+int			render_gun(t_vars *vars);
+void		calculate_ammo_count(t_vars *vars, double pos_tile);
+void		render_ui(t_vars *vars);
+t_data		*fill_t_data(t_data *data, t_vars *vars, int width, int height);
+char		*get_xpm_filename(char *filename, int i);
+int			cast_spr(t_vars *vars, double *ddist);
+t_sprite	*detect_barrels(t_vars *vars);
+double		euclid_dist(double *cam, double *pos2);
 
 #endif
