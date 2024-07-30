@@ -61,6 +61,8 @@ typedef struct s_player
 	double	camera[2];
 	double	fov;
 	double	p_angle;
+	double	plane[2];
+	double	dir[2];
 	double	running;
 	int		shoot;
 	int		ani_i;
@@ -107,6 +109,8 @@ typedef struct s_vars
 	t_mlx		mlx;
 	t_data		img;
 	t_data		mini_map;
+	t_data		sprites_canvas;
+	t_data		sprite;
 	t_data		xpm[4];
 	t_data		*gun[3];
 	t_data		num[10];
@@ -121,9 +125,10 @@ typedef struct s_vars
 	int			map_w;
 	int			map_h;
 	int			ammo;
+	int			spr_count;
 	size_t		s_time;
 	char		*raw_map;
-	int			fov_angle;
+	double		fov_angle;
 	int			*map_grid;
 }	t_vars;
 
@@ -135,6 +140,12 @@ typedef struct s_ray
 	int		step[2];
 	int		side;
 }	t_ray;
+
+typedef struct s_sprite
+{
+	double	plane[2];
+	double	spr_pos[2];
+}	t_sprite;
 
 typedef struct s_args
 {
@@ -187,5 +198,6 @@ void	calculate_ammo_count(t_vars *vars, double pos_tile);
 void	render_ui(t_vars *vars);
 t_data	*fill_t_data(t_data *data, t_vars *vars, int width, int height);
 char	*get_xpm_filename(char *filename, int i);
+int	cast_spr(t_vars *vars, double *ddist);
 
 #endif

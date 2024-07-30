@@ -40,6 +40,9 @@ int	get_canvas(t_vars *vars)
 	if (!fill_t_data(&vars->ui_canvas, vars, vars->render.sc_width,
 			vars->render.sc_height))
 		return (err("İmage init error!"), 1);
+	if (!fill_t_data(&vars->sprites_canvas, vars, vars->render.sc_width,
+			vars->render.sc_height))
+		return (err("İmage init error!"), 1);
 	return (0);
 }
 
@@ -69,6 +72,8 @@ int	fill_background(t_vars *vars)
 int	render(void *ptr)
 {
 	t_vars		*vars;
+	int	x;
+	int	y;
 
 	vars = (t_vars *)ptr;
 	if (vars->player.running != 1 && vars->fov_angle >= 64)
@@ -80,8 +85,16 @@ int	render(void *ptr)
 	if (fill_background(vars))
 		return (close_windows(vars), 1);
 	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
+	y = -1;
+	while (vars->render.sc_height > ++y)
+	{
+		x = -1;
+		while (vars->render.sc_width > ++x)
+			pixel_put(&vars->sprites_canvas, x, y, -16777216);
+	}
 	cast_rays(vars);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->sprites_canvas.img, 0, 0);
 	render_mini_map(vars);
 	render_gun(vars);
 	render_ui(vars);
@@ -90,6 +103,7 @@ int	render(void *ptr)
 	mlx_destroy_image(vars->mlx.mlx, vars->img.img);
 	mlx_destroy_image(vars->mlx.mlx, vars->mini_map.img);
 	mlx_destroy_image(vars->mlx.mlx, vars->gun_canvas.img);
+	mlx_destroy_image(vars->mlx.mlx, vars->sprites_canvas.img);
 	mlx_destroy_image(vars->mlx.mlx, vars->ui_canvas.img);
 	return (0);
 }

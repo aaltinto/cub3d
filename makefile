@@ -1,6 +1,6 @@
 CC = gcc
 RM = rm -f
-CFLAGS =  -Wall -Werror -Wextra -g
+CFLAGS =  -g #-Wall -Werror -Wextra -g
 OpenGL = -framework OpenGL -framework AppKit
 SRC = src/mandatory/main.c\
 		src/mandatory/map_reader.c\
@@ -31,7 +31,8 @@ SRC_BNS = src/bns/main.c\
 		src/bns/map.c\
 		src/bns/mouse.c\
 		src/bns/mini_map.c\
-		src/bns/cast_rays.c
+		src/bns/cast_rays.c\
+		src/bns/cast_rays_spr.c
 
 LIB = libft/libft.a
 GNL = gnl/gnl.a

@@ -12,6 +12,7 @@
 
 #include "../../includes/bonus.h"
 #include "../../minilibx/mlx.h"
+#include <math.h>
 
 int	mouse_func(int button, int x, int y, t_vars *vars)
 {
@@ -34,16 +35,23 @@ int	mouse_move(t_vars *vars)
 {
 	int	mx;
 	int	my;
-	int	x;
-	int	y;
+	static int	x = 0;
 
-	x = vars->render.sc_width / 2;
-	y = vars->render.sc_height / 2;
 	mlx_mouse_get_pos(vars->mlx.win, &mx, &my);
-	if (mx > x + 721 || mx < x - 721)
-		mlx_mouse_move(vars->mlx.win, x, y);
-	mx = mx / 2;
-	my = mx / 2;
-	vars->player.p_angle = nor_angle(mx * 0.05);
+	if (mx != 0 && x == 0)
+		x = vars->render.sc_width / 2;
+	if (mx > vars->render.sc_width || mx < 5)
+	{
+		x = vars->render.sc_width / 2;
+		mlx_mouse_move(vars->mlx.win, vars->render.sc_width / 2,
+			vars->render.sc_height / 2);
+		mlx_mouse_get_pos(vars->mlx.win, &mx, &my);
+	}
+	vars->player.p_angle += nor_angle((mx - x) * 0.01);
+	vars->player.dir[X] = cos(vars->player.p_angle);
+	vars->player.dir[Y] = sin(vars->player.p_angle);
+	vars->player.plane[X] = (-1 * sin(vars->player.p_angle)) * tan((vars->fov_angle / 2) * (M_PI / 180.0));;
+	vars->player.plane[Y] = cos(vars->player.p_angle) * tan(vars->fov_angle / 2) * (M_PI / 180.0);
+	x = mx;
 	return (0);
 }
