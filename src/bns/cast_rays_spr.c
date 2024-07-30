@@ -15,6 +15,35 @@
 #include <math.h>
 #include <stdlib.h>
 
+double	euclid_dist(double *cam, double *pos2)
+{
+	return (sqrt(pow((cam[X] / TILE_SIZE) - pos2[X], 2) + pow((cam[Y] / TILE_SIZE) - pos2[Y], 2)));
+}
+
+int	sort_sprites(t_vars *vars, t_sprite **sprites)
+{
+	t_sprite	tmp;
+	int			i;
+	int			j;
+
+	i = -1;
+	while (++i < vars->spr_count)
+	{
+		j = 0;
+		while (++j < vars->spr_count)
+		{
+			if (euclid_dist(vars->player.pos, (*sprites)[i].spr_pos)
+				< euclid_dist(vars->player.pos, (*sprites)[j].spr_pos))
+			{
+				tmp = (*sprites)[i];
+				(*sprites)[i] = (*sprites)[j];
+				(*sprites)[j] = tmp;
+			}
+		}
+	}
+	return (0);
+}
+
 t_sprite	*detect_barrels(t_vars *vars)
 {
 	int	count;
@@ -47,13 +76,9 @@ t_sprite	*detect_barrels(t_vars *vars)
 				if (count == -1)
 					break ;
 				count--;
-				printf("x: %d\nposX: %lf\n", x, vars->player.camera[X] / TILE_SIZE);
-				sprites[count].spr_pos[X] = (double)x - (vars->player.camera[X] / TILE_SIZE);
-				sprites[count].spr_pos[Y] = (double)y - (vars->player.camera[Y] / TILE_SIZE);
-				sprites[count].plane[X] = 0;
-				sprites[count].plane[Y] = vars->fov_angle * 0.01;
+				sprites[count].spr_pos[X] = (double)x;
+				sprites[count].spr_pos[Y] = (double)y;
 			}
-				
 	}
 	return (sprites);
 }
@@ -72,9 +97,11 @@ int	cast_spr(t_vars *vars, double *ddist)
 	i = -1;
 	while (++i < vars->spr_count)
 	{
+		double spriteX = sprite[i].spr_pos[X] - (vars->player.camera[X] / TILE_SIZE);
+		double spriteY = sprite[i].spr_pos[Y] - (vars->player.camera[Y] / TILE_SIZE);
 		inv_det = 1.0 / (vars->player.plane[X] * vars->player.dir[Y] - vars->player.dir[X] * vars->player.plane[Y]);
-		double transformX = inv_det * (vars->player.dir[Y] * sprite[i].spr_pos[X] - vars->player.dir[X] * sprite[i].spr_pos[Y]);
-		double transformY = inv_det * ((-1 * vars->player.plane[Y]) * sprite[i].spr_pos[X] - vars->player.plane[X] * sprite[i].spr_pos[Y]);
+		double transformX = inv_det * (vars->player.dir[Y] *spriteX - vars->player.dir[X] * spriteY);
+		double transformY = inv_det * ((-1 * vars->player.plane[Y]) *spriteX - vars->player.plane[X] * spriteY);
 		int spriteScreenX = (int)((vars->render.sc_width / 2) * (1 + transformX / transformY));
 		int	spriteHeight = abs((int)(vars->render.sc_height/transformY));
 		int drawStartY = (-1 * spriteHeight) / 2 + vars->render.sc_height / 2;
@@ -100,7 +127,9 @@ int	cast_spr(t_vars *vars, double *ddist)
         	{
 				int d = (y) * 256 - vars->render.sc_height * 128 + spriteHeight * 128;
 				int texY = ((d * 64) / spriteHeight) / 256;
-				pixel_put(&vars->sprites_canvas, stripe, y, texture_color(&vars->sprite, texX, texY));
+				int color = texture_color(&vars->sprite, texX, texY);
+				if (color !=  -16777216)
+					pixel_put(&vars->sprites_canvas, stripe, y, color);
         	}
 		}
       }

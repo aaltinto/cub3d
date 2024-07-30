@@ -143,7 +143,6 @@ typedef struct s_ray
 
 typedef struct s_sprite
 {
-	double	plane[2];
 	double	spr_pos[2];
 }	t_sprite;
 
