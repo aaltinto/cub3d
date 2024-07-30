@@ -47,11 +47,11 @@ int	mouse_move(t_vars *vars)
 			vars->render.sc_height / 2);
 		mlx_mouse_get_pos(vars->mlx.win, &mx, &my);
 	}
-	vars->player.p_angle += nor_angle((mx - x) * 0.01);
+	vars->player.p_angle += nor_angle((mx - x) * 0.005);
 	vars->player.dir[X] = cos(vars->player.p_angle);
 	vars->player.dir[Y] = sin(vars->player.p_angle);
-	vars->player.plane[X] = (-1 * sin(vars->player.p_angle)) * tan((vars->fov_angle / 2) * (M_PI / 180.0));;
-	vars->player.plane[Y] = cos(vars->player.p_angle) * tan(vars->fov_angle / 2) * (M_PI / 180.0);
+	vars->player.plane[X] = (-1 * sin(vars->player.p_angle)) * tan((vars->player.fov / 2));;
+	vars->player.plane[Y] = cos(vars->player.p_angle) * tan(vars->player.fov / 2);
 	x = mx;
 	return (0);
 }
