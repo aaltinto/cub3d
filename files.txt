@@ -1,1 +1,0 @@
-files="cast_rays.c init_textures.c key_pres.c main.c map.c map_reader.c ray_utils.c render.c render_utils.c utils.c"
