@@ -12,6 +12,7 @@
 
 #include "../../includes/bonus.h"
 #include "../../minilibx/mlx.h"
+#include <math.h>
 
 static int	get_images(t_vars *vars)
 {
@@ -77,6 +78,9 @@ int	get_textures(t_vars *vars)
 			"./textures/map_arrow.xpm", &x, &y);
 	if (!vars->map_arrow.img)
 		return (err("can't get texture map arrow"));
+	vars->sprites = detect_barrels(vars);
+	if (!vars->sprites)
+		return (1);
 	return (get_images(vars));
 }
 
@@ -107,7 +111,7 @@ static void	assign_player(t_vars *vars, int dir)
 		vars->player.camera[Y] = vars->player.pos[Y];
 	}
 }
-#include <math.h>
+
 int	detect_player(t_vars *vars)
 {
 	int	x;
@@ -135,10 +139,3 @@ int	detect_player(t_vars *vars)
 	vars->player.dir[Y] = sin(vars->player.p_angle);
 	return (1);
 }
-	// double odx = vars->player.dir[X];
-	// vars->player.dir[X] = vars->player.dir[X] * cos((mx - x) * 0.005) - vars->player.dir[Y] * sin(-((mx - x) * 0.005));
-	// vars->player.dir[Y] = odx * sin(-(mx - x) * 0.005) + vars->player.dir[Y] * cos((mx - x) * 0.005);
-	// double opx = vars->player.plane[X];
-	// vars->player.plane[X] = vars->player.plane[X] * cos((mx - x) * 0.005) - vars->player.plane[Y] * sin((mx - x) * 0.005);
-	// vars->player.plane[Y] = opx * sin((mx - x) * 0.005) + vars->player.plane[Y] * cos((mx - x) * 0.005);
-	// printf("px:%lf, py:%lf\n", vars->player.plane[X], vars->player.plane[Y]);

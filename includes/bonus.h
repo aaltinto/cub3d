@@ -106,6 +106,7 @@ typedef struct s_data
 typedef struct s_sprite
 {
 	double	spr_pos[2];
+	t_data	sprite;
 }	t_sprite;
 
 typedef struct s_vars
@@ -119,6 +120,7 @@ typedef struct s_vars
 	t_data		xpm[4];
 	t_data		*gun[3];
 	t_data		num[10];
+	t_data		alp[26];
 	t_data		gun_canvas;
 	t_sprite	*sprites;
 	t_data		ui_canvas;
@@ -132,6 +134,7 @@ typedef struct s_vars
 	int			map_h;
 	int			ammo;
 	int			spr_count;
+	int			menu;
 	size_t		s_time;
 	char		*raw_map;
 	double		fov_angle;
@@ -202,5 +205,6 @@ char		*get_xpm_filename(char *filename, int i);
 int			cast_spr(t_vars *vars, double *ddist);
 t_sprite	*detect_barrels(t_vars *vars);
 double		euclid_dist(double *cam, double *pos2);
+void		scale_up_image(t_data *data, t_data canvas, t_img_args args);
 
 #endif

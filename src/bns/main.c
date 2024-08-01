@@ -63,6 +63,7 @@ int	marche(t_vars *vars)
 	vars->player.running = 1;
 	vars->fov_angle = 60;
 	vars->spr_count = 0;
+	vars->menu = 1;
 	vars->player.plane[X] = 0.0;
 	vars->player.plane[Y] = 0.60;
 	vars->player.fov = vars->fov_angle * (M_PI / 180);
@@ -91,14 +92,6 @@ int	main(int ac, char **argv)
 	if (get_textures(&vars) || get_magnum_sprites(&vars)
 		|| get_num_sprites(&vars, 7, 10))
 		return (close_windows(&vars), 1);
-	vars.sprite.img = mlx_xpm_file_to_image(vars.mlx.mlx, "./textures/barrel.xpm", &x, &y);
-	if (!vars.sprite.img)
-		return (err("something bad"));
-	vars.sprite.addr = mlx_get_data_addr(vars.sprite.img, &vars.sprite.bits_per_pixel, &vars.sprite.line_length, &vars.sprite.endian);
-	if (!vars.sprite.addr)
-		return (err("something bad"));
-	vars.sprites = detect_barrels(&vars);
-	mlx_mouse_hide();
 	mlx_mouse_move(vars.mlx.win, vars.render.sc_width / 2, vars.render.sc_height / 2);
 	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);
 	mlx_hook(vars.mlx.win, 02, 0, key_capture, &vars);

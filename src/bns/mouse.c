@@ -16,10 +16,20 @@
 
 int	mouse_func(int button, int x, int y, t_vars *vars)
 {
-	(void)x;
-	(void)y;
 	if (button == 1)
 	{
+		if (vars->menu)
+		{
+			if (y > vars->render.sc_height / 2 - 20
+				&& y < vars->render.sc_height / 2 + 20
+				&& x < vars->render.sc_width / 2 + 100
+				&& x > vars->render.sc_width / 2 - 100)
+			{
+				vars->menu = 0;
+				mlx_mouse_hide();
+			}
+			return (0);
+		}
 		if (vars->ammo == 0)
 			return (0);
 		vars->s_time = get_time();

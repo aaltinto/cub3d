@@ -14,11 +14,43 @@
 #include "../../libft/libft.h"
 #include "../../minilibx/mlx.h"
 
+int	get_alp_sprites(t_vars *vars, int x, int y)
+{
+	char	*filename;
+	char	*tmp;
+	char	c[2];
+	int		i;
+
+	c[1] = '\0';
+	i = -1;
+	while (++i < 26)
+	{
+		c[0] = i + 97;
+		tmp = ft_strjoin("./alphabet/", c);
+		filename = ft_strjoin(tmp, ".xpm");
+		if (null_free(tmp), !filename)
+			return (err("Strjoin error"));
+		vars->alp[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
+				&x, &y);
+		if (!vars->alp[i].img)
+			return (err("Can't find animation sprites"));
+		vars->alp[i].addr = mlx_get_data_addr(vars->alp[i].img, \
+		&vars->alp[i].bits_per_pixel, &vars->alp[i].line_length, \
+		&vars->alp[i].endian);
+		if (!vars->alp[i].addr)
+			return (err("Get data addr error"));
+		free(filename);
+	}
+	return (0);
+}
+
 int	get_num_sprites(t_vars *vars, int x, int y)
 {
 	int		i;
 	char	*filename;
 
+	if (get_alp_sprites(vars, 8, 8))
+		return (1);
 	i = -1;
 	while (++i < 10)
 	{
