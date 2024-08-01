@@ -13,6 +13,7 @@
 #include "../../includes/bonus.h"
 #include "../../minilibx/mlx.h"
 #include <math.h>
+#include <stdlib.h>
 
 static int	get_images(t_vars *vars)
 {
@@ -56,6 +57,43 @@ static int	wall_err(int i)
 	return (0);
 }
 
+int	set_enemy(t_vars *vars, int x, int y)
+{
+	int		i;
+	int		j;
+	char	*filename;
+
+	i = -1;
+	vars->enemy.sprites = malloc(sizeof(t_data *) * 6);
+	if (!vars->enemy.sprites)
+		return (err("Malloc error"), free_doubles((char **)vars->enemy.sprites));
+	vars->enemy.sprites[5] = NULL;
+	while (++i < 5)
+	{
+		j = -1;
+		vars->enemy.sprites[i] = malloc(sizeof(t_data) * vars->enemy.index[i]);
+		if (!vars->enemy.sprites[i])
+			return (err("Malloc error"), free_doubles((char **)vars->enemy.sprites));
+		while (++j < vars->enemy.index[i])
+		{
+			filename = get_xpm_filename(vars->enemy.filename[i], j + 1);
+			if (!filename)
+				return (1);
+			vars->enemy.sprites[i][j].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
+					&x, &y);
+			if (!vars->enemy.sprites[i][j].img)
+				return (err("Can't find animation sprites"));
+			vars->enemy.sprites[i][j].addr = mlx_get_data_addr(vars->enemy.sprites[i][j].img, \
+			&vars->enemy.sprites[i][j].bits_per_pixel, &vars->enemy.sprites[i][j].line_length, \
+			&vars->enemy.sprites[i][j].endian);
+			if (!vars->enemy.sprites[i][j].addr)
+				return (err("Get data addr error"));
+			null_free(filename);
+		}
+	}
+	return (0);
+}
+
 int	get_textures(t_vars *vars)
 {
 	int	x;
@@ -78,6 +116,7 @@ int	get_textures(t_vars *vars)
 			"./textures/map_arrow.xpm", &x, &y);
 	if (!vars->map_arrow.img)
 		return (err("can't get texture map arrow"));
+	set_enemy(vars, 128, 128);
 	vars->sprites = detect_barrels(vars);
 	if (!vars->sprites)
 		return (1);

@@ -25,8 +25,6 @@ int	texture_color(t_data *data, int x, int y)
 {
 	int	p_ofset;
 
-	if ((x < 0 || x >= 64) || (y < 0 || y >= 64))
-		return (0);
 	p_ofset = y * data->line_length + x * (data->bits_per_pixel / 8);
 	return (*(int *)(data->addr + p_ofset));
 }

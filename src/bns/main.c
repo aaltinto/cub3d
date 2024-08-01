@@ -67,6 +67,16 @@ int	marche(t_vars *vars)
 	vars->player.plane[X] = 0.0;
 	vars->player.plane[Y] = 0.60;
 	vars->player.fov = vars->fov_angle * (M_PI / 180);
+	vars->enemy.index[0] = 4;
+	vars->enemy.index[1] = 6;
+	vars->enemy.index[2] = 6;
+	vars->enemy.index[3] = 4;
+	vars->enemy.index[4] = 9;
+	vars->enemy.filename[0] = ft_strdup("./enemy/idle/idle");
+	vars->enemy.filename[1] = ft_strdup("./enemy/attack/attack");
+	vars->enemy.filename[2] = ft_strdup("./enemy/walk/walk");
+	vars->enemy.filename[3] = ft_strdup("./enemy/damage/damaged");
+	vars->enemy.filename[4] = ft_strdup("./enemy/death/death");
 	if (set_guns(vars))
 		return (1);
 	return (0);

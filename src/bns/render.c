@@ -30,19 +30,19 @@ int	get_canvas(t_vars *vars)
 {
 	if (fill_t_data(&vars->mini_map, vars, vars->render.sc_width * 0.2,
 			vars->render.sc_height * 0.2) == NULL)
-		return (err("İmage init error!"), 1);
+		return (err("Image init error!"), 1);
 	if (!fill_t_data(&vars->img, vars, vars->render.sc_width,
 			vars->render.sc_height))
-		return (err("İmage init error!"), 1);
+		return (err("Image init error!"), 1);
 	if (!fill_t_data(&vars->gun_canvas, vars, 64 * TILE_GUN,
 			64 * TILE_GUN))
-		return (err("İmage init error!"), 1);
+		return (err("Image init error!"), 1);
 	if (!fill_t_data(&vars->ui_canvas, vars, vars->render.sc_width,
 			vars->render.sc_height))
-		return (err("İmage init error!"), 1);
+		return (err("Image init error!"), 1);
 	if (!fill_t_data(&vars->sprites_canvas, vars, vars->render.sc_width,
 			vars->render.sc_height))
-		return (err("İmage init error!"), 1);
+		return (err("Image init error!"), 1);
 	return (0);
 }
 
@@ -179,20 +179,21 @@ int	render(void *ptr)
 			x = 0;
 			y = 0;
 			double dist = euclid_dist(vars->player.pos, vars->sprites[i].spr_pos);
-			if (dist < 7 && dist > 2)
+			if (dist < 7 && dist > 1.5f && vars->sprites[i].is_enemy)
 			{
-				if (vars->sprites[i].spr_pos[X] > (vars->player.pos[X] / TILE_SIZE))
-					x -= 0.01;
+				if (vars->sprites[i].spr_pos[X] > (vars->player.pos[X] / TILE_SIZE - 0.5))
+					x -= 0.025;
 				else
-					x += 0.01;
-				if (vars->sprites[i].spr_pos[Y] > (vars->player.pos[Y] / TILE_SIZE))
-					y -= 0.01;
+					x += 0.025;
+				if (vars->sprites[i].spr_pos[Y] > (vars->player.pos[Y] / TILE_SIZE - 0.5))
+					y -= 0.025;
 				else
-					y += 0.01;
-				if (vars->map[(int)(vars->sprites[i].spr_pos[Y] + y)][(int)vars->sprites[i].spr_pos[X]] == '0')
+					y += 0.025;
+				if (vars->map[(int)(round(vars->sprites[i].spr_pos[Y] + y +((y / fabs(y)) * 0.25f)))][(int)(round(vars->sprites[i].spr_pos[X]))] != '1')
 					vars->sprites[i].spr_pos[Y] += y;
-				if (vars->map[(int)(vars->sprites[i].spr_pos[Y])][(int)(vars->sprites[i].spr_pos[X] + x)] == '0')
+				if (vars->map[(int)(round(vars->sprites[i].spr_pos[Y]))][(int)(round(vars->sprites[i].spr_pos[X] + x + ((x / fabs(x)) * 0.25f)))] != '1')
 					vars->sprites[i].spr_pos[X] += x;
+
 			}
 
 		}

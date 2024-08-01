@@ -107,7 +107,22 @@ typedef struct s_sprite
 {
 	double	spr_pos[2];
 	t_data	sprite;
+	int		is_enemy;
 }	t_sprite;
+
+typedef struct s_enemy
+{
+	int			index[5];
+	char		*filename[5];
+	t_data		**sprites;
+	/*
+	0 idle
+	1 attack
+	2 walk
+	3 damage
+	4 death
+	*/
+}	t_enemy;
 
 typedef struct s_vars
 {
@@ -122,12 +137,13 @@ typedef struct s_vars
 	t_data		num[10];
 	t_data		alp[26];
 	t_data		gun_canvas;
-	t_sprite	*sprites;
 	t_data		ui_canvas;
 	t_data		map_arrow;
+	t_sprite	*sprites;
 	t_player	player;
 	t_render	render;
 	t_keys		keys;
+	t_enemy		enemy;
 	char		**map;
 	char		**gun_name;
 	int			map_w;
@@ -138,7 +154,6 @@ typedef struct s_vars
 	size_t		s_time;
 	char		*raw_map;
 	double		fov_angle;
-	int			*map_grid;
 }	t_vars;
 
 typedef struct s_ray

@@ -20,7 +20,8 @@ int	mouse_func(int button, int x, int y, t_vars *vars)
 	{
 		if (vars->menu)
 		{
-			if (y > vars->render.sc_height / 2 - 40
+			if (y > vars->render.sc_height / 2 - 20
+				&& y < vars->render.sc_height / 2 + 20
 				&& x < vars->render.sc_width / 2 + 100
 				&& x > vars->render.sc_width / 2 - 100)
 			{

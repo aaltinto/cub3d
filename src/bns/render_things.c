@@ -85,7 +85,7 @@ int	make_sound(t_vars *vars)
 		}
 	}
 	if (pid == 0)
-		exit(0);
+		close_windows(vars);
 	return (0);
 }
 

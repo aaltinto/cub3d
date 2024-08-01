@@ -52,6 +52,8 @@ char	*choose_texture(char c)
 	char	*text;
 
 	if (c == 'X')
+		text = ft_strdup("./textures/idle1.xpm");
+	if (c == 'B')
 		text = ft_strdup("./textures/barrel.xpm");
 	return (text);
 }
@@ -89,7 +91,7 @@ t_sprite	*detect_barrels(t_vars *vars)
 	{
 		x = -1;
 		while (vars->map[y][++x] != '\0')
-			if (vars->map[y][x] == 'X')
+			if (vars->map[y][x] == 'X' || vars->map[y][x] == 'B')
 				count++;
 	}
 	if (count == 0)
@@ -109,6 +111,16 @@ t_sprite	*detect_barrels(t_vars *vars)
 				count--;
 				sprites[count].spr_pos[X] = (double)x;
 				sprites[count].spr_pos[Y] = (double)y;
+				sprites[count].is_enemy = 1;
+				if (texture_fill(vars, &sprites[count], vars->map[y][x]))
+					return (NULL);
+			}
+			if (vars->map[y][x] == 'B')
+			{
+				count--;
+				sprites[count].spr_pos[X] = (double)x;
+				sprites[count].spr_pos[Y] = (double)y;
+				sprites[count].is_enemy = 0;
 				if (texture_fill(vars, &sprites[count], vars->map[y][x]))
 					return (NULL);
 			}
@@ -178,19 +190,23 @@ void	draw_sprite(t_vars *vars, t_spr_vars spr_vars, t_sprite sprite, double *ddi
 	int	stripe;
 	int	y;
 	int	d;
+	int	t;
 	int color;
 
 	stripe = spr_vars.draw_s[X] - 1;
     while (++stripe < spr_vars.draw_e[X])
     {
-		spr_vars.tex[X] = (int)((stripe - ((-1 * spr_vars.width) / 2 + spr_vars.screen_x)) * 64 / spr_vars.width);
+		t = 64;
+		if (sprite.is_enemy)
+			t = 128;
+		spr_vars.tex[X] = (int)((stripe - ((-1 * spr_vars.width) / 2 + spr_vars.screen_x)) * t / spr_vars.width);
 		if (spr_vars.transform[Y] > 0 && stripe > 0 && stripe < vars->render.sc_width && spr_vars.transform[Y] < ddist[stripe])
         {
 			y = spr_vars.draw_s[Y] - 1;
 			while (++y < spr_vars.draw_e[Y])
             {
                 d = (y) * 256 - vars->render.sc_height * 128 + spr_vars.height * 128;
-                spr_vars.tex[Y] = ((d * 64) / spr_vars.height) / 256;
+                spr_vars.tex[Y] = ((d * t) / spr_vars.height) / 256;
                 color = texture_color(&sprite.sprite, spr_vars.tex[X], spr_vars.tex[Y]);
                 if (color != -16777216)
                     pixel_put(&vars->sprites_canvas, stripe, y, color);

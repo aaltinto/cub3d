@@ -115,6 +115,7 @@ int	get_magnum_sprites(t_vars *vars)
 			null_free(filename);
 		}
 	}
+	free_doubles(vars->gun_name);
 	return (0);
 }
 

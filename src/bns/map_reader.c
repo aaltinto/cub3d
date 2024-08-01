@@ -64,7 +64,8 @@ static int	check_raw_map(t_vars *vars, char *map, int player_count)
 		if (map[i + 1] != '\0' && map[i] == '\n' && map[i + 1] == '\n')
 			return (err("Error!\nConsecutive newlines in the map"));
 		if (map[i] != '0' && map[i] != '1' && map[i] != '\n' && map[i] != 'N'
-			&& map[i] != 'S' && map[i] != 'W' && map[i] != 'E' && map[i] != 'X')
+			&& map[i] != 'S' && map[i] != 'W' && map[i] != 'E' && map[i] != 'X'
+			&& map[i] != 'B')
 			return (err("Error! Invalid map"));
 		if (map[i] == 'N' || map[i] == 'S' || map[i] == 'W' || map[i] == 'E')
 			player_count++;
