@@ -55,6 +55,8 @@ char	*choose_texture(char c)
 		text = ft_strdup("./textures/idle1.xpm");
 	if (c == 'B')
 		text = ft_strdup("./textures/barrel.xpm");
+	if (c == 'D')
+		text = ft_strdup("./textures/collectible_img.xpm");
 	return (text);
 }
 
@@ -91,7 +93,7 @@ t_sprite	*detect_barrels(t_vars *vars)
 	{
 		x = -1;
 		while (vars->map[y][++x] != '\0')
-			if (vars->map[y][x] == 'X' || vars->map[y][x] == 'B')
+			if (vars->map[y][x] == 'X' || vars->map[y][x] == 'B' || vars->map[y][x] == 'D')
 				count++;
 	}
 	if (count == 0)
@@ -112,10 +114,15 @@ t_sprite	*detect_barrels(t_vars *vars)
 				sprites[count].spr_pos[X] = (double)x;
 				sprites[count].spr_pos[Y] = (double)y;
 				sprites[count].is_enemy = 1;
+				sprites[count].life = 100;
+				sprites[count].emy_ani = 0;
+				sprites[count].spr_ani = 0;
+				sprites[count].spr_ani = 0;
+				sprites[count].time = 0;
 				if (texture_fill(vars, &sprites[count], vars->map[y][x]))
 					return (NULL);
 			}
-			if (vars->map[y][x] == 'B')
+			if (vars->map[y][x] == 'B' || vars->map[y][x] == 'D')
 			{
 				count--;
 				sprites[count].spr_pos[X] = (double)x;
@@ -185,7 +192,24 @@ t_spr_vars	fill_spr(t_vars *vars, t_sprite sprite)
 	return (spr_vars);
 }
 
-void	draw_sprite(t_vars *vars, t_spr_vars spr_vars, t_sprite sprite, double *ddist)
+int	sprite_display(t_vars *vars, t_sprite *sprite, t_spr_vars spr_vars)
+{
+	int	i;
+
+	if (sprite->is_enemy)
+	{
+		if (sprite->dist > 7)
+			sprite->emy_ani = 0;
+		else if (sprite->dist <= 1.5f)
+			sprite->emy_ani = 1;
+		else
+			sprite->emy_ani = 2;
+		return (texture_color(&vars->enemy.sprites[sprite->emy_ani][sprite->spr_ani], spr_vars.tex[X], spr_vars.tex[Y]));
+	}
+	return (texture_color(&sprite->sprite, spr_vars.tex[X], spr_vars.tex[Y]));
+}
+
+void	draw_sprite(t_vars *vars, t_spr_vars spr_vars, t_sprite *sprite, double *ddist)
 {
 	int	stripe;
 	int	y;
@@ -197,7 +221,7 @@ void	draw_sprite(t_vars *vars, t_spr_vars spr_vars, t_sprite sprite, double *ddi
     while (++stripe < spr_vars.draw_e[X])
     {
 		t = 64;
-		if (sprite.is_enemy)
+		if (sprite->is_enemy)
 			t = 128;
 		spr_vars.tex[X] = (int)((stripe - ((-1 * spr_vars.width) / 2 + spr_vars.screen_x)) * t / spr_vars.width);
 		if (spr_vars.transform[Y] > 0 && stripe > 0 && stripe < vars->render.sc_width && spr_vars.transform[Y] < ddist[stripe])
@@ -207,7 +231,7 @@ void	draw_sprite(t_vars *vars, t_spr_vars spr_vars, t_sprite sprite, double *ddi
             {
                 d = (y) * 256 - vars->render.sc_height * 128 + spr_vars.height * 128;
                 spr_vars.tex[Y] = ((d * t) / spr_vars.height) / 256;
-                color = texture_color(&sprite.sprite, spr_vars.tex[X], spr_vars.tex[Y]);
+                color = sprite_display(vars, sprite, spr_vars);
                 if (color != -16777216)
                     pixel_put(&vars->sprites_canvas, stripe, y, color);
             }
@@ -231,7 +255,34 @@ int cast_spr(t_vars *vars, double *ddist)
     while (++i < vars->spr_count)
     {
         spr_vars = fill_spr(vars, sprite[i]);
-		draw_sprite(vars, spr_vars, sprite[i], ddist);
+		sprite[i].dist = euclid_dist(vars->player.camera, sprite[i].spr_pos);
+		if (1)
+		{
+			if (sprite[i].time == 0 || get_time() - sprite[i].time > 100)
+			{
+				sprite[i].time = get_time();
+				if (sprite[i].emy_ani == 0 && sprite[i].spr_ani < 3)
+					sprite[i].spr_ani++;
+				else if (sprite[i].emy_ani == 1 && sprite[i].spr_ani < 5)
+					sprite[i].spr_ani++;
+				else if (sprite[i].emy_ani == 2 && sprite[i].spr_ani < 5)
+					sprite[i].spr_ani++;
+				else
+				{
+					if (sprite[i].emy_ani == 1 && sprite[i].dist <= 1)
+						vars->player.life -= 25;
+					if (vars->player.life <= 0)
+					{
+						mlx_mouse_show();
+						vars->menu = 1;
+					}
+					printf("life: %d\n", vars->player.life);
+					sprite[i].spr_ani = 0;
+					vars->end_ani = 1;
+				}
+			}
+		}
+		draw_sprite(vars, spr_vars, &sprite[i], ddist);
     }
     return (0);
 }

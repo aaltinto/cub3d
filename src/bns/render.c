@@ -121,6 +121,15 @@ int	opening_menu(t_vars *vars)
 {
 	int	pos[2];
 
+	if (vars->player.life <= 0)
+	{
+		pos[X] = vars->render.sc_width / 2;
+		pos[Y] = vars->render.sc_height * 0.2;
+		if (print_text(vars, "game over", pos, 8))
+			return (1);
+		mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img, 0, 0);
+		return (0);
+	}
 	pos[X] = vars->render.sc_width / 2;
 	pos[Y] = vars->render.sc_height * 0.2;
 	if (print_text(vars, "cube game", pos, 8))
@@ -135,9 +144,9 @@ int	opening_menu(t_vars *vars)
 
 int	render(void *ptr)
 {
-	t_vars		*vars;
-	int	x;
-	int	y;
+	t_vars	*vars;
+	int		x;
+	int		y;
 
 	vars = (t_vars *)ptr;
 	if (vars->player.running != 1 && vars->fov_angle >= 64)
@@ -148,7 +157,9 @@ int	render(void *ptr)
 	get_canvas(vars);
 	if (vars->menu)
 	{
-		opening_menu(vars);
+		mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
+		if (opening_menu(vars))
+			return (close_windows(vars));
 		return (0);
 	}
 	if (fill_background(vars))
@@ -179,7 +190,7 @@ int	render(void *ptr)
 			x = 0;
 			y = 0;
 			double dist = euclid_dist(vars->player.pos, vars->sprites[i].spr_pos);
-			if (dist < 7 && dist > 1.5f && vars->sprites[i].is_enemy)
+			if (dist < 7 && dist > 0.75f && vars->sprites[i].is_enemy)
 			{
 				if (vars->sprites[i].spr_pos[X] > (vars->player.pos[X] / TILE_SIZE - 0.5))
 					x -= 0.025;
@@ -189,10 +200,12 @@ int	render(void *ptr)
 					y -= 0.025;
 				else
 					y += 0.025;
-				if (vars->map[(int)(round(vars->sprites[i].spr_pos[Y] + y +((y / fabs(y)) * 0.25f)))][(int)(round(vars->sprites[i].spr_pos[X]))] != '1')
-					vars->sprites[i].spr_pos[Y] += y;
-				if (vars->map[(int)(round(vars->sprites[i].spr_pos[Y]))][(int)(round(vars->sprites[i].spr_pos[X] + x + ((x / fabs(x)) * 0.25f)))] != '1')
-					vars->sprites[i].spr_pos[X] += x;
+				if (vars->map[(int)(round(vars->sprites[i].spr_pos[Y] + y +((y / fabs(y)) * 0.25f)))][(int)(round(vars->sprites[i].spr_pos[X]))] != '1' && vars->map[(int)(round(vars->sprites[i].spr_pos[Y] + y +((y / fabs(y)) * 0.25f)))][(int)(round(vars->sprites[i].spr_pos[X]))] != 'B')
+					if (fabs((vars->sprites[i].spr_pos[Y] + y) - (vars->player.pos[Y] / TILE_SIZE - 0.5)) >= 0.1)
+						vars->sprites[i].spr_pos[Y] += y;
+				if (vars->map[(int)(round(vars->sprites[i].spr_pos[Y]))][(int)(round(vars->sprites[i].spr_pos[X] + x + ((x / fabs(x)) * 0.25f)))] != '1' && vars->map[(int)(round(vars->sprites[i].spr_pos[Y]))][(int)(round(vars->sprites[i].spr_pos[X] + x + ((x / fabs(x)) * 0.25f)))] != 'B')
+					if (fabs((vars->sprites[i].spr_pos[X] + x) - (vars->player.pos[X] / TILE_SIZE - 0.5)) >= 0.1)
+						vars->sprites[i].spr_pos[X] += x;
 
 			}
 

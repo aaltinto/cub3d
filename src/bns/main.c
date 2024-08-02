@@ -64,6 +64,7 @@ int	marche(t_vars *vars)
 	vars->fov_angle = 60;
 	vars->spr_count = 0;
 	vars->menu = 1;
+	vars->player.life = 100;
 	vars->player.plane[X] = 0.0;
 	vars->player.plane[Y] = 0.60;
 	vars->player.fov = vars->fov_angle * (M_PI / 180);

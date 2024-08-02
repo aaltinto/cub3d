@@ -67,6 +67,7 @@ typedef struct s_player
 	int		shoot;
 	int		ani_i;
 	int		gun_type;
+	int		life;
 }	t_player;
 
 typedef struct s_textures
@@ -108,6 +109,11 @@ typedef struct s_sprite
 	double	spr_pos[2];
 	t_data	sprite;
 	int		is_enemy;
+	int		life;
+	int		spr_ani;
+	int		emy_ani;
+	double	dist;
+	size_t	time;
 }	t_sprite;
 
 typedef struct s_enemy
@@ -123,6 +129,11 @@ typedef struct s_enemy
 	4 death
 	*/
 }	t_enemy;
+
+typedef struct s_ui
+{
+ 	t_data	healt_bar[4];
+}	t_ui;
 
 typedef struct s_vars
 {
@@ -144,6 +155,7 @@ typedef struct s_vars
 	t_render	render;
 	t_keys		keys;
 	t_enemy		enemy;
+	t_ui		ui;
 	char		**map;
 	char		**gun_name;
 	int			map_w;
@@ -153,6 +165,7 @@ typedef struct s_vars
 	int			menu;
 	size_t		s_time;
 	char		*raw_map;
+	int			end_ani;
 	double		fov_angle;
 }	t_vars;
 

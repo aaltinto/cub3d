@@ -94,6 +94,31 @@ int	set_enemy(t_vars *vars, int x, int y)
 	return (0);
 }
 
+int	get_hp(t_vars *vars, int x, int y)
+{
+	int	i;
+	char	*filename;
+
+	i = -1;
+	while (++i < 4)
+	{
+		filename = get_xpm_filename("./health_bar/h", i + 1);
+		if (!filename)
+			return (err("Error!"));
+		printf("%s\n", filename);
+		vars->ui.healt_bar[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename, &x, &y);
+		if (!vars->ui.healt_bar[i].img)
+			return (null_free(filename), err("Error. Couldn't get img"));
+		null_free(filename);
+		vars->ui.healt_bar[i].addr = mlx_get_data_addr(vars->ui.healt_bar[i].img, \
+		&vars->ui.healt_bar[i].bits_per_pixel, &vars->ui.healt_bar[i].line_length, \
+		&vars->ui.healt_bar[i].endian);
+		if (!vars->ui.healt_bar[i].addr)
+			return (err("Error. Couldn't get data addr"));
+	}
+	return (0);
+}
+
 int	get_textures(t_vars *vars)
 {
 	int	x;
@@ -103,6 +128,8 @@ int	get_textures(t_vars *vars)
 	x = 64;
 	y = 64;
 	i = -1;
+	if (get_hp(vars, 380, 97))
+		return (1);
 	while (++i < 4)
 	{
 		vars->xpm[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, \

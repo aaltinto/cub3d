@@ -118,10 +118,24 @@ int	render_gun(t_vars *vars)
 		/ 2), vars->render.sc_height - (64 * TILE_GUN)), 0);
 }
 
+int	select_index(t_vars *vars)
+{
+	if (vars->player.life == 100)
+		return (0);
+	if (vars->player.life == 75)
+		return (1);
+	if (vars->player.life == 50)
+		return (2);
+	if (vars->player.life == 25)
+		return (3);
+	return (3);
+}
+
 void	render_ui(t_vars *vars)
 {
 	int			x;
 	int			y;
+	int			i;
 	t_img_args	args;
 
 	y = -1;
@@ -138,6 +152,13 @@ void	render_ui(t_vars *vars)
 	args.pos_y = vars->render.sc_height * 0.2 / 2 - 12;
 	scale_up_image(&vars->map_arrow, vars->ui_canvas, args);
 	calculate_ammo_count(vars, 3.5);
+	args.original_height = 97;
+	args.original_width = 380;
+	args.pos_x = vars->render.sc_width * 0.9 - 100;
+	args.pos_y = vars->render.sc_height * 0.9;
+	args.tile_size = 0.5;
+	i = select_index(vars);
+	scale_up_image(&vars->ui.healt_bar[i], vars->ui_canvas, args);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img,
 		0, 0);
 }
