@@ -195,8 +195,6 @@ t_spr_vars	fill_spr(t_vars *vars, t_sprite sprite)
 
 int	sprite_display(t_vars *vars, t_sprite *sprite, t_spr_vars spr_vars)
 {
-	int	i;
-
 	if (sprite->is_enemy)
 	{
 		if (sprite->life <= 0)

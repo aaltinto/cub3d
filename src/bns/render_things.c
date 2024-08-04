@@ -68,7 +68,9 @@ void	calculate_ammo_count(t_vars *vars, double pos_tile)
 int	make_sound(t_vars *vars)
 {
 	int	pid;
+	int	i;
 
+	i = 0;
 	pid = fork();
 	if (pid < 0)
 		return (err("Fork error"));

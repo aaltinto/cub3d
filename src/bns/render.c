@@ -28,8 +28,8 @@ t_data	*fill_t_data(t_data *data, t_vars *vars, int width, int height)
 
 int	get_canvas(t_vars *vars)
 {
-	if (fill_t_data(&vars->mini_map, vars, vars->render.sc_width * 0.2,
-			vars->render.sc_height * 0.2) == NULL)
+	if (fill_t_data(&vars->mini_map, vars, (int)(vars->render.sc_width * 0.2),
+			(int)(vars->render.sc_height * 0.2)) == NULL)
 		return (err("Image init error!"), 1);
 	if (!fill_t_data(&vars->img, vars, vars->render.sc_width,
 			vars->render.sc_height))

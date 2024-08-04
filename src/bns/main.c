@@ -86,8 +86,6 @@ int	marche(t_vars *vars)
 int	main(int ac, char **argv)
 {
 	t_vars	vars;
-	int x = 64;
-	int y = 64;
 
 	if (ac != 2)
 		return (err(ARG));

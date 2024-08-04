@@ -1,6 +1,6 @@
 CC = gcc
 RM = rm -f
-CFLAGS =  -g #-Wall -Werror -Wextra -g
+CFLAGS =  -Wall -Werror -Wextra -g #-fsanitize=address -g
 OpenGL = -framework OpenGL -framework AppKit
 SRC = src/mandatory/main.c\
 		src/mandatory/map_reader.c\

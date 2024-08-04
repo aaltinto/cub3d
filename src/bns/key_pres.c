@@ -12,6 +12,7 @@
 
 #include "../../includes/bonus.h"
 #include "../../libft/libft.h"
+#include "../../minilibx/mlx.h"
 #include <math.h>
 #define CAMERA_DISTANCE 10
 
@@ -103,7 +104,10 @@ int	key_release(int keycode, t_vars *vars)
 int	key_capture(int keycode, t_vars *vars)
 {
 	if (keycode == ESC)
-		close_windows(vars);
+	{
+		mlx_mouse_show();
+		vars->menu = 1;
+	}
 	if (keycode == ARROW_R)
 		vars->keys.key_ra = 1;
 	if (keycode == ARROW_L)

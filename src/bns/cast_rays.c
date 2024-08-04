@@ -149,21 +149,19 @@ int	cast_rays(t_vars *vars)
 	while (ray < vars->render.sc_width)
 	{
 		if (fill_variable(vars, &ray_data) || find_side_dist(vars, &ray_data))
-			return (-1);
+			return (null_free(wall_dist), -1);
 		if (check_hit(vars, &ray_data))
-			return (-1);
+			return (null_free(wall_dist), -1);
 		if (vars->render.flag == 0)
 			wall_dist[ray] = ray_data.side_dist[X] - ray_data.delta_dist[X];
 		else
 			wall_dist[ray] = ray_data.side_dist[Y] - ray_data.delta_dist[Y];
 		if (wall_dist < 0)
-			return (1);
+			return (null_free(wall_dist));
 		wall_dist[ray] *= cos(vars->render.ray_angle - vars->player.p_angle);
 		print_wall(vars, wall_dist[ray], ray, &ray_data);
 		ray++;
 		vars->render.ray_angle += vars->player.fov / vars->render.sc_width;
-		// if (ray == vars->render.sc_width / 2 || ray == 0)
-		// 	printf("ray: %d\nray_angle: %lf\np_angle: %lf\n",ray, vars->render.ray_angle, vars->player.p_angle);
 	}
 	cast_spr(vars, wall_dist);
 	null_free(wall_dist);

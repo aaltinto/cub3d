@@ -113,7 +113,7 @@ int	get_hp(t_vars *vars, int x, int y)
 		&vars->ui.healt_bar[i].bits_per_pixel, &vars->ui.healt_bar[i].line_length, \
 		&vars->ui.healt_bar[i].endian);
 		if (!vars->ui.healt_bar[i].addr)
-			return (mlx_destroy_image(vars->mlx.mlx, vars->ui.healt_bar->img), err("Error. Couldn't get data addr"));
+			return (err("Error. Couldn't get data addr"));
 	}
 	return (0);
 }

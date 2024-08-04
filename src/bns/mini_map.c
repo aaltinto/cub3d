@@ -50,10 +50,10 @@ static void	put_tiles(t_vars *vars, int *pos, double cos_angle,
 	center[X] = pos[X] + map_size[X] / 2;
 	center[Y] = pos[Y] + map_size[Y] / 2;
 	y = -1;
-	while (++y <= map_size[Y])
+	while (++y < map_size[Y])
 	{
 		x = -1;
-		while (++x <= map_size[X])
+		while (++x < map_size[X])
 		{
 			rotated[X] = (x - map_size[X] / 2) * cos_angle
 				- (y - map_size[Y] / 2) * sin_angle;
