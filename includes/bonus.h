@@ -109,6 +109,7 @@ typedef struct s_sprite
 	double	spr_pos[2];
 	t_data	sprite;
 	int		is_enemy;
+	int		hit;
 	int		life;
 	int		spr_ani;
 	int		emy_ani;

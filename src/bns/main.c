@@ -34,7 +34,7 @@ int	set_guns(t_vars *vars)
 		return (err("Malloc error"));
 	vars->gun_name[3] = NULL;
 	vars->player.gun_type = 0;
-	vars->ammo = 10;
+	vars->ammo = 100;
 	vars->player.ani_i = 0;
 	return (0);
 }

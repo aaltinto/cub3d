@@ -189,6 +189,8 @@ int	render(void *ptr)
 		{
 			x = 0;
 			y = 0;
+			if (vars->sprites[i].life <= 0)
+				continue ;
 			double dist = euclid_dist(vars->player.pos, vars->sprites[i].spr_pos);
 			if (dist < 7 && dist > 0.75f && vars->sprites[i].is_enemy)
 			{

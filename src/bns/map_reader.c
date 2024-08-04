@@ -76,7 +76,7 @@ static int	check_raw_map(t_vars *vars, char *map, int player_count)
 	if (!splitted_map)
 		return (err("Split error"));
 	if (check_borders(splitted_map, vars))
-		return (1);
+		return (free_doubles(splitted_map), 1);
 	return (free_doubles(splitted_map), 0);
 }
 
@@ -115,7 +115,6 @@ int	read_map(char **argv, t_vars *vars)
 	int		fd;
 	char	*map;
 
-	(void)vars;
 	len = ft_strlen(argv[1]) - 1;
 	if (argv[1][len] != 'b' || argv[1][len -1] != 'u' || argv[1][len -2] != 'c'
 		|| argv[1][len -3] != '.')
@@ -126,6 +125,7 @@ int	read_map(char **argv, t_vars *vars)
 	map = get_next_line(fd);
 	if (!map)
 		return (err("Error while reading the file"));
+	close(fd);
 	if (split_map(map, vars))
 		return (null_free(map), 1);
 	if (parse_init(vars, map))

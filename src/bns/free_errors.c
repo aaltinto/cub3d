@@ -52,7 +52,7 @@ void	abort_mission(t_vars *vars)
 	null_free(vars->textures.walls[2]);
 	null_free(vars->textures.walls[3]);
 	null_free(vars->sprites);
-	free_doubles(vars->enemy.sprites);
+	free_doubles((char **)vars->enemy.sprites);
 	free_doubles(vars->map);
 	null_free(vars->enemy.filename[0]);
 	null_free(vars->enemy.filename[1]);
@@ -62,7 +62,7 @@ void	abort_mission(t_vars *vars)
 	i = -1;
 	while (++i < 10)
 	{
-		// mlx_destroy_image(vars->mlx.mlx, vars->gun[0][i].img);
+		mlx_destroy_image(vars->mlx.mlx, vars->gun[0][i].img);
 		mlx_destroy_image(vars->mlx.mlx, vars->gun[2][i].img);
 	}
 	i = -1;
@@ -86,7 +86,6 @@ int	close_windows(t_vars *vars)
 	abort_mission(vars);
 	mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
 	null_free(vars->mlx.mlx);
-	// system("leaks cub3d");
 	exit(0);
 	return (0);
 }

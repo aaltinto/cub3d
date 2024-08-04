@@ -105,7 +105,6 @@ int	get_hp(t_vars *vars, int x, int y)
 		filename = get_xpm_filename("./health_bar/h", i + 1);
 		if (!filename)
 			return (err("Error!"));
-		printf("%s\n", filename);
 		vars->ui.healt_bar[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename, &x, &y);
 		if (!vars->ui.healt_bar[i].img)
 			return (null_free(filename), err("Error. Couldn't get img"));
@@ -114,7 +113,7 @@ int	get_hp(t_vars *vars, int x, int y)
 		&vars->ui.healt_bar[i].bits_per_pixel, &vars->ui.healt_bar[i].line_length, \
 		&vars->ui.healt_bar[i].endian);
 		if (!vars->ui.healt_bar[i].addr)
-			return (err("Error. Couldn't get data addr"));
+			return (mlx_destroy_image(vars->mlx.mlx, vars->ui.healt_bar->img), err("Error. Couldn't get data addr"));
 	}
 	return (0);
 }

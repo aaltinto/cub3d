@@ -114,9 +114,9 @@ t_sprite	*detect_barrels(t_vars *vars)
 				sprites[count].spr_pos[X] = (double)x;
 				sprites[count].spr_pos[Y] = (double)y;
 				sprites[count].is_enemy = 1;
+				sprites[count].hit = 0;
 				sprites[count].life = 100;
 				sprites[count].emy_ani = 0;
-				sprites[count].spr_ani = 0;
 				sprites[count].spr_ani = 0;
 				sprites[count].time = 0;
 				if (texture_fill(vars, &sprites[count], vars->map[y][x]))
@@ -127,6 +127,7 @@ t_sprite	*detect_barrels(t_vars *vars)
 				count--;
 				sprites[count].spr_pos[X] = (double)x;
 				sprites[count].spr_pos[Y] = (double)y;
+				sprites[count].hit = 0;
 				sprites[count].is_enemy = 0;
 				if (texture_fill(vars, &sprites[count], vars->map[y][x]))
 					return (NULL);
@@ -198,12 +199,26 @@ int	sprite_display(t_vars *vars, t_sprite *sprite, t_spr_vars spr_vars)
 
 	if (sprite->is_enemy)
 	{
-		if (sprite->dist > 7)
+		if (sprite->life <= 0)
+		{
+			vars->end_ani = 0;
+			sprite->emy_ani = 4;
+			if (sprite->spr_ani == 8)
+				return (-16777216);
+		}
+		else if (!sprite->hit && sprite->dist > 7)
 			sprite->emy_ani = 0;
-		else if (sprite->dist <= 1.5f)
+		else if (!sprite->hit && sprite->dist <= 1.5f)
 			sprite->emy_ani = 1;
+		else if (sprite->hit)
+		{
+			vars->end_ani = 0;
+			sprite->emy_ani = 3;
+		}
 		else
 			sprite->emy_ani = 2;
+		if ((sprite->emy_ani == 0 || sprite->emy_ani == 3) && sprite->spr_ani > 3)
+			sprite->spr_ani = 0;
 		return (texture_color(&vars->enemy.sprites[sprite->emy_ani][sprite->spr_ani], spr_vars.tex[X], spr_vars.tex[Y]));
 	}
 	return (texture_color(&sprite->sprite, spr_vars.tex[X], spr_vars.tex[Y]));
@@ -267,17 +282,26 @@ int cast_spr(t_vars *vars, double *ddist)
 					sprite[i].spr_ani++;
 				else if (sprite[i].emy_ani == 2 && sprite[i].spr_ani < 5)
 					sprite[i].spr_ani++;
+				else if (sprite[i].emy_ani == 3 && sprite[i].spr_ani < 3)
+					sprite[i].spr_ani++;
+				else if (sprite[i].emy_ani == 4 && sprite[i].spr_ani < 8)
+					sprite[i].spr_ani++;
 				else
 				{
 					if (sprite[i].emy_ani == 1 && sprite[i].dist <= 1)
 						vars->player.life -= 25;
+					if (sprite[i].hit)
+					{
+						sprite[i].hit = 0;
+						sprite[i].life -= 50;
+					}
 					if (vars->player.life <= 0)
 					{
 						mlx_mouse_show();
 						vars->menu = 1;
 					}
-					printf("life: %d\n", vars->player.life);
-					sprite[i].spr_ani = 0;
+					if (sprite[i].life > 0)
+						sprite[i].spr_ani = 0;
 					vars->end_ani = 1;
 				}
 			}
