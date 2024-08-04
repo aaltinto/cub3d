@@ -41,7 +41,7 @@ int	null_free(void *ptr)
 	return (1);
 }
 
-void	abort_mission(t_vars *vars)
+void	abort_mission(t_vars *vars, int close)
 {
 	int	i;
 	int	j;
@@ -65,7 +65,8 @@ void	abort_mission(t_vars *vars)
 		mlx_destroy_image(vars->mlx.mlx, vars->sprites[i].sprite.img);
 	null_free(vars->sprites);
 	null_free(vars->enemy.sprites);
-	free_doubles(vars->map);
+	if (close)
+		free_doubles(vars->map);
 	free_doubles(vars->gun_name);
 	null_free(vars->enemy.filename[0]);
 	null_free(vars->enemy.filename[1]);
@@ -92,9 +93,7 @@ void	abort_mission(t_vars *vars)
 	null_free(vars->gun[2]);
 }
 
-#include <unistd.h>
-
-int	close_windows(t_vars *vars)
+int	close_windows(t_vars *vars, int close)
 {
 	int	i;
 
@@ -104,14 +103,11 @@ int	close_windows(t_vars *vars)
 	i = -1;
 	while (++i < 10)
 		mlx_destroy_image(vars->mlx.mlx, vars->num[i].img);
-	abort_mission(vars);
+	abort_mission(vars, close);
 	mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
 	null_free(vars->mlx.mlx);
-	// int pid = fork();
-	// if (!pid)
-	// 	system("leaks cub3d");
-	// waitpid(pid, &i, 0);
-	system("leaks cub3d");
+	if (!close)
+		return (0);
 	exit(0);
 	return (0);
 }

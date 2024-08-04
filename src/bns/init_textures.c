@@ -120,13 +120,13 @@ int	get_magnum_sprites(t_vars *vars)
 
 int	get_walls(t_textures *textures, char *tmp, int dir)
 {
-	if (dir == 0 && !textures->walls[NO])
+	if (dir == NO && !textures->walls[NO])
 		textures->walls[NO] = ft_substr(tmp, 2, ft_strlen(tmp));
-	else if (dir == 1 && !textures->walls[SO])
+	else if (dir == SO && !textures->walls[SO])
 		textures->walls[SO] = ft_substr(tmp, 2, ft_strlen(tmp));
-	else if (dir == 2 && !textures->walls[WE])
+	else if (dir == WE && !textures->walls[WE])
 		textures->walls[WE] = ft_substr(tmp, 2, ft_strlen(tmp));
-	else if (dir == 3 && !textures->walls[EA])
+	else if (dir == EA && !textures->walls[EA])
 		textures->walls[EA] = ft_substr(tmp, 2, ft_strlen(tmp));
 	else
 		return (err("Error!\nDuplicating wall textures"));

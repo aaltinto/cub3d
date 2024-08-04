@@ -1,7 +1,7 @@
 NO ./textures/ancientstone.xpm
 SO ./textures/brick.xpm
-WE ./textures/brick.xpm
-EA ./textures/brick.xpm
+WE ./textures/floar_img.xpm
+EA ./textures/wall_img.xpm
 C 135,206,235
 F 102,165,88
 

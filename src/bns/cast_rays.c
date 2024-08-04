@@ -51,23 +51,6 @@ int	check_hit(t_vars *vars, t_ray *ray)
 	{
 		i = -1;
 		
-		while (vars->render.ray_angle + 0.09 >= vars->player.p_angle
-			&& vars->render.ray_angle - 0.09 <= vars->player.p_angle
-			&& vars->player.shoot
-			&& hit == 0 && ++i < vars->spr_count)
-		{
-			if (vars->sprites[i].spr_pos[X] <= map_grid[X] + 1
-			&& vars->sprites[i].spr_pos[X] >= map_grid[X] - 1
-			&& vars->sprites[i].spr_pos[Y] <= map_grid[Y] + 1
-			&& vars->sprites[i].spr_pos[Y] >= map_grid[Y] - 1)
-			{
-				if (vars->player.gun_type != 2)
-					hit = 1;
-				if (vars->sprites[i].is_enemy)
-					vars->sprites[i].hit = 1;
-			}
-
-		}
 		if (ray->side_dist[X] < ray->side_dist[Y])
 		{
 			ray->side_dist[X] += ray->delta_dist[X];
@@ -79,6 +62,23 @@ int	check_hit(t_vars *vars, t_ray *ray)
 			ray->side_dist[Y] += ray->delta_dist[Y];
 			map_grid[Y] += ray->step[Y];
 			vars->render.flag = 1;
+		}
+		while (vars->spr_count && vars->render.ray_angle + 0.09 >= vars->player.p_angle
+			&& vars->render.ray_angle - 0.09 <= vars->player.p_angle
+			&& vars->player.shoot
+			&& hit == 0 && ++i < vars->spr_count)
+		{
+			if (vars->sprites[i].spr_pos[X] <= map_grid[X] + 0.5
+			&& vars->sprites[i].spr_pos[X] >= map_grid[X] - 0.5
+			&& vars->sprites[i].spr_pos[Y] <= map_grid[Y] + 0.5
+			&& vars->sprites[i].spr_pos[Y] >= map_grid[Y] - 0.5)
+			{
+				if (vars->player.gun_type != 2)
+					hit = 1;
+				if (vars->sprites[i].is_enemy)
+					vars->sprites[i].hit = 1;
+			}
+
 		}
 	}
 	return (0);
@@ -163,7 +163,8 @@ int	cast_rays(t_vars *vars)
 		ray++;
 		vars->render.ray_angle += vars->player.fov / vars->render.sc_width;
 	}
-	cast_spr(vars, wall_dist);
+	if (vars->spr_count)
+		cast_spr(vars, wall_dist);
 	null_free(wall_dist);
 	return (0);
 }

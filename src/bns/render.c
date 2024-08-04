@@ -111,9 +111,43 @@ int	print_text(t_vars *vars, char *text, int *pos, double size)
 			return (err("Error\nUnrecognized char in the text. All must \
 be alphabetical"));
 		c = ft_tolower(text[i]) - 97;
-		scale_up_image(&vars->alp[c], vars->ui_canvas, args);
+		menu_printer(vars, &vars->alp[c], vars->ui_canvas, args);
 		args.pos_x += 8 * size;
 	}
+	return (0);
+}
+
+int	new_game(t_vars *vars)
+{
+	int	i;
+	int	j;
+	int	count;
+
+	i = -1;
+	count = vars->spr_count;
+	while (vars->map[++i])
+	{
+		j = -1;
+		while (vars->map[i][++j])
+		{
+			if (vars->map[i][j] == 'X' || vars->map[i][j] == 'B' || vars->map[i][j] == 'D')
+			{
+				count--;
+				if (vars->map[i][j] != 'X')
+					continue ;
+				vars->sprites[count].spr_pos[X] = (double)j;
+				vars->sprites[count].spr_pos[Y] = (double)i;
+				vars->sprites[count].hit = 0;
+				vars->sprites[count].life = 500;
+				vars->sprites[count].emy_ani = 0;
+				vars->sprites[count].spr_ani = 0;
+				vars->sprites[count].time = 0;
+			}
+		}
+	}
+	detect_player(vars);
+	vars->player.life = 100;
+	vars->menu = 0;
 	return (0);
 }
 
@@ -127,6 +161,14 @@ int	opening_menu(t_vars *vars)
 		pos[Y] = vars->render.sc_height * 0.2;
 		if (print_text(vars, "game over", pos, 8))
 			return (1);
+			pos[X] = vars->render.sc_width / 2;
+		pos[Y] = vars->render.sc_height / 2;
+		if (print_text(vars, "new game", pos, 5))
+			return (1);
+		pos[X] = vars->render.sc_width / 2;
+		pos[Y] = vars->render.sc_height / 2 + 80;
+		if (print_text(vars, "Quit", pos, 5))
+			return (1);
 		mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img, 0, 0);
 		return (0);
 	}
@@ -137,6 +179,10 @@ int	opening_menu(t_vars *vars)
 	pos[X] = vars->render.sc_width / 2;
 	pos[Y] = vars->render.sc_height / 2;
 	if (print_text(vars, "start", pos, 5))
+		return (1);
+	pos[X] = vars->render.sc_width / 2;
+	pos[Y] = vars->render.sc_height / 2 + 80;
+	if (print_text(vars, "quit", pos, 5))
 		return (1);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img, 0, 0);
 	return (0);
@@ -159,11 +205,11 @@ int	render(void *ptr)
 	{
 		mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
 		if (opening_menu(vars))
-			return (close_windows(vars));
+			return (close_windows(vars, 1));
 		return (0);
 	}
 	if (fill_background(vars))
-		return (close_windows(vars), 1);
+		return (close_windows(vars, 1), 1);
 	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
 	y = -1;
 	while (vars->render.sc_height > ++y)

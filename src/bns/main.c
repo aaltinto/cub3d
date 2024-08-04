@@ -90,17 +90,20 @@ int	main(int ac, char **argv)
 	if (ac != 2)
 		return (err(ARG));
 	if (marche(&vars) || read_map(argv, &vars))
-		return (abort_mission(&vars), 1);
+		return (abort_mission(&vars, 1), 1);
 	vars.mlx.mlx = mlx_init();
 	if (!vars.mlx.mlx)
 		return (err("Mlx init error"));
 	vars.mlx.win = mlx_new_window(vars.mlx.mlx, vars.render.sc_width,
 			vars.render.sc_height, "cub3d");
 	if (!vars.mlx.win)
-		return (err("Mlx window error"), close_windows(&vars), 1);
-	if (get_textures(&vars) || get_magnum_sprites(&vars)
-		|| get_num_sprites(&vars, 7, 10))
-		return (close_windows(&vars), 1);
+		return (err("Mlx window error"), close_windows(&vars, 1), 1);
+	if (get_textures(&vars))
+		return (close_windows(&vars, 1), 1);
+	if (get_magnum_sprites(&vars))
+		return (close_windows(&vars, 1), 1);
+	if (get_num_sprites(&vars, 7, 10))
+		return (close_windows(&vars, 1), 1);
 	mlx_mouse_move(vars.mlx.win, vars.render.sc_width / 2, vars.render.sc_height / 2);
 	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);
 	mlx_hook(vars.mlx.win, 02, 0, key_capture, &vars);
@@ -108,5 +111,5 @@ int	main(int ac, char **argv)
 	mlx_hook(vars.mlx.win, 04, 0, mouse_func, &vars);
 	mlx_loop_hook(vars.mlx.mlx, render, (void *)(&vars));
 	mlx_loop(vars.mlx.mlx);
-	return (close_windows(&vars), 0);
+	return (close_windows(&vars, 1), 0);
 }

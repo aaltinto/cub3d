@@ -15,26 +15,80 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void	scale_up_image(t_data *data, t_data canvas, t_img_args args)
+int	hover_effect(t_vars *vars, t_data *data, int *pos, t_img_args args)
 {
-	int	x;
-	int	y;
+	int	color;
+	int	mx;
+	int	my;
+
+	mlx_mouse_get_pos(vars->mlx.win, &mx, &my);
+	color = texture_color(data, pos[X], pos[Y]);
+	if (!vars->menu)
+		return (color);
+	if (color == 16777215 && my > vars->render.sc_height / 2
+				&& my < vars->render.sc_height / 2 + 40
+				&& mx < vars->render.sc_width / 2 + 95
+				&& mx > vars->render.sc_width / 2 - 105
+				&& args.pos_y == 450)
+		color = rgb_to_hex(209, 95, 43);
+	else if (color == 16777215 && my > vars->render.sc_height / 2 + 80
+				&& my < vars->render.sc_height / 2 + 120
+				&& mx < vars->render.sc_width / 2 + 75
+				&& mx > vars->render.sc_width / 2 - 85
+				&& args.pos_y == 530)
+		color = rgb_to_hex(209, 95, 43);
+	return (color);
+}
+
+void	menu_printer(t_vars *vars, t_data *data, t_data canvas, t_img_args args)
+{
+	int	pos[2];
+	int	color;
 	int	tile[2];
 
-	y = -1;
-	while (++y < args.original_height)
+	pos[Y] = -1;
+	while (++pos[Y] < args.original_height)
 	{
-		x = -1;
-		while (++x < args.original_width)
+		pos[X] = -1;
+		while (++pos[X] < args.original_width)
 		{
 			tile[Y] = -1;
 			while (++tile[Y] < args.tile_size)
 			{
 				tile[X] = -1;
 				while (++tile[X] < args.tile_size)
-					pixel_put(&canvas, (x * args.tile_size) + tile[X]
-						+ args.pos_x, (y * args.tile_size) + tile[Y]
-						+ args.pos_y, texture_color(data, x, y));
+				{
+					color = hover_effect(vars, data, pos, args);
+					pixel_put(&canvas, (pos[X] * args.tile_size) + tile[X]
+						+ args.pos_x, (pos[Y] * args.tile_size) + tile[Y]
+						+ args.pos_y, color);
+				}
+			}
+		}
+	}
+}
+
+void	scale_up_image(t_data *data, t_data canvas, t_img_args args)
+{
+	int	pos[2];
+	int	tile[2];
+
+	pos[Y] = -1;
+	while (++pos[Y] < args.original_height)
+	{
+		pos[X] = -1;
+		while (++pos[X] < args.original_width)
+		{
+			tile[Y] = -1;
+			while (++tile[Y] < args.tile_size)
+			{
+				tile[X] = -1;
+				while (++tile[X] < args.tile_size)
+				{
+					pixel_put(&canvas, (pos[X] * args.tile_size) + tile[X]
+						+ args.pos_x, (pos[Y] * args.tile_size) + tile[Y]
+						+ args.pos_y, texture_color(data, pos[X], pos[Y]));
+				}
 			}
 		}
 	}
@@ -87,7 +141,7 @@ int	make_sound(t_vars *vars)
 		}
 	}
 	if (pid == 0)
-		close_windows(vars);
+		close_windows(vars, 1);
 	return (0);
 }
 

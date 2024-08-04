@@ -144,7 +144,7 @@ int	get_textures(t_vars *vars)
 		return (err("can't get texture map arrow"));
 	set_enemy(vars, 128, 128);
 	vars->sprites = detect_barrels(vars);
-	if (!vars->sprites)
+	if (!vars->sprites && vars->spr_count)
 		return (1);
 	return (get_images(vars));
 }

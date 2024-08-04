@@ -26,14 +26,12 @@ static int	color(t_vars *vars, int tile_x, int tile_y)
 	max_x = ft_strlen(vars->map[tile_y / MAP_TILE]) * MAP_TILE;
 	if (max_x < tile_x || tile_x < 0 || max_x == 0)
 		return (rgb_to_hex(0, 0, 0));
-	else if (vars->map[tile_y / MAP_TILE][tile_x / MAP_TILE] == '0'
-	|| vars->map[tile_y / MAP_TILE][tile_x / MAP_TILE] == 'N'
-	|| vars->map[tile_y / MAP_TILE][tile_x / MAP_TILE] == 'S'
-	|| vars->map[tile_y / MAP_TILE][tile_x / MAP_TILE] == 'W'
-	|| vars->map[tile_y / MAP_TILE][tile_x / MAP_TILE] == 'E')
-		return (rgb_to_hex(255, 255, 255));
-	else
+	else if (vars->map[tile_y / MAP_TILE][tile_x / MAP_TILE] == '1'
+	|| vars->map[tile_y / MAP_TILE][tile_x / MAP_TILE] == ' '
+	|| vars->map[tile_y / MAP_TILE][tile_x / MAP_TILE] == '\0')
 		return (rgb_to_hex(0, 0, 0));
+	else
+		return (rgb_to_hex(255, 255, 255));
 }
 
 static void	put_tiles(t_vars *vars, int *pos, double cos_angle,

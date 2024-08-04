@@ -115,7 +115,7 @@ t_sprite	*detect_barrels(t_vars *vars)
 				sprites[count].spr_pos[Y] = (double)y;
 				sprites[count].is_enemy = 1;
 				sprites[count].hit = 0;
-				sprites[count].life = 100;
+				sprites[count].life = 500;
 				sprites[count].emy_ani = 0;
 				sprites[count].spr_ani = 0;
 				sprites[count].time = 0;
@@ -291,6 +291,8 @@ int cast_spr(t_vars *vars, double *ddist)
 					if (sprite[i].hit)
 					{
 						sprite[i].hit = 0;
+						if (vars->player.gun_type == 2)
+							sprite[i].life -= 250;
 						sprite[i].life -= 50;
 					}
 					if (vars->player.life <= 0)
