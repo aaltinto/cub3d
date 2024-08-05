@@ -107,8 +107,10 @@ typedef struct s_data
 typedef struct s_sprite
 {
 	double	spr_pos[2];
+	double	org_pos[2];
 	t_data	sprite;
 	int		is_enemy;
+	int		is_diamond;
 	int		hit;
 	int		life;
 	int		spr_ani;
@@ -163,8 +165,15 @@ typedef struct s_vars
 	int			map_h;
 	int			ammo;
 	int			spr_count;
+	int			enemy_count;
+	int			diamond;
 	int			menu;
+	int			pid;
+	int			diamond_org;
+	int			enemy_org;
+	char		**sound;
 	size_t		s_time;
+	size_t		d_time;
 	char		*raw_map;
 	int			end_ani;
 	double		fov_angle;
@@ -199,6 +208,7 @@ int			double_counter(char **str);
 char		**reallocate_double(char **str);
 int			find_longest_line(char **str);
 int			free_doubles(char **str);
+int			free_doubles2(char **str, int size);
 int			parse_init(t_vars *vars, char *map);
 int			init_textures(t_textures *textures, char *tmp);
 int			extract_rgb(t_vars *vars);

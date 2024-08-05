@@ -28,6 +28,7 @@ int	mouse_func(int button, int x, int y, t_vars *vars)
 				if (vars->player.life <= 0)
 					return (new_game(vars));
 				vars->menu = 0;
+				vars->d_time = get_time();
 				mlx_mouse_hide();
 			}
 			if (y > vars->render.sc_height / 2 + 80

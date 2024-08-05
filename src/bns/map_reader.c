@@ -51,6 +51,29 @@ static int	check_borders(char	**map, t_vars *vars)
 	return (0);
 }
 
+int	count_d(t_vars *vars, char *map)
+{
+	int	i;
+	
+	vars->enemy_count = 0;
+	vars->diamond = 0;
+	i = -1;
+	while (map[++i])
+	{
+		if (map[i] == ' ' || map[i] == '\t')
+			continue ;
+		if (map[i] == 'D')
+			vars->diamond++;
+		else if (map[i] == 'X')
+			vars->enemy_count++;
+	}
+	vars->diamond_org = vars->diamond;
+	vars->enemy_org = vars->enemy_count;
+	if (vars->diamond == 0)
+		return (err("Error: Diamond count must be at least one!"));
+	return (0);
+}
+
 static int	check_raw_map(t_vars *vars, char *map, int player_count)
 {
 	int		i;
@@ -104,7 +127,7 @@ static int	split_map(char *map, t_vars *vars)
 	vars->raw_map = ft_substr(map, i - spc + 1, ft_strlen(map));
 	if (!vars->raw_map)
 		return (err("Substr error"));
-	if (check_raw_map(vars, vars->raw_map, 0))
+	if (check_raw_map(vars, vars->raw_map, 0) || count_d(vars, vars->raw_map))
 		return (null_free(vars->raw_map), 1);
 	return (null_free(vars->raw_map), 0);
 }

@@ -60,6 +60,15 @@ int	marche(t_vars *vars)
 	vars->keys.key_w = 0;
 	vars->keys.key_la = 0;
 	vars->keys.key_ra = 0;
+	vars->d_time = get_time();
+	vars->sound = malloc(sizeof(char *) * 3);
+	if (!vars->sound)
+		return (err("Malloc error"));
+	vars->sound[0] = ft_strdup("afplay sounds/menu_track.mp3");
+	vars->sound[1] = ft_strdup("afplay sounds/morbid_descent.mp3");
+	vars->sound[2] = NULL;
+	if (!vars->sound[0] || !vars->sound[1])
+		return (err("Strdup error"), free_doubles2(vars->sound, 3));
 	vars->player.running = 1;
 	vars->fov_angle = 60;
 	vars->spr_count = 0;

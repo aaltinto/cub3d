@@ -13,11 +13,25 @@
 #include "../../libft/libft.h"
 #include "../../includes/bonus.h"
 #include "../../minilibx/mlx.h"
+#include <signal.h>
 
 int	err(char *str)
 {
 	ft_putendl_fd(str, 2);
 	return (1);
+}
+
+int	free_doubles2(char **str, int size)
+{
+	int	i;
+
+	if (!str)
+		return (1);
+	i = -1;
+	while (++i < size)
+		null_free(str[i]);
+	null_free(str);
+	return (0);
 }
 
 int	free_doubles(char **str)
@@ -108,6 +122,8 @@ int	close_windows(t_vars *vars, int close)
 	null_free(vars->mlx.mlx);
 	if (!close)
 		return (0);
+	kill(vars->pid + 1, SIGKILL);
+	system("leaks cub3d");
 	exit(0);
 	return (0);
 }

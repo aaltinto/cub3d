@@ -119,32 +119,24 @@ be alphabetical"));
 
 int	new_game(t_vars *vars)
 {
-	int	i;
-	int	j;
 	int	count;
 
-	i = -1;
 	count = vars->spr_count;
-	while (vars->map[++i])
+	while (--count >= 0)
 	{
-		j = -1;
-		while (vars->map[i][++j])
+		if (vars->sprites[count].is_enemy)
 		{
-			if (vars->map[i][j] == 'X' || vars->map[i][j] == 'B' || vars->map[i][j] == 'D')
-			{
-				count--;
-				if (vars->map[i][j] != 'X')
-					continue ;
-				vars->sprites[count].spr_pos[X] = (double)j;
-				vars->sprites[count].spr_pos[Y] = (double)i;
-				vars->sprites[count].hit = 0;
-				vars->sprites[count].life = 500;
-				vars->sprites[count].emy_ani = 0;
-				vars->sprites[count].spr_ani = 0;
-				vars->sprites[count].time = 0;
-			}
+			vars->sprites[count].spr_pos[X] = vars->sprites[count].org_pos[X];
+			vars->sprites[count].spr_pos[Y] = vars->sprites[count].org_pos[Y];
+			vars->sprites[count].life = 500;
+			vars->sprites[count].spr_ani = 0;
+			vars->sprites[count].time = 0;
 		}
+		if (vars->sprites[count].is_diamond)
+			vars->sprites[count].life = 100;
 	}
+	vars->diamond = vars->diamond_org;
+	vars->enemy_count = vars->enemy_org;
 	detect_player(vars);
 	vars->player.life = 100;
 	vars->menu = 0;
@@ -159,9 +151,15 @@ int	opening_menu(t_vars *vars)
 	{
 		pos[X] = vars->render.sc_width / 2;
 		pos[Y] = vars->render.sc_height * 0.2;
-		if (print_text(vars, "game over", pos, 8))
-			return (1);
-			pos[X] = vars->render.sc_width / 2;
+		if (vars->diamond == 0)
+		{
+			if (print_text(vars, "congratulations", pos, 8))
+				return (1);
+		}
+		else
+			if (print_text(vars, "game over", pos, 8))
+				return (1);
+		pos[X] = vars->render.sc_width / 2;
 		pos[Y] = vars->render.sc_height / 2;
 		if (print_text(vars, "new game", pos, 5))
 			return (1);
@@ -188,11 +186,95 @@ int	opening_menu(t_vars *vars)
 	return (0);
 }
 
+void	make_transparent(t_vars *vars, t_data canvas)
+{
+	int		x;
+	int		y;
+
+	y = -1;
+	while (vars->render.sc_height > ++y)
+	{
+		x = -1;
+		while (vars->render.sc_width > ++x)
+			pixel_put(&canvas, x, y, -16777216);
+	}
+}
+
+void	collect_diamond(t_vars *vars, t_player player, t_sprite *sprites)
+{
+	int	pos[2];
+
+	if (vars->diamond == 0)
+	{
+		mlx_mouse_show();
+		vars->player.life = 0;
+		vars->menu = 1;
+	}
+	if (!sprites->is_diamond)
+		return ;
+	if (vars->enemy_count != 0)
+	{
+		if ((sprites->spr_pos[X] <= (player.camera[X] / TILE_SIZE) + 0.5
+			&& sprites->spr_pos[X] >= (player.camera[X] / TILE_SIZE) - 0.5)
+			&& (sprites->spr_pos[Y] <= (player.camera[Y] / TILE_SIZE) + 0.5
+			&& sprites->spr_pos[Y] >= (player.camera[Y] / TILE_SIZE) - 0.5))
+			vars->d_time = get_time();
+		pos[X] = vars->render.sc_width / 2;
+		pos[Y] = vars->render.sc_height * 0.22;
+		if ( get_time() - vars->d_time < 3000)
+		{
+			print_text(vars, "kill all the martians", pos, 3);
+			mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img, 0, 0);
+		}
+		return ;
+	}
+	if ((sprites->spr_pos[X] <= (player.camera[X] / TILE_SIZE) + 0.5
+		&& sprites->spr_pos[X] >= (player.camera[X] / TILE_SIZE) - 0.5)
+		&& (sprites->spr_pos[Y] <= (player.camera[Y] / TILE_SIZE) + 0.5
+		&& sprites->spr_pos[Y] >= (player.camera[Y] / TILE_SIZE) - 0.5))
+	{
+		vars->diamond--;
+		sprites->life = 0;
+	}
+	if ( get_time() - vars->d_time < 3000)
+	{
+		pos[X] = vars->render.sc_width / 2;
+		pos[Y] = vars->render.sc_height * 0.22;
+		print_text(vars, "collect the diamonds", pos, 3);
+		mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img, 0, 0);
+	}
+}
+#include <signal.h>
+#include <unistd.h>
+int	music(t_vars *vars)
+{
+	static int	s = -1;
+	char		*sound;
+
+
+	if (s != -1 && s == vars->menu)
+		return (0);
+	else if (s != -1)
+		kill(vars->pid + 1, SIGKILL);
+	vars->pid = fork();
+	if (vars->pid < 0)
+		return (err("Fork error"), close_windows(vars, 1));
+	if (vars->pid == 0)
+	{
+		if (vars->menu == 1)
+			sound = vars->sound[0];
+		else
+			sound = vars->sound[1];
+		system(sound);
+		exit(EXIT_SUCCESS);
+	}
+	s = vars->menu;
+	return (0);
+}
+
 int	render(void *ptr)
 {
 	t_vars	*vars;
-	int		x;
-	int		y;
 
 	vars = (t_vars *)ptr;
 	if (vars->player.running != 1 && vars->fov_angle >= 64)
@@ -201,6 +283,8 @@ int	render(void *ptr)
 		vars->fov_angle++;
 	vars->player.fov = vars->fov_angle * (M_PI / 180);
 	get_canvas(vars);
+	if (music(vars))
+		return (1);
 	if (vars->menu)
 	{
 		mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
@@ -211,13 +295,7 @@ int	render(void *ptr)
 	if (fill_background(vars))
 		return (close_windows(vars, 1), 1);
 	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
-	y = -1;
-	while (vars->render.sc_height > ++y)
-	{
-		x = -1;
-		while (vars->render.sc_width > ++x)
-			pixel_put(&vars->sprites_canvas, x, y, -16777216);
-	}
+	make_transparent(vars, vars->sprites_canvas);
 	cast_rays(vars);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->sprites_canvas.img, 0, 0);
@@ -237,6 +315,7 @@ int	render(void *ptr)
 			y = 0;
 			if (vars->sprites[i].life <= 0)
 				continue ;
+			collect_diamond(vars, vars->player, &(vars->sprites[i]));
 			double dist = euclid_dist(vars->player.pos, vars->sprites[i].spr_pos);
 			if (dist < 7 && dist > 0.75f && vars->sprites[i].is_enemy)
 			{
@@ -254,9 +333,7 @@ int	render(void *ptr)
 				if (vars->map[(int)(round(vars->sprites[i].spr_pos[Y]))][(int)(round(vars->sprites[i].spr_pos[X] + x + ((x / fabs(x)) * 0.25f)))] != '1' && vars->map[(int)(round(vars->sprites[i].spr_pos[Y]))][(int)(round(vars->sprites[i].spr_pos[X] + x + ((x / fabs(x)) * 0.25f)))] != 'B')
 					if (fabs((vars->sprites[i].spr_pos[X] + x) - (vars->player.pos[X] / TILE_SIZE - 0.5)) >= 0.1)
 						vars->sprites[i].spr_pos[X] += x;
-
 			}
-
 		}
 	}
 	vars->player.p_angle = nor_angle(vars->player.p_angle);

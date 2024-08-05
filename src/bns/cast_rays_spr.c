@@ -113,11 +113,14 @@ t_sprite	*detect_barrels(t_vars *vars)
 				count--;
 				sprites[count].spr_pos[X] = (double)x;
 				sprites[count].spr_pos[Y] = (double)y;
+				sprites[count].org_pos[X] = (double)x;
+				sprites[count].org_pos[Y] = (double)y;
 				sprites[count].is_enemy = 1;
 				sprites[count].hit = 0;
 				sprites[count].life = 500;
 				sprites[count].emy_ani = 0;
 				sprites[count].spr_ani = 0;
+				sprites[count].is_diamond = 0;
 				sprites[count].time = 0;
 				if (texture_fill(vars, &sprites[count], vars->map[y][x]))
 					return (NULL);
@@ -127,7 +130,10 @@ t_sprite	*detect_barrels(t_vars *vars)
 				count--;
 				sprites[count].spr_pos[X] = (double)x;
 				sprites[count].spr_pos[Y] = (double)y;
+				sprites[count].life = 500;
 				sprites[count].hit = 0;
+				if (vars->map[y][x] == 'D')
+					sprites[count].is_diamond = 1;
 				sprites[count].is_enemy = 0;
 				if (texture_fill(vars, &sprites[count], vars->map[y][x]))
 					return (NULL);
@@ -267,6 +273,8 @@ int cast_spr(t_vars *vars, double *ddist)
     i = -1;
     while (++i < vars->spr_count)
     {
+		if (sprite[i].life <= 0)
+			continue ;
         spr_vars = fill_spr(vars, sprite[i]);
 		sprite[i].dist = euclid_dist(vars->player.camera, sprite[i].spr_pos);
 		if (1)
@@ -294,6 +302,12 @@ int cast_spr(t_vars *vars, double *ddist)
 						if (vars->player.gun_type == 2)
 							sprite[i].life -= 250;
 						sprite[i].life -= 50;
+						if (sprite[i].life <= 0)
+						{
+							vars->enemy_count--;
+							if (vars->enemy_count == 0)
+								vars->d_time = get_time();
+						}
 					}
 					if (vars->player.life <= 0)
 					{
