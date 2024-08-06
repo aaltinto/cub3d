@@ -23,7 +23,7 @@ int	hover_effect(t_vars *vars, t_data *data, int *pos, t_img_args args)
 
 	mlx_mouse_get_pos(vars->mlx.win, &mx, &my);
 	color = texture_color(data, pos[X], pos[Y]);
-	if (!vars->menu)
+	if (!vars->ui.menu)
 		return (color);
 	if (color == 16777215 && my > vars->render.sc_height / 2
 				&& my < vars->render.sc_height / 2 + 40
@@ -100,7 +100,7 @@ void	calculate_ammo_count(t_vars *vars, double pos_tile)
 	int			pos;
 	t_img_args	args;
 
-	ammo = vars->ammo;
+	ammo = vars->ui.ammo[vars->player.gun_type];
 	pos = 0;
 	args.original_height = 10;
 	args.original_width = 7;
@@ -111,20 +111,18 @@ void	calculate_ammo_count(t_vars *vars, double pos_tile)
 	{
 		args.pos_x = vars->render.sc_width * 0.8 - pos * 7;
 		args.pos_y = vars->render.sc_height * 0.8;
-		scale_up_image(&vars->num[ammo % 10], vars->ui_canvas, args);
+		scale_up_image(&vars->ui.num[ammo % 10], vars->ui.ui_canvas, args);
 		ammo /= 10;
 		pos += pos_tile;
 	}
-	if (vars->ammo == 0)
-		scale_up_image(&vars->num[ammo % 10], vars->ui_canvas, args);
+	if (vars->ui.ammo[vars->player.gun_type] == 0)
+		scale_up_image(&vars->ui.num[ammo % 10], vars->ui.ui_canvas, args);
 }
 
 int	make_sound(t_vars *vars)
 {
 	int	pid;
-	int	i;
 
-	i = 0;
 	pid = fork();
 	if (pid < 0)
 		return (err("Fork error"));
@@ -155,7 +153,7 @@ int	render_gun(t_vars *vars)
 	args.pos_x = 0;
 	args.pos_y = 0;
 	scale_up_image(&vars->gun[vars->player.gun_type][vars->player.ani_i],
-		vars->gun_canvas, args);
+		vars->ui.gun_canvas, args);
 	if (vars->player.shoot == 1)
 	{
 		if (make_sound(vars))
@@ -170,7 +168,7 @@ int	render_gun(t_vars *vars)
 		}
 	}
 	return (mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, \
-		vars->gun_canvas.img, (vars->render.sc_width / 2) - ((64 * TILE_GUN) \
+		vars->ui.gun_canvas.img, (vars->render.sc_width / 2) - ((64 * TILE_GUN) \
 		/ 2), vars->render.sc_height - (64 * TILE_GUN)), 0);
 }
 
@@ -199,14 +197,14 @@ void	render_ui(t_vars *vars)
 	{
 		x = -1;
 		while (vars->render.sc_width > ++x)
-			pixel_put(&vars->ui_canvas, x, y, -16777216);
+			pixel_put(&vars->ui.ui_canvas, x, y, -16777216);
 	}
 	args.original_height = 48;
 	args.original_width = 48;
 	args.tile_size = 0.5;
 	args.pos_x = vars->render.sc_width * 0.2 / 2 - 12;
 	args.pos_y = vars->render.sc_height * 0.2 / 2 - 12;
-	scale_up_image(&vars->map_arrow, vars->ui_canvas, args);
+	scale_up_image(&vars->ui.map_arrow, vars->ui.ui_canvas, args);
 	calculate_ammo_count(vars, 3.5);
 	args.original_height = 97;
 	args.original_width = 380;
@@ -214,7 +212,7 @@ void	render_ui(t_vars *vars)
 	args.pos_y = vars->render.sc_height * 0.9;
 	args.tile_size = 0.5;
 	i = select_index(vars);
-	scale_up_image(&vars->ui.healt_bar[i], vars->ui_canvas, args);
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img,
+	scale_up_image(&vars->ui.healt_bar[i], vars->ui.ui_canvas, args);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui.ui_canvas.img,
 		0, 0);
 }

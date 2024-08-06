@@ -28,19 +28,19 @@ t_data	*fill_t_data(t_data *data, t_vars *vars, int width, int height)
 
 int	get_canvas(t_vars *vars)
 {
-	if (fill_t_data(&vars->mini_map, vars, (int)(vars->render.sc_width * 0.2),
+	if (fill_t_data(&vars->ui.mini_map, vars, (int)(vars->render.sc_width * 0.2),
 			(int)(vars->render.sc_height * 0.2)) == NULL)
 		return (err("Image init error!"), 1);
 	if (!fill_t_data(&vars->img, vars, vars->render.sc_width,
 			vars->render.sc_height))
 		return (err("Image init error!"), 1);
-	if (!fill_t_data(&vars->gun_canvas, vars, 64 * TILE_GUN,
+	if (!fill_t_data(&vars->ui.gun_canvas, vars, 64 * TILE_GUN,
 			64 * TILE_GUN))
 		return (err("Image init error!"), 1);
-	if (!fill_t_data(&vars->ui_canvas, vars, vars->render.sc_width,
+	if (!fill_t_data(&vars->ui.ui_canvas, vars, vars->render.sc_width,
 			vars->render.sc_height))
 		return (err("Image init error!"), 1);
-	if (!fill_t_data(&vars->sprites_canvas, vars, vars->render.sc_width,
+	if (!fill_t_data(&vars->ui.sprites_canvas, vars, vars->render.sc_width,
 			vars->render.sc_height))
 		return (err("Image init error!"), 1);
 	return (0);
@@ -111,7 +111,7 @@ int	print_text(t_vars *vars, char *text, int *pos, double size)
 			return (err("Error\nUnrecognized char in the text. All must \
 be alphabetical"));
 		c = ft_tolower(text[i]) - 97;
-		menu_printer(vars, &vars->alp[c], vars->ui_canvas, args);
+		menu_printer(vars, &vars->ui.alp[c], vars->ui.ui_canvas, args);
 		args.pos_x += 8 * size;
 	}
 	return (0);
@@ -121,7 +121,7 @@ int	new_game(t_vars *vars)
 {
 	int	count;
 
-	count = vars->spr_count;
+	count = vars->game.spr_count;
 	while (--count >= 0)
 	{
 		if (vars->sprites[count].is_enemy)
@@ -135,11 +135,11 @@ int	new_game(t_vars *vars)
 		if (vars->sprites[count].is_diamond)
 			vars->sprites[count].life = 100;
 	}
-	vars->diamond = vars->diamond_org;
-	vars->enemy_count = vars->enemy_org;
+	vars->game.diamond = vars->game.diamond_org;
+	vars->game.enemy_count = vars->game.enemy_org;
 	detect_player(vars);
 	vars->player.life = 100;
-	vars->menu = 0;
+	vars->ui.menu = 0;
 	return (0);
 }
 
@@ -151,7 +151,7 @@ int	opening_menu(t_vars *vars)
 	{
 		pos[X] = vars->render.sc_width / 2;
 		pos[Y] = vars->render.sc_height * 0.2;
-		if (vars->diamond == 0)
+		if (vars->game.diamond == 0)
 		{
 			if (print_text(vars, "congratulations", pos, 8))
 				return (1);
@@ -167,7 +167,7 @@ int	opening_menu(t_vars *vars)
 		pos[Y] = vars->render.sc_height / 2 + 80;
 		if (print_text(vars, "Quit", pos, 5))
 			return (1);
-		mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img, 0, 0);
+		mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui.ui_canvas.img, 0, 0);
 		return (0);
 	}
 	pos[X] = vars->render.sc_width / 2;
@@ -182,7 +182,7 @@ int	opening_menu(t_vars *vars)
 	pos[Y] = vars->render.sc_height / 2 + 80;
 	if (print_text(vars, "quit", pos, 5))
 		return (1);
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img, 0, 0);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui.ui_canvas.img, 0, 0);
 	return (0);
 }
 
@@ -204,15 +204,15 @@ void	collect_diamond(t_vars *vars, t_player player, t_sprite *sprites)
 {
 	int	pos[2];
 
-	if (vars->diamond == 0)
+	if (vars->game.diamond == 0)
 	{
 		mlx_mouse_show();
 		vars->player.life = 0;
-		vars->menu = 1;
+		vars->ui.menu = 1;
 	}
 	if (!sprites->is_diamond)
 		return ;
-	if (vars->enemy_count != 0)
+	if (vars->game.enemy_count != 0)
 	{
 		if ((sprites->spr_pos[X] <= (player.camera[X] / TILE_SIZE) + 0.5
 			&& sprites->spr_pos[X] >= (player.camera[X] / TILE_SIZE) - 0.5)
@@ -224,7 +224,7 @@ void	collect_diamond(t_vars *vars, t_player player, t_sprite *sprites)
 		if ( get_time() - vars->d_time < 3000)
 		{
 			print_text(vars, "kill all the martians", pos, 3);
-			mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img, 0, 0);
+			mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui.ui_canvas.img, 0, 0);
 		}
 		return ;
 	}
@@ -233,7 +233,7 @@ void	collect_diamond(t_vars *vars, t_player player, t_sprite *sprites)
 		&& (sprites->spr_pos[Y] <= (player.camera[Y] / TILE_SIZE) + 0.5
 		&& sprites->spr_pos[Y] >= (player.camera[Y] / TILE_SIZE) - 0.5))
 	{
-		vars->diamond--;
+		vars->game.diamond--;
 		sprites->life = 0;
 	}
 	if ( get_time() - vars->d_time < 3000)
@@ -241,7 +241,7 @@ void	collect_diamond(t_vars *vars, t_player player, t_sprite *sprites)
 		pos[X] = vars->render.sc_width / 2;
 		pos[Y] = vars->render.sc_height * 0.22;
 		print_text(vars, "collect the diamonds", pos, 3);
-		mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui_canvas.img, 0, 0);
+		mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui.ui_canvas.img, 0, 0);
 	}
 }
 #include <signal.h>
@@ -252,23 +252,23 @@ int	music(t_vars *vars)
 	char		*sound;
 
 
-	if (s != -1 && s == vars->menu)
+	if (s != -1 && s == vars->ui.menu)
 		return (0);
 	else if (s != -1)
-		kill(vars->pid + 1, SIGKILL);
-	vars->pid = fork();
-	if (vars->pid < 0)
+		kill(vars->game.pid + 1, SIGKILL);
+	vars->game.pid = fork();
+	if (vars->game.pid < 0)
 		return (err("Fork error"), close_windows(vars, 1));
-	if (vars->pid == 0)
+	if (vars->game.pid == 0)
 	{
-		if (vars->menu == 1)
-			sound = vars->sound[0];
+		if (vars->ui.menu == 1)
+			sound = vars->ui.sound[0];
 		else
-			sound = vars->sound[1];
+			sound = vars->ui.sound[1];
 		system(sound);
 		exit(EXIT_SUCCESS);
 	}
-	s = vars->menu;
+	s = vars->ui.menu;
 	return (0);
 }
 
@@ -285,31 +285,36 @@ int	render(void *ptr)
 	get_canvas(vars);
 	if (music(vars))
 		return (1);
-	if (vars->menu)
+	if (vars->ui.menu)
 	{
 		mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
 		if (opening_menu(vars))
 			return (close_windows(vars, 1));
+		mlx_destroy_image(vars->mlx.mlx, vars->img.img);
+		mlx_destroy_image(vars->mlx.mlx, vars->ui.mini_map.img);
+		mlx_destroy_image(vars->mlx.mlx, vars->ui.gun_canvas.img);
+		mlx_destroy_image(vars->mlx.mlx, vars->ui.sprites_canvas.img);
+		mlx_destroy_image(vars->mlx.mlx, vars->ui.ui_canvas.img);
 		return (0);
 	}
 	if (fill_background(vars))
 		return (close_windows(vars, 1), 1);
 	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
-	make_transparent(vars, vars->sprites_canvas);
+	make_transparent(vars, vars->ui.sprites_canvas);
 	cast_rays(vars);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->sprites_canvas.img, 0, 0);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui.sprites_canvas.img, 0, 0);
 	render_mini_map(vars);
 	render_gun(vars);
 	render_ui(vars);
 	move_player(vars, 0.0, 0.0);
-	if (vars->spr_count)
+	if (vars->game.spr_count)
 	{
 		int i = -1;
 		double x;
 		double y;
 	
-		while (++i < vars->spr_count)
+		while (++i < vars->game.spr_count)
 		{
 			x = 0;
 			y = 0;
@@ -338,9 +343,9 @@ int	render(void *ptr)
 	}
 	vars->player.p_angle = nor_angle(vars->player.p_angle);
 	mlx_destroy_image(vars->mlx.mlx, vars->img.img);
-	mlx_destroy_image(vars->mlx.mlx, vars->mini_map.img);
-	mlx_destroy_image(vars->mlx.mlx, vars->gun_canvas.img);
-	mlx_destroy_image(vars->mlx.mlx, vars->sprites_canvas.img);
-	mlx_destroy_image(vars->mlx.mlx, vars->ui_canvas.img);
+	mlx_destroy_image(vars->mlx.mlx, vars->ui.mini_map.img);
+	mlx_destroy_image(vars->mlx.mlx, vars->ui.gun_canvas.img);
+	mlx_destroy_image(vars->mlx.mlx, vars->ui.sprites_canvas.img);
+	mlx_destroy_image(vars->mlx.mlx, vars->ui.ui_canvas.img);
 	return (0);
 }

@@ -34,7 +34,12 @@ int	set_guns(t_vars *vars)
 		return (err("Malloc error"));
 	vars->gun_name[3] = NULL;
 	vars->player.gun_type = 0;
-	vars->ammo = 100;
+	vars->ui.ammo = malloc(sizeof(int) * 3);
+	if (!vars->ui.ammo)
+		return (err("Malloc error"));
+	vars->ui.ammo[0] = 30;
+	vars->ui.ammo[1] = 30;
+	vars->ui.ammo[2] = 3;
 	vars->player.ani_i = 0;
 	return (0);
 }
@@ -60,19 +65,29 @@ int	marche(t_vars *vars)
 	vars->keys.key_w = 0;
 	vars->keys.key_la = 0;
 	vars->keys.key_ra = 0;
+	vars->ui.sound = NULL;
+	vars->gun = NULL;
+	vars->ui.map_arrow.img = NULL;
+	vars->enemy.sprites = NULL;
+	vars->ui.alp = NULL;
+	vars->ui.num = NULL;
+	vars->ui.ammo = NULL;
+	vars->gun_name = NULL;
 	vars->d_time = get_time();
-	vars->sound = malloc(sizeof(char *) * 3);
-	if (!vars->sound)
+	if (vars->d_time == 0)
+		return (err("Get_time error"));
+	vars->ui.sound = malloc(sizeof(char *) * 3);
+	if (!vars->ui.sound)
 		return (err("Malloc error"));
-	vars->sound[0] = ft_strdup("afplay sounds/menu_track.mp3");
-	vars->sound[1] = ft_strdup("afplay sounds/morbid_descent.mp3");
-	vars->sound[2] = NULL;
-	if (!vars->sound[0] || !vars->sound[1])
-		return (err("Strdup error"), free_doubles2(vars->sound, 3));
+	vars->ui.sound[0] = ft_strdup("afplay sounds/menu_track.mp3");
+	vars->ui.sound[1] = ft_strdup("afplay sounds/morbid_descent.mp3");
+	vars->ui.sound[2] = NULL;
+	if (!vars->ui.sound[0] || !vars->ui.sound[1])
+		return (err("Strdup error"));
 	vars->player.running = 1;
 	vars->fov_angle = 60;
-	vars->spr_count = 0;
-	vars->menu = 1;
+	vars->game.spr_count = 0;
+	vars->ui.menu = 1;
 	vars->player.life = 100;
 	vars->player.plane[X] = 0.0;
 	vars->player.plane[Y] = 0.60;
@@ -82,11 +97,19 @@ int	marche(t_vars *vars)
 	vars->enemy.index[2] = 6;
 	vars->enemy.index[3] = 4;
 	vars->enemy.index[4] = 9;
+	vars->enemy.filename = malloc(sizeof(char *) * 6);
+	if (!vars->enemy.filename)
+		return (err("Malloc error"));
 	vars->enemy.filename[0] = ft_strdup("./enemy/idle/idle");
 	vars->enemy.filename[1] = ft_strdup("./enemy/attack/attack");
 	vars->enemy.filename[2] = ft_strdup("./enemy/walk/walk");
 	vars->enemy.filename[3] = ft_strdup("./enemy/damage/damaged");
 	vars->enemy.filename[4] = ft_strdup("./enemy/death/death");
+	vars->enemy.filename[5] = NULL;
+	if (!vars->enemy.filename[0] || !vars->enemy.filename[1]
+		|| !vars->enemy.filename[2] || !vars->enemy.filename[3]
+		|| !vars->enemy.filename[4])
+		return (err("Strdup error"));
 	if (set_guns(vars))
 		return (1);
 	return (0);
@@ -102,11 +125,11 @@ int	main(int ac, char **argv)
 		return (abort_mission(&vars, 1), 1);
 	vars.mlx.mlx = mlx_init();
 	if (!vars.mlx.mlx)
-		return (err("Mlx init error"));
+		return (abort_mission(&vars ,1), err("Mlx init error"));
 	vars.mlx.win = mlx_new_window(vars.mlx.mlx, vars.render.sc_width,
 			vars.render.sc_height, "cub3d");
 	if (!vars.mlx.win)
-		return (err("Mlx window error"), close_windows(&vars, 1), 1);
+		return (null_free(vars.mlx.mlx), abort_mission(&vars, 1), err("Mlx window error"));
 	if (get_textures(&vars))
 		return (close_windows(&vars, 1), 1);
 	if (get_magnum_sprites(&vars))

@@ -57,7 +57,7 @@ static void	put_tiles(t_vars *vars, int *pos, double cos_angle,
 				- (y - map_size[Y] / 2) * sin_angle;
 			rotated[Y] = (x - map_size[X] / 2) * sin_angle + (y - map_size[Y]
 					/ 2) * cos_angle;
-			pixel_put(&vars->mini_map, x, y, color(vars, rotated[X] + center[X],
+			pixel_put(&vars->ui.mini_map, x, y, color(vars, rotated[X] + center[X],
 					rotated[Y] + center[Y]));
 		}
 	}
@@ -79,5 +79,5 @@ int	render_mini_map(t_vars *vars)
 		- vars->render.sc_height * 0.10;
 	put_tiles(vars, pos, cos_angle, sin_angle);
 	return (mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
-			vars->mini_map.img, 0, 0), 0);
+			vars->ui.mini_map.img, 0, 0), 0);
 }

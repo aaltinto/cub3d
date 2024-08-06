@@ -55,21 +55,21 @@ int	count_d(t_vars *vars, char *map)
 {
 	int	i;
 	
-	vars->enemy_count = 0;
-	vars->diamond = 0;
+	vars->game.enemy_count = 0;
+	vars->game.diamond = 0;
 	i = -1;
 	while (map[++i])
 	{
 		if (map[i] == ' ' || map[i] == '\t')
 			continue ;
 		if (map[i] == 'D')
-			vars->diamond++;
+			vars->game.diamond++;
 		else if (map[i] == 'X')
-			vars->enemy_count++;
+			vars->game.enemy_count++;
 	}
-	vars->diamond_org = vars->diamond;
-	vars->enemy_org = vars->enemy_count;
-	if (vars->diamond == 0)
+	vars->game.diamond_org = vars->game.diamond;
+	vars->game.enemy_org = vars->game.enemy_count;
+	if (vars->game.diamond == 0)
 		return (err("Error: Diamond count must be at least one!"));
 	return (0);
 }

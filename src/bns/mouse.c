@@ -18,7 +18,7 @@ int	mouse_func(int button, int x, int y, t_vars *vars)
 {
 	if (button == 1)
 	{
-		if (vars->menu)
+		if (vars->ui.menu)
 		{
 			if (y > vars->render.sc_height / 2
 				&& y < vars->render.sc_height / 2 + 40
@@ -27,7 +27,7 @@ int	mouse_func(int button, int x, int y, t_vars *vars)
 			{
 				if (vars->player.life <= 0)
 					return (new_game(vars));
-				vars->menu = 0;
+				vars->ui.menu = 0;
 				vars->d_time = get_time();
 				mlx_mouse_hide();
 			}
@@ -38,11 +38,11 @@ int	mouse_func(int button, int x, int y, t_vars *vars)
 				close_windows(vars, 1);
 			return (0);
 		}
-		if (vars->ammo == 0)
+		if (vars->ui.ammo[vars->player.gun_type] == 0)
 			return (0);
 		vars->s_time = get_time();
-		if (vars->ammo > 0 && vars->player.shoot == 0)
-			vars->ammo--;
+		if (vars->ui.ammo[vars->player.gun_type] > 0 && vars->player.shoot == 0)
+			vars->ui.ammo[vars->player.gun_type]--;
 		if (vars->player.shoot == 0)
 			vars->player.shoot = 1;
 	}

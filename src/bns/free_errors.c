@@ -21,7 +21,7 @@ int	err(char *str)
 	return (1);
 }
 
-int	free_doubles2(char **str, int size)
+int	free_doubles2(void **str, int size)
 {
 	int	i;
 
@@ -57,38 +57,29 @@ int	null_free(void *ptr)
 
 void	abort_mission(t_vars *vars, int close)
 {
-	int	i;
-	int	j;
-
-	i = -1;
-	while (++i < 5)
-	{
-		j = -1;
-		while (++j < vars->enemy.index[i])
-			mlx_destroy_image(vars->mlx.mlx, vars->enemy.sprites[i][j].img);
-		null_free(vars->enemy.sprites[i]);
-	}
 	null_free(vars->textures.ceiling);
 	null_free(vars->textures.floor);
 	null_free(vars->textures.walls[0]);
 	null_free(vars->textures.walls[1]);
 	null_free(vars->textures.walls[2]);
 	null_free(vars->textures.walls[3]);
-	i = -1;
-	while (++i < vars->spr_count)
-		mlx_destroy_image(vars->mlx.mlx, vars->sprites[i].sprite.img);
 	null_free(vars->sprites);
-	null_free(vars->enemy.sprites);
 	if (close)
 		free_doubles(vars->map);
-	free_doubles(vars->gun_name);
-	null_free(vars->enemy.filename[0]);
-	null_free(vars->enemy.filename[1]);
-	null_free(vars->enemy.filename[2]);
-	null_free(vars->enemy.filename[3]);
-	null_free(vars->enemy.filename[4]);
+	free_doubles2((void **)vars->gun_name, 3);
+	free_doubles2((void **)vars->ui.sound, 3);
+	free_doubles(vars->enemy.filename);
+	null_free(vars->ui.ammo);
+	kill(vars->game.pid + 1, SIGKILL);
+}
+
+int	close_windows(t_vars *vars, int close)
+{
+	int	i;
+	int	j;
+
 	i = -1;
-	while (++i < 10)
+	while (vars->gun && ++i < 10)
 	{
 		mlx_destroy_image(vars->mlx.mlx, vars->gun[0][i].img);
 		mlx_destroy_image(vars->mlx.mlx, vars->gun[2][i].img);
@@ -99,31 +90,34 @@ void	abort_mission(t_vars *vars, int close)
 		}
 	}
 	i = -1;
-	while (++i < 15)
+	while (vars->gun && ++i < 15)
 		mlx_destroy_image(vars->mlx.mlx, vars->gun[1][i].img);
-	mlx_destroy_image(vars->mlx.mlx, vars->map_arrow.img);
-	null_free(vars->gun[0]);
-	null_free(vars->gun[1]);
-	null_free(vars->gun[2]);
-}
-
-int	close_windows(t_vars *vars, int close)
-{
-	int	i;
-
+	free_doubles2((void **)vars->gun, 3);
+	if (vars->ui.map_arrow.img)
+		mlx_destroy_image(vars->mlx.mlx, vars->ui.map_arrow.img);
 	i = -1;
-	while (++i < 26)
-		mlx_destroy_image(vars->mlx.mlx, vars->alp[i].img);
+	while (++i < vars->game.spr_count)
+		mlx_destroy_image(vars->mlx.mlx, vars->sprites[i].sprite.img);
 	i = -1;
-	while (++i < 10)
-		mlx_destroy_image(vars->mlx.mlx, vars->num[i].img);
+	while (vars->enemy.sprites && ++i < 5)
+	{
+		j = -1;
+		while (++j < vars->enemy.index[i])
+			mlx_destroy_image(vars->mlx.mlx, vars->enemy.sprites[i][j].img);
+		null_free(vars->enemy.sprites[i]);
+	}
+	null_free(vars->enemy.sprites);
+	i = -1;
+	while (vars->ui.alp && ++i < 26)
+		mlx_destroy_image(vars->mlx.mlx, vars->ui.alp[i].img);
+	i = -1;
+	while (vars->ui.num && ++i < 10)
+		mlx_destroy_image(vars->mlx.mlx, vars->ui.num[i].img);
 	abort_mission(vars, close);
 	mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
 	null_free(vars->mlx.mlx);
 	if (!close)
 		return (0);
-	kill(vars->pid + 1, SIGKILL);
-	system("leaks cub3d");
 	exit(0);
 	return (0);
 }

@@ -28,10 +28,10 @@ int	sort_sprites(t_vars *vars, t_sprite **sprites)
 	int			j;
 
 	i = 0;
-	while (i < vars->spr_count - 1)
+	while (i < vars->game.spr_count - 1)
 	{
 		j = 0;
-		while (j < vars->spr_count - i - 1)
+		while (j < vars->game.spr_count - i - 1)
 		{
 			if (euclid_dist(vars->player.pos, (*sprites)[j].spr_pos)
 				< euclid_dist(vars->player.pos, (*sprites)[j + 1].spr_pos))
@@ -98,7 +98,7 @@ t_sprite	*detect_barrels(t_vars *vars)
 	}
 	if (count == 0)
 		return (NULL);
-	vars->spr_count = count;
+	vars->game.spr_count = count;
 	sprites = malloc(sizeof(t_sprite) * (count));
 	if (!sprites)
 		return (err("Malloc error"), NULL);
@@ -205,7 +205,7 @@ int	sprite_display(t_vars *vars, t_sprite *sprite, t_spr_vars spr_vars)
 	{
 		if (sprite->life <= 0)
 		{
-			vars->end_ani = 0;
+			vars->game.end_ani = 0;
 			sprite->emy_ani = 4;
 			if (sprite->spr_ani == 8)
 				return (-16777216);
@@ -216,7 +216,7 @@ int	sprite_display(t_vars *vars, t_sprite *sprite, t_spr_vars spr_vars)
 			sprite->emy_ani = 1;
 		else if (sprite->hit)
 		{
-			vars->end_ani = 0;
+			vars->game.end_ani = 0;
 			sprite->emy_ani = 3;
 		}
 		else
@@ -252,7 +252,7 @@ void	draw_sprite(t_vars *vars, t_spr_vars spr_vars, t_sprite *sprite, double *dd
                 spr_vars.tex[Y] = ((d * t) / spr_vars.height) / 256;
                 color = sprite_display(vars, sprite, spr_vars);
                 if (color != -16777216)
-                    pixel_put(&vars->sprites_canvas, stripe, y, color);
+                    pixel_put(&vars->ui.sprites_canvas, stripe, y, color);
             }
         }
     }
@@ -271,7 +271,7 @@ int cast_spr(t_vars *vars, double *ddist)
     if (!sprite)
         return (1);
     i = -1;
-    while (++i < vars->spr_count)
+    while (++i < vars->game.spr_count)
     {
 		if (sprite[i].life <= 0)
 			continue ;
@@ -304,19 +304,19 @@ int cast_spr(t_vars *vars, double *ddist)
 						sprite[i].life -= 50;
 						if (sprite[i].life <= 0)
 						{
-							vars->enemy_count--;
-							if (vars->enemy_count == 0)
+							vars->game.enemy_count--;
+							if (vars->game.enemy_count == 0)
 								vars->d_time = get_time();
 						}
 					}
 					if (vars->player.life <= 0)
 					{
 						mlx_mouse_show();
-						vars->menu = 1;
+						vars->ui.menu = 1;
 					}
 					if (sprite[i].life > 0)
 						sprite[i].spr_ani = 0;
-					vars->end_ani = 1;
+					vars->game.end_ani = 1;
 				}
 			}
 		}

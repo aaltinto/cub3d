@@ -106,7 +106,7 @@ int	key_capture(int keycode, t_vars *vars)
 	if (keycode == ESC)
 	{
 		mlx_mouse_show();
-		vars->menu = 1;
+		vars->ui.menu = 1;
 	}
 	if (keycode == ARROW_R)
 		vars->keys.key_ra = 1;

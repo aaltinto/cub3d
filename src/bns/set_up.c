@@ -36,10 +36,10 @@ static int	get_images(t_vars *vars)
 			&xpm[EA].line_length, &xpm[EA].endian);
 	if (!xpm[EA].addr)
 		return (err("Get data addr error: 'EA'"));
-	vars->map_arrow.addr = mlx_get_data_addr(vars->map_arrow.img, \
-	&vars->map_arrow.bits_per_pixel, &vars->map_arrow.line_length, \
-	&vars->map_arrow.endian);
-	if (!vars->map_arrow.addr)
+	vars->ui.map_arrow.addr = mlx_get_data_addr(vars->ui.map_arrow.img, \
+	&vars->ui.map_arrow.bits_per_pixel, &vars->ui.map_arrow.line_length, \
+	&vars->ui.map_arrow.endian);
+	if (!vars->ui.map_arrow.addr)
 		return (err("Get data addr error: map arrow"));
 	return (0);
 }
@@ -138,13 +138,13 @@ int	get_textures(t_vars *vars)
 	}
 	x = 48;
 	y = 48;
-	vars->map_arrow.img = mlx_xpm_file_to_image(vars->mlx.mlx,
+	vars->ui.map_arrow.img = mlx_xpm_file_to_image(vars->mlx.mlx,
 			"./textures/map_arrow.xpm", &x, &y);
-	if (!vars->map_arrow.img)
+	if (!vars->ui.map_arrow.img)
 		return (err("can't get texture map arrow"));
 	set_enemy(vars, 128, 128);
 	vars->sprites = detect_barrels(vars);
-	if (!vars->sprites && vars->spr_count)
+	if (!vars->sprites && vars->game.spr_count)
 		return (1);
 	return (get_images(vars));
 }

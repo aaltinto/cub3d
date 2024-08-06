@@ -122,7 +122,7 @@ typedef struct s_sprite
 typedef struct s_enemy
 {
 	int			index[5];
-	char		*filename[5];
+	char		**filename;
 	t_data		**sprites;
 	/*
 	0 idle
@@ -136,23 +136,39 @@ typedef struct s_enemy
 typedef struct s_ui
 {
  	t_data	healt_bar[4];
+	t_data		mini_map;
+	t_data		sprites_canvas;
+	t_data		gun_canvas;
+	t_data		ui_canvas;
+	t_data		*num;
+	t_data		*alp;
+	t_data		map_arrow;
+	int			*ammo;
+	int			menu;
+	char		**sound;
 }	t_ui;
+
+typedef struct s_game
+{
+	int			spr_count;
+	int			enemy_count;
+	int			diamond;
+	int			pid;
+	int			diamond_org;
+	int			enemy_org;
+	int			end_ani;
+
+}	t_game;
 
 typedef struct s_vars
 {
 	t_textures	textures;
+	t_game		game;
 	t_mlx		mlx;
 	t_data		img;
-	t_data		mini_map;
-	t_data		sprites_canvas;
 	t_data		sprite;
 	t_data		xpm[4];
-	t_data		*gun[3];
-	t_data		num[10];
-	t_data		alp[26];
-	t_data		gun_canvas;
-	t_data		ui_canvas;
-	t_data		map_arrow;
+	t_data		**gun;
 	t_sprite	*sprites;
 	t_player	player;
 	t_render	render;
@@ -163,19 +179,9 @@ typedef struct s_vars
 	char		**gun_name;
 	int			map_w;
 	int			map_h;
-	int			ammo;
-	int			spr_count;
-	int			enemy_count;
-	int			diamond;
-	int			menu;
-	int			pid;
-	int			diamond_org;
-	int			enemy_org;
-	char		**sound;
 	size_t		s_time;
 	size_t		d_time;
 	char		*raw_map;
-	int			end_ani;
 	double		fov_angle;
 }	t_vars;
 
@@ -208,7 +214,7 @@ int			double_counter(char **str);
 char		**reallocate_double(char **str);
 int			find_longest_line(char **str);
 int			free_doubles(char **str);
-int			free_doubles2(char **str, int size);
+int			free_doubles2(void **str, int size);
 int			parse_init(t_vars *vars, char *map);
 int			init_textures(t_textures *textures, char *tmp);
 int			extract_rgb(t_vars *vars);
