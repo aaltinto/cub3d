@@ -36,7 +36,7 @@ static int	check_borders(char	**map, t_vars *vars)
 	free_doubles(vars->map);
 	vars->map = reallocate_double(map);
 	if (!vars->map)
-		return (err("Allocate error"), 1);
+		return (free_doubles(map), err("Allocate error"), 1);
 	len = find_longest_line(map);
 	i = -1;
 	while (vars->map[++i])

@@ -30,7 +30,7 @@
 # define M_PI 3.14159265358979323846
 
 # define TILE_SIZE 40
-# define PLAYER_SPEED 1.0f
+# define PLAYER_SPEED 1.5f
 # define CAMERA_DISTANCE 10
 
 # define X 0

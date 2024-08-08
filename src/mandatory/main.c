@@ -50,17 +50,16 @@ int	main(int ac, char **argv)
 
 	if (ac != 2)
 		return (err(ARG));
-	if (marche(&vars))
-		return (abort_mission(&vars), 1);
+	marche(&vars);
 	if (read_map(argv, &vars))
 		return (abort_mission(&vars), 1);
 	vars.mlx.mlx = mlx_init();
 	if (!vars.mlx.mlx)
-		return (err("Mlx init error"));
+		return (abort_mission(&vars), err("Mlx init error"));
 	vars.mlx.win = mlx_new_window(vars.mlx.mlx, vars.render.sc_width,
 			vars.render.sc_height, "cub3d");
 	if (!vars.mlx.win)
-		return (err("Mlx window error"), close_windows(&vars), 1);
+		return (abort_mission(&vars), err("Mlx window error"));
 	if (get_textures(&vars))
 		return (close_windows(&vars), 1);
 	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);

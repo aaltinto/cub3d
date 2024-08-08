@@ -62,9 +62,9 @@ int	render(void *ptr)
 	else if (vars->player.running == 1 && vars->fov_angle < 66)
 		vars->fov_angle++;
 	vars->player.fov = vars->fov_angle * (M_PI / 180);
-	get_canvas(vars);
-	if (fill_background(vars))
+	if (get_canvas(vars))
 		return (close_windows(vars), 1);
+	fill_background(vars);
 	cast_rays(vars);
 	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);

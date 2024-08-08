@@ -122,10 +122,9 @@ int	cast_rays(t_vars *vars)
 	ray = 0;
 	while (ray < vars->render.sc_width)
 	{
-		if (fill_variable(vars, &ray_data) || find_side_dist(vars, &ray_data))
-			return (-1);
-		if (check_hit(vars, &ray_data))
-			return (-1);
+		fill_variable(vars, &ray_data);
+		find_side_dist(vars, &ray_data);
+		check_hit(vars, &ray_data);
 		if (vars->render.flag == 0)
 			wall_dist = ray_data.side_dist[X] - ray_data.delta_dist[X];
 		else

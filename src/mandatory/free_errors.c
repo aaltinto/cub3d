@@ -43,21 +43,21 @@ int	null_free(void *ptr)
 
 void	abort_mission(t_vars *vars)
 {
+	int	i;
+
+	i = -1;
 	free_doubles(vars->map);
 	null_free(vars->textures.ceiling);
 	null_free(vars->textures.floor);
-	null_free(vars->textures.walls[0]);
-	null_free(vars->textures.walls[1]);
-	null_free(vars->textures.walls[2]);
-	null_free(vars->textures.walls[3]);
+	while (++i < 4)
+		null_free(vars->textures.walls[i]);
 }
 
 int	close_windows(t_vars *vars)
 {
-	mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
-	null_free(vars->mlx.mlx);
+	if (vars->mlx.mlx && vars->mlx.win)
+		mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
 	abort_mission(vars);
-	system("leaks cub3d");
 	exit(0);
 	return (0);
 }
