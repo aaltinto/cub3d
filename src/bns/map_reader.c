@@ -154,6 +154,6 @@ int	read_map(char **argv, t_vars *vars)
 	if (parse_init(vars, map))
 		return (null_free(map), 1);
 	if (detect_player(vars))
-		return (abort_mission(vars, 1), 1);
+		return (abort_mission(vars, 1, 0), 1);
 	return (null_free(map), 0);
 }

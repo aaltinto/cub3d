@@ -67,7 +67,7 @@ int	set_enemy(t_vars *vars, int x, int y)
 	vars->enemy.sprites = malloc(sizeof(t_data *) * 6);
 	if (!vars->enemy.sprites)
 		return (err("Malloc error"), free_doubles((char **)vars->enemy.sprites));
-	vars->enemy.sprites[5] = NULL;
+	set_null((void ***)&vars->enemy.sprites, 6);
 	while (++i < 5)
 	{
 		j = -1;

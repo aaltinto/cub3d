@@ -122,6 +122,7 @@ int	new_game(t_vars *vars)
 	int	count;
 
 	count = vars->game.spr_count;
+	vars->new_game = 1;
 	while (--count >= 0)
 	{
 		if (vars->sprites[count].is_enemy)
@@ -138,6 +139,8 @@ int	new_game(t_vars *vars)
 	vars->game.diamond = vars->game.diamond_org;
 	vars->game.enemy_count = vars->game.enemy_org;
 	detect_player(vars);
+	mlx_mouse_move(vars->mlx.win, vars->render.sc_width / 2,
+		vars->render.sc_height / 2);
 	vars->player.life = 100;
 	vars->ui.menu = 0;
 	return (0);
@@ -258,7 +261,7 @@ int	music(t_vars *vars)
 		kill(vars->game.pid + 1, SIGKILL);
 	vars->game.pid = fork();
 	if (vars->game.pid < 0)
-		return (err("Fork error"), close_windows(vars, 1));
+		return (err("Fork error"), close_windows(vars, 1, 0));
 	if (vars->game.pid == 0)
 	{
 		if (vars->ui.menu == 1)
@@ -266,7 +269,7 @@ int	music(t_vars *vars)
 		else
 			sound = vars->ui.sound[1];
 		system(sound);
-		exit(EXIT_SUCCESS);
+		close_windows(vars, 1, 1);
 	}
 	s = vars->ui.menu;
 	return (0);
@@ -282,14 +285,15 @@ int	render(void *ptr)
 	else if (vars->player.running == 1 && vars->fov_angle < 66)
 		vars->fov_angle++;
 	vars->player.fov = vars->fov_angle * (M_PI / 180);
-	get_canvas(vars);
+	if (get_canvas(vars))
+		return (close_windows(vars, 1, 0));
 	if (music(vars))
 		return (1);
 	if (vars->ui.menu)
 	{
 		mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
 		if (opening_menu(vars))
-			return (close_windows(vars, 1));
+			return (close_windows(vars, 1, 0));
 		mlx_destroy_image(vars->mlx.mlx, vars->img.img);
 		mlx_destroy_image(vars->mlx.mlx, vars->ui.mini_map.img);
 		mlx_destroy_image(vars->mlx.mlx, vars->ui.gun_canvas.img);
@@ -297,15 +301,15 @@ int	render(void *ptr)
 		mlx_destroy_image(vars->mlx.mlx, vars->ui.ui_canvas.img);
 		return (0);
 	}
-	if (fill_background(vars))
-		return (close_windows(vars, 1), 1);
+	fill_background(vars);
 	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
 	make_transparent(vars, vars->ui.sprites_canvas);
 	cast_rays(vars);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui.sprites_canvas.img, 0, 0);
 	render_mini_map(vars);
-	render_gun(vars);
+	if (render_gun(vars))
+		return (close_windows(vars, 1, 0));
 	render_ui(vars);
 	move_player(vars, 0.0, 0.0);
 	if (vars->game.spr_count)

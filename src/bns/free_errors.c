@@ -55,7 +55,7 @@ int	null_free(void *ptr)
 	return (1);
 }
 
-void	abort_mission(t_vars *vars, int close)
+void	abort_mission(t_vars *vars, int close, int child)
 {
 	null_free(vars->textures.ceiling);
 	null_free(vars->textures.floor);
@@ -68,30 +68,47 @@ void	abort_mission(t_vars *vars, int close)
 		free_doubles(vars->map);
 	free_doubles2((void **)vars->gun_name, 3);
 	free_doubles2((void **)vars->ui.sound, 3);
-	free_doubles(vars->enemy.filename);
+	free_doubles2((void **)vars->enemy.filename, 5);
 	null_free(vars->ui.ammo);
-	kill(vars->game.pid + 1, SIGKILL);
+	if (!child)
+		system("leaks cub3d");
 }
-
-int	close_windows(t_vars *vars, int close)
+#include <unistd.h>
+int	close_windows(t_vars *vars, int close, int child)
 {
 	int	i;
 	int	j;
+	int	det;
 
-	i = -1;
-	while (vars->gun && ++i < 10)
+	i = 0;
+	det = 0;
+	if (!child)
 	{
-		mlx_destroy_image(vars->mlx.mlx, vars->gun[0][i].img);
-		mlx_destroy_image(vars->mlx.mlx, vars->gun[2][i].img);
-		if (i < 4)
+		kill(vars->game.pid + 1, SIGKILL);
+		sleep(1);
+	}
+	i = -1;
+	while (vars->gun && ++i < 3 && !det)
+	{
+		j = -1;
+		while (++j < 15 && !det)
 		{
-			mlx_destroy_image(vars->mlx.mlx, vars->ui.healt_bar[i].img);
-			mlx_destroy_image(vars->mlx.mlx, vars->xpm[i].img);
+			if (vars->gun[i][j].img == NULL || !vars->gun[i])
+			{
+				det = 1;
+				break ;
+			}
+			if (i != 1 && j > 9)
+				break ;
+			mlx_destroy_image(vars->mlx.mlx, vars->gun[i][j].img);
 		}
 	}
 	i = -1;
-	while (vars->gun && ++i < 15)
-		mlx_destroy_image(vars->mlx.mlx, vars->gun[1][i].img);
+	while (++i < 4)
+	{
+		mlx_destroy_image(vars->mlx.mlx, vars->ui.healt_bar[i].img);
+		mlx_destroy_image(vars->mlx.mlx, vars->xpm[i].img);
+	}
 	free_doubles2((void **)vars->gun, 3);
 	if (vars->ui.map_arrow.img)
 		mlx_destroy_image(vars->mlx.mlx, vars->ui.map_arrow.img);
@@ -108,12 +125,12 @@ int	close_windows(t_vars *vars, int close)
 	}
 	null_free(vars->enemy.sprites);
 	i = -1;
-	while (vars->ui.alp && ++i < 26)
+	while (vars->ui.alp && ++i < 26 && vars->ui.alp[i].img != NULL)
 		mlx_destroy_image(vars->mlx.mlx, vars->ui.alp[i].img);
 	i = -1;
-	while (vars->ui.num && ++i < 10)
+	while (vars->ui.num && ++i < 10 && vars->ui.num[i].img != NULL)
 		mlx_destroy_image(vars->mlx.mlx, vars->ui.num[i].img);
-	abort_mission(vars, close);
+	abort_mission(vars, close, child);
 	mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
 	null_free(vars->mlx.mlx);
 	if (!close)

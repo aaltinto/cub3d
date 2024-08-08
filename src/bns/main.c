@@ -23,6 +23,7 @@ int	set_guns(t_vars *vars)
 	vars->gun_name = malloc(sizeof(char *) * 4);
 	if (!vars->gun_name)
 		return (err("Malloc error"));
+	set_null((void ***)&vars->gun_name, 4);
 	vars->gun_name[0] = ft_strdup("./xpm/Hunter");
 	if (!vars->gun_name[0])
 		return (err("Malloc error"));
@@ -73,6 +74,8 @@ int	marche(t_vars *vars)
 	vars->ui.num = NULL;
 	vars->ui.ammo = NULL;
 	vars->gun_name = NULL;
+	vars->sprites = NULL;
+	vars->new_game = 1;
 	vars->d_time = get_time();
 	if (vars->d_time == 0)
 		return (err("Get_time error"));
@@ -122,20 +125,20 @@ int	main(int ac, char **argv)
 	if (ac != 2)
 		return (err(ARG));
 	if (marche(&vars) || read_map(argv, &vars))
-		return (abort_mission(&vars, 1), 1);
+		return (abort_mission(&vars, 1, 0), 1);
 	vars.mlx.mlx = mlx_init();
 	if (!vars.mlx.mlx)
-		return (abort_mission(&vars ,1), err("Mlx init error"));
+		return (abort_mission(&vars ,1, 0), err("Mlx init error"));
 	vars.mlx.win = mlx_new_window(vars.mlx.mlx, vars.render.sc_width,
 			vars.render.sc_height, "cub3d");
 	if (!vars.mlx.win)
-		return (null_free(vars.mlx.mlx), abort_mission(&vars, 1), err("Mlx window error"));
+		return (null_free(vars.mlx.mlx), abort_mission(&vars, 1, 0), err("Mlx window error"));
 	if (get_textures(&vars))
-		return (close_windows(&vars, 1), 1);
+		return (close_windows(&vars, 1, 0), 1);
 	if (get_magnum_sprites(&vars))
-		return (close_windows(&vars, 1), 1);
+		return (close_windows(&vars, 1, 0), 1);
 	if (get_num_sprites(&vars, 7, 10))
-		return (close_windows(&vars, 1), 1);
+		return (close_windows(&vars, 1, 0), 1);
 	mlx_mouse_move(vars.mlx.win, vars.render.sc_width / 2, vars.render.sc_height / 2);
 	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);
 	mlx_hook(vars.mlx.win, 02, 0, key_capture, &vars);
@@ -143,5 +146,5 @@ int	main(int ac, char **argv)
 	mlx_hook(vars.mlx.win, 04, 0, mouse_func, &vars);
 	mlx_loop_hook(vars.mlx.mlx, render, (void *)(&vars));
 	mlx_loop(vars.mlx.mlx);
-	return (close_windows(&vars, 1), 0);
+	return (close_windows(&vars, 1, 0), 0);
 }

@@ -35,14 +35,13 @@ int	get_alp_sprites(t_vars *vars, int x, int y)
 			return (err("Strjoin error"));
 		vars->ui.alp[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
 				&x, &y);
-		if (!vars->ui.alp[i].img)
+		if (null_free(filename), !vars->ui.alp[i].img)
 			return (err("Can't find animation sprites"));
 		vars->ui.alp[i].addr = mlx_get_data_addr(vars->ui.alp[i].img, \
 		&vars->ui.alp[i].bits_per_pixel, &vars->ui.alp[i].line_length, \
 		&vars->ui.alp[i].endian);
 		if (!vars->ui.alp[i].addr)
 			return (err("Get data addr error"));
-		free(filename);
 	}
 	return (0);
 }
@@ -65,14 +64,13 @@ int	get_num_sprites(t_vars *vars, int x, int y)
 			return (1);
 		vars->ui.num[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
 				&x, &y);
-		if (!vars->ui.num[i].img)
+		if (null_free(filename), !vars->ui.num[i].img)
 			return (err("Can't find animation sprites"));
 		vars->ui.num[i].addr = mlx_get_data_addr(vars->ui.num[i].img, \
 		&vars->ui.num[i].bits_per_pixel, &vars->ui.num[i].line_length, \
 		&vars->ui.num[i].endian);
 		if (!vars->ui.num[i].addr)
 			return (err("Get data addr error"));
-		null_free(filename);
 	}
 	return (0);
 }
@@ -84,8 +82,7 @@ static int	set_gun_data(t_vars *vars, int i, int j, char *filename)
 
 	x = 64;
 	y = 64;
-	vars->gun[j][i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename,
-			&x, &y);
+	vars->gun[j][i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename, &x, &y);
 	if (!vars->gun[j][i].img)
 		return (err("Can't find animation sprites"));
 	vars->gun[j][i].addr = mlx_get_data_addr(vars->gun[j][i].img, \
@@ -94,6 +91,15 @@ static int	set_gun_data(t_vars *vars, int i, int j, char *filename)
 	if (!vars->gun[j][i].addr)
 		return (err("Get data addr error"));
 	return (0);
+}
+
+void	set_null(void ***thing, int count)
+{
+	int	i;
+
+	i = -1;
+	while (++i < count)
+		(*thing)[i] = NULL;
 }
 
 int	get_magnum_sprites(t_vars *vars)
@@ -106,6 +112,7 @@ int	get_magnum_sprites(t_vars *vars)
 	vars->gun = (t_data **)malloc(sizeof(t_data *) * 3);
 	if (!vars->gun)
 		return (err("Malloc error"));
+	set_null((void ***)(&vars->gun), 3);
 	j = -1;
 	while (++j < 3)
 	{
@@ -118,9 +125,10 @@ int	get_magnum_sprites(t_vars *vars)
 		i = -1;
 		while (++i < 10 + ani_count)
 		{
+			vars->gun[j][i].img = NULL;
 			filename = get_xpm_filename(vars->gun_name[j], i + 1);
 			if (!filename || set_gun_data(vars, i, j, filename))
-				return (1);
+				return (null_free(filename));
 			null_free(filename);
 		}
 	}

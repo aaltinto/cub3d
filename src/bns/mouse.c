@@ -25,17 +25,17 @@ int	mouse_func(int button, int x, int y, t_vars *vars)
 				&& x < vars->render.sc_width / 2 + 100
 				&& x > vars->render.sc_width / 2 - 100)
 			{
+				vars->d_time = get_time();
+				mlx_mouse_hide();
 				if (vars->player.life <= 0)
 					return (new_game(vars));
 				vars->ui.menu = 0;
-				vars->d_time = get_time();
-				mlx_mouse_hide();
 			}
 			if (y > vars->render.sc_height / 2 + 80
 				&& y < vars->render.sc_height / 2 + 120
 				&& x < vars->render.sc_width / 2 + 75
 				&& x > vars->render.sc_width / 2 - 85)
-				close_windows(vars, 1);
+				close_windows(vars, 1, 0);
 			return (0);
 		}
 		if (vars->ui.ammo[vars->player.gun_type] == 0)
@@ -55,6 +55,11 @@ int	mouse_move(t_vars *vars)
 	int	my;
 	static int	x = 0;
 
+	if (vars->new_game)
+	{
+		vars->new_game = 0;
+		x = 0;
+	}
 	mlx_mouse_get_pos(vars->mlx.win, &mx, &my);
 	if (mx != 0 && x == 0)
 		x = vars->render.sc_width / 2;

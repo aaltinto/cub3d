@@ -139,7 +139,7 @@ int	make_sound(t_vars *vars)
 		}
 	}
 	if (pid == 0)
-		close_windows(vars, 1);
+		close_windows(vars, 1, 1);
 	return (0);
 }
 

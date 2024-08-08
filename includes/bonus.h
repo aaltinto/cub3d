@@ -179,6 +179,7 @@ typedef struct s_vars
 	char		**gun_name;
 	int			map_w;
 	int			map_h;
+	int			new_game;
 	size_t		s_time;
 	size_t		d_time;
 	char		*raw_map;
@@ -208,7 +209,7 @@ typedef struct s_args
 //error
 int			err(char *str);
 int			null_free(void *ptr);
-void		abort_mission(t_vars *vars, int close);
+void		abort_mission(t_vars *vars, int close, int child);
 int			read_map(char **argv, t_vars *vars);
 int			double_counter(char **str);
 char		**reallocate_double(char **str);
@@ -226,7 +227,7 @@ double		nor_angle(double angle);
 int			key_capture(int keycode, t_vars *vars);
 int			key_release(int keycode, t_vars *vars);
 int			move_player(t_vars *vars, double x, double y);
-int			close_windows(t_vars *vars, int close);
+int			close_windows(t_vars *vars, int close, int child);
 char		*strip(char *str);
 int			render_mini_map(t_vars *vars);
 int			get_color(t_vars *vars, int flag, int x, int y);
@@ -254,5 +255,6 @@ void		scale_up_image(t_data *data, t_data canvas, t_img_args args);
 void		menu_printer(t_vars *vars, t_data *data, t_data canvas, t_img_args args);
 int			marche(t_vars *vars);
 int			new_game(t_vars *vars);
+void		set_null(void ***thing, int count);
 
 #endif
