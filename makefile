@@ -32,6 +32,9 @@ SRC_BNS = src/bns/main.c\
 		src/bns/mouse.c\
 		src/bns/mini_map.c\
 		src/bns/cast_rays.c\
+		src/bns/menu.c\
+		src/bns/text.c\
+		src/bns/gun.c\
 		src/bns/cast_rays_spr.c
 
 LIB = libft/libft.a

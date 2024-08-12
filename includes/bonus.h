@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CUB3D_H
-# define CUB3D_H
+#ifndef BONUS_H
+# define BONUS_H
 
 # define ARG "Error! Invalid arguments.\nUsage: './cub3d *.cub'"
 
@@ -135,28 +135,33 @@ typedef struct s_enemy
 
 typedef struct s_ui
 {
- 	t_data	healt_bar[4];
-	t_data		mini_map;
-	t_data		sprites_canvas;
-	t_data		gun_canvas;
-	t_data		ui_canvas;
-	t_data		*num;
-	t_data		*alp;
-	t_data		map_arrow;
-	int			*ammo;
-	int			menu;
-	char		**sound;
+	t_data	healt_bar[4];
+	t_data	mini_map;
+	t_data	sprites_canvas;
+	t_data	gun_canvas;
+	t_data	ui_canvas;
+	t_data	music[2];
+	t_data	*num;
+	t_data	*mars;
+	t_data	*alp;
+	t_data	map_arrow;
+	int		*ammo;
+	int		menu;
+	int		music_on;
+	char	**sound;
+	size_t	time;
 }	t_ui;
 
 typedef struct s_game
 {
-	int			spr_count;
-	int			enemy_count;
-	int			diamond;
-	int			pid;
-	int			diamond_org;
-	int			enemy_org;
-	int			end_ani;
+	int	spr_count;
+	int	enemy_count;
+	int	diamond;
+	int	pid;
+	int	start;
+	int	diamond_org;
+	int	enemy_org;
+	int	end_ani;
 
 }	t_game;
 
@@ -195,7 +200,6 @@ typedef struct s_ray
 	int		side;
 }	t_ray;
 
-
 typedef struct s_args
 {
 	int		original_width;
@@ -203,8 +207,9 @@ typedef struct s_args
 	double	tile_size;
 	int		pos_x;
 	int		pos_y;
+	int		tile[2];
+	int		pos[2];
 }	t_img_args;
-
 
 //error
 int			err(char *str);
@@ -252,9 +257,14 @@ int			cast_spr(t_vars *vars, double *ddist);
 t_sprite	*detect_barrels(t_vars *vars);
 double		euclid_dist(double *cam, double *pos2);
 void		scale_up_image(t_data *data, t_data canvas, t_img_args args);
-void		menu_printer(t_vars *vars, t_data *data, t_data canvas, t_img_args args);
+void		menu_printer(t_vars *vars, t_data *data, t_data canvas,
+				t_img_args args);
 int			marche(t_vars *vars);
 int			new_game(t_vars *vars);
 void		set_null(void ***thing, int count);
+void		make_transparent(t_vars *vars, t_data canvas);
+int			menu(t_vars *vars);
+int			print_text(t_vars *vars, char *text, int *pos, double size);
+int			enemy_hit(t_vars *vars, int	*map_grid);
 
 #endif

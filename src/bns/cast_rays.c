@@ -41,16 +41,13 @@ int	find_side_dist(t_vars *vars, t_ray *ray)
 int	check_hit(t_vars *vars, t_ray *ray)
 {
 	int	map_grid[2];
-	int	hit;
 	int	i;
 
 	map_grid[X] = (int)(vars->player.camera[X] / TILE_SIZE);
 	map_grid[Y] = (int)(vars->player.camera[Y] / TILE_SIZE);
-	hit = 0;
 	while (vars->map[map_grid[Y]][map_grid[X]] != '1')
 	{
 		i = -1;
-		
 		if (ray->side_dist[X] < ray->side_dist[Y])
 		{
 			ray->side_dist[X] += ray->delta_dist[X];
@@ -63,23 +60,7 @@ int	check_hit(t_vars *vars, t_ray *ray)
 			map_grid[Y] += ray->step[Y];
 			vars->render.flag = 1;
 		}
-		while (vars->game.spr_count && vars->render.ray_angle + 0.09 >= vars->player.p_angle
-			&& vars->render.ray_angle - 0.09 <= vars->player.p_angle
-			&& vars->player.shoot
-			&& hit == 0 && ++i < vars->game.spr_count)
-		{
-			if (vars->sprites[i].spr_pos[X] <= map_grid[X] + 0.5
-			&& vars->sprites[i].spr_pos[X] >= map_grid[X] - 0.5
-			&& vars->sprites[i].spr_pos[Y] <= map_grid[Y] + 0.5
-			&& vars->sprites[i].spr_pos[Y] >= map_grid[Y] - 0.5)
-			{
-				if (vars->player.gun_type != 2)
-					hit = 1;
-				if (vars->sprites[i].is_enemy)
-					vars->sprites[i].hit = 1;
-			}
-
-		}
+		enemy_hit(vars, map_grid);
 	}
 	return (0);
 }

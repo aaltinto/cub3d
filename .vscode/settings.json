@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "sstream": "c",
-        "ratio": "c"
+        "ratio": "c",
+        "bonus.h": "c"
     }
 }

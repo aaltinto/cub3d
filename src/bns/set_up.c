@@ -118,6 +118,33 @@ int	get_hp(t_vars *vars, int x, int y)
 	return (0);
 }
 
+int	get_mars(t_vars *vars, int x, int y)
+{
+	int	i;
+	char	*filename;
+
+	vars->ui.mars = malloc(sizeof(t_data) * 27);
+	if (!vars->ui.mars)
+		return (err("Malloc error"));
+	i = -1;
+	while (++i < 27)
+	{
+		filename = get_xpm_filename("./mars/mars", i);
+		if (!filename)
+			return (err("Error!"));
+		vars->ui.mars[i].img = mlx_xpm_file_to_image(vars->mlx.mlx, filename, &x, &y);
+		if (!vars->ui.mars[i].img)
+			return (null_free(filename), err("Error. Couldn't get img"));
+		null_free(filename);
+		vars->ui.mars[i].addr = mlx_get_data_addr(vars->ui.mars[i].img, \
+		&vars->ui.mars[i].bits_per_pixel, &vars->ui.mars[i].line_length, \
+		&vars->ui.mars[i].endian);
+		if (!vars->ui.mars[i].addr)
+			return (err("Error. Couldn't get data addr"));
+	}
+	return (0);
+}
+
 int	get_textures(t_vars *vars)
 {
 	int	x;
@@ -127,7 +154,7 @@ int	get_textures(t_vars *vars)
 	x = 64;
 	y = 64;
 	i = -1;
-	if (get_hp(vars, 380, 97))
+	if (get_hp(vars, 380, 97) || get_mars(vars, 540, 810))
 		return (1);
 	while (++i < 4)
 	{
@@ -136,6 +163,16 @@ int	get_textures(t_vars *vars)
 		if (!vars->xpm[i].img)
 			return (wall_err(i));
 	}
+	x = 155;
+	y = 155;
+	vars->ui.music[0].img = mlx_xpm_file_to_image(vars->mlx.mlx,
+			"./textures/music_on.xpm", &x, &y);
+	vars->ui.music[0].addr = mlx_get_data_addr(vars->ui.music[0].img, &vars->ui.music[0].bits_per_pixel, &vars->ui.music[0].line_length, &vars->ui.music[0].endian);
+	vars->ui.music[1].img = mlx_xpm_file_to_image(vars->mlx.mlx,
+			"./textures/music_off.xpm", &x, &y);
+	vars->ui.music[1].addr = mlx_get_data_addr(vars->ui.music[1].img, &vars->ui.music[1].bits_per_pixel, &vars->ui.music[1].line_length, &vars->ui.music[1].endian);
+	if (!vars->ui.music[0].img || !vars->ui.music[1].img)
+		return (err("can't get texture music"));
 	x = 48;
 	y = 48;
 	vars->ui.map_arrow.img = mlx_xpm_file_to_image(vars->mlx.mlx,

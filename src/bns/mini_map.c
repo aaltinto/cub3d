@@ -57,8 +57,8 @@ static void	put_tiles(t_vars *vars, int *pos, double cos_angle,
 				- (y - map_size[Y] / 2) * sin_angle;
 			rotated[Y] = (x - map_size[X] / 2) * sin_angle + (y - map_size[Y]
 					/ 2) * cos_angle;
-			pixel_put(&vars->ui.mini_map, x, y, color(vars, rotated[X] + center[X],
-					rotated[Y] + center[Y]));
+			pixel_put(&vars->ui.mini_map, x, y,
+				color(vars, rotated[X] + center[X], rotated[Y] + center[Y]));
 		}
 	}
 }

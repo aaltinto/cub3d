@@ -2,7 +2,7 @@
 static char *musicoff1723132825[] = {
 /* columns rows colors chars-per-pixel */
 "155 155 50 1 ",
-"  c black",
+"  c white",
 ". c #060606",
 "X c gray4",
 "o c #0E0E0E",
@@ -51,7 +51,7 @@ static char *musicoff1723132825[] = {
 "l c #F3F3F3",
 "z c #F4F4F4",
 "x c gray98",
-"c c white",
+"c c black",
 /* pixels */
 "jcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
 "jcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",

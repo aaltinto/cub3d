@@ -73,7 +73,7 @@ void	abort_mission(t_vars *vars, int close, int child)
 	if (!child)
 		system("leaks cub3d");
 }
-#include <unistd.h>
+
 int	close_windows(t_vars *vars, int close, int child)
 {
 	int	i;
@@ -132,7 +132,6 @@ int	close_windows(t_vars *vars, int close, int child)
 		mlx_destroy_image(vars->mlx.mlx, vars->ui.num[i].img);
 	abort_mission(vars, close, child);
 	mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
-	null_free(vars->mlx.mlx);
 	if (!close)
 		return (0);
 	exit(0);

@@ -14,59 +14,7 @@
 #include "../../minilibx/mlx.h"
 #include <stdlib.h>
 #include <unistd.h>
-
-int	hover_effect(t_vars *vars, t_data *data, int *pos, t_img_args args)
-{
-	int	color;
-	int	mx;
-	int	my;
-
-	mlx_mouse_get_pos(vars->mlx.win, &mx, &my);
-	color = texture_color(data, pos[X], pos[Y]);
-	if (!vars->ui.menu)
-		return (color);
-	if (color == 16777215 && my > vars->render.sc_height / 2
-				&& my < vars->render.sc_height / 2 + 40
-				&& mx < vars->render.sc_width / 2 + 95
-				&& mx > vars->render.sc_width / 2 - 105
-				&& args.pos_y == 450)
-		color = rgb_to_hex(209, 95, 43);
-	else if (color == 16777215 && my > vars->render.sc_height / 2 + 80
-				&& my < vars->render.sc_height / 2 + 120
-				&& mx < vars->render.sc_width / 2 + 75
-				&& mx > vars->render.sc_width / 2 - 85
-				&& args.pos_y == 530)
-		color = rgb_to_hex(209, 95, 43);
-	return (color);
-}
-
-void	menu_printer(t_vars *vars, t_data *data, t_data canvas, t_img_args args)
-{
-	int	pos[2];
-	int	color;
-	int	tile[2];
-
-	pos[Y] = -1;
-	while (++pos[Y] < args.original_height)
-	{
-		pos[X] = -1;
-		while (++pos[X] < args.original_width)
-		{
-			tile[Y] = -1;
-			while (++tile[Y] < args.tile_size)
-			{
-				tile[X] = -1;
-				while (++tile[X] < args.tile_size)
-				{
-					color = hover_effect(vars, data, pos, args);
-					pixel_put(&canvas, (pos[X] * args.tile_size) + tile[X]
-						+ args.pos_x, (pos[Y] * args.tile_size) + tile[Y]
-						+ args.pos_y, color);
-				}
-			}
-		}
-	}
-}
+#include <signal.h>
 
 void	scale_up_image(t_data *data, t_data canvas, t_img_args args)
 {
@@ -94,84 +42,6 @@ void	scale_up_image(t_data *data, t_data canvas, t_img_args args)
 	}
 }
 
-void	calculate_ammo_count(t_vars *vars, double pos_tile)
-{
-	int			ammo;
-	int			pos;
-	t_img_args	args;
-
-	ammo = vars->ui.ammo[vars->player.gun_type];
-	pos = 0;
-	args.original_height = 10;
-	args.original_width = 7;
-	args.tile_size = pos_tile;
-	args.pos_x = vars->render.sc_width * 0.8 - pos * 7;
-	args.pos_y = vars->render.sc_height * 0.8;
-	while (ammo != 0)
-	{
-		args.pos_x = vars->render.sc_width * 0.8 - pos * 7;
-		args.pos_y = vars->render.sc_height * 0.8;
-		scale_up_image(&vars->ui.num[ammo % 10], vars->ui.ui_canvas, args);
-		ammo /= 10;
-		pos += pos_tile;
-	}
-	if (vars->ui.ammo[vars->player.gun_type] == 0)
-		scale_up_image(&vars->ui.num[ammo % 10], vars->ui.ui_canvas, args);
-}
-
-int	make_sound(t_vars *vars)
-{
-	int	pid;
-
-	pid = fork();
-	if (pid < 0)
-		return (err("Fork error"));
-	if (vars->player.shoot == 1 && vars->player.ani_i == 0)
-	{
-		if (pid == 0)
-		{
-			if (!vars->player.gun_type)
-				system("afplay xpm/Huntershoot.wav");
-			else if (vars->player.gun_type == 1)
-				system("afplay xpm/Talonshoot.wav");
-			else
-				system("afplay xpm/Thermshoot.wav");
-		}
-	}
-	if (pid == 0)
-		close_windows(vars, 1, 1);
-	return (0);
-}
-
-int	render_gun(t_vars *vars)
-{
-	t_img_args	args;
-
-	args.original_height = 64;
-	args.original_width = 64;
-	args.tile_size = TILE_GUN;
-	args.pos_x = 0;
-	args.pos_y = 0;
-	scale_up_image(&vars->gun[vars->player.gun_type][vars->player.ani_i],
-		vars->ui.gun_canvas, args);
-	if (vars->player.shoot == 1)
-	{
-		if (make_sound(vars))
-			return (1);
-		if ((int)(get_time() - vars->s_time) > 7 + vars->player.ani_i)
-			vars->player.ani_i++;
-		if ((vars->player.gun_type != 1 && vars->player.ani_i >= 10)
-			|| (vars->player.gun_type == 1 && vars->player.ani_i >= 15))
-		{
-			vars->player.ani_i = 0;
-			vars->player.shoot = 0;
-		}
-	}
-	return (mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, \
-		vars->ui.gun_canvas.img, (vars->render.sc_width / 2) - ((64 * TILE_GUN) \
-		/ 2), vars->render.sc_height - (64 * TILE_GUN)), 0);
-}
-
 int	select_index(t_vars *vars)
 {
 	if (vars->player.life == 100)
@@ -185,6 +55,45 @@ int	select_index(t_vars *vars)
 	return (3);
 }
 
+char	*pick_sound(t_vars *vars)
+{
+	char		*sound;
+
+	if (vars->ui.menu == 1)
+		sound = vars->ui.sound[0];
+	else
+		sound = vars->ui.sound[1];
+	return (sound);
+}
+
+int	music(t_vars *vars)
+{
+	static int	s = -1;
+	static int	m = 1;
+
+	if (!vars->ui.music_on)
+	{
+		if (m == 1)
+			kill(vars->game.pid + 1, SIGKILL);
+		return (s = -1, m = 0, 0);
+	}
+	if (s != -1 && s == vars->ui.menu)
+		return (0);
+	else if (s != -1)
+		kill(vars->game.pid + 1, SIGKILL);
+	m = 1;
+	vars->game.pid = fork();
+	if (vars->game.pid < 0)
+		return (err("Fork error"), close_windows(vars, 1, 0));
+	if (vars->game.pid == 0)
+	{
+		system(pick_sound(vars));
+		close_windows(vars, 1, 1);
+	}
+	s = vars->ui.menu;
+	return (0);
+}
+
 void	render_ui(t_vars *vars)
 {
 	int			x;
@@ -192,13 +101,7 @@ void	render_ui(t_vars *vars)
 	int			i;
 	t_img_args	args;
 
-	y = -1;
-	while (vars->render.sc_height > ++y)
-	{
-		x = -1;
-		while (vars->render.sc_width > ++x)
-			pixel_put(&vars->ui.ui_canvas, x, y, -16777216);
-	}
+	make_transparent(vars, vars->ui.ui_canvas);
 	args.original_height = 48;
 	args.original_width = 48;
 	args.tile_size = 0.5;
@@ -213,6 +116,6 @@ void	render_ui(t_vars *vars)
 	args.tile_size = 0.5;
 	i = select_index(vars);
 	scale_up_image(&vars->ui.healt_bar[i], vars->ui.ui_canvas, args);
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui.ui_canvas.img,
-		0, 0);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
+		vars->ui.ui_canvas.img, 0, 0);
 }

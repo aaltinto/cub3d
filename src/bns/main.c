@@ -66,6 +66,8 @@ int	marche(t_vars *vars)
 	vars->keys.key_w = 0;
 	vars->keys.key_la = 0;
 	vars->keys.key_ra = 0;
+	vars->ui.music_on = 1;
+	vars->game.start = 0;
 	vars->ui.sound = NULL;
 	vars->gun = NULL;
 	vars->ui.map_arrow.img = NULL;
@@ -90,6 +92,7 @@ int	marche(t_vars *vars)
 	vars->player.running = 1;
 	vars->fov_angle = 60;
 	vars->game.spr_count = 0;
+	vars->ui.time = get_time();
 	vars->ui.menu = 1;
 	vars->player.life = 100;
 	vars->player.plane[X] = 0.0;

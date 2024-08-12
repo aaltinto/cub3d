@@ -13,6 +13,7 @@
 #include "../../includes/bonus.h"
 #include "../../minilibx/mlx.h"
 #include "../../libft/libft.h"
+#include <math.h>
 
 t_data	*fill_t_data(t_data *data, t_vars *vars, int width, int height)
 {
@@ -28,8 +29,8 @@ t_data	*fill_t_data(t_data *data, t_vars *vars, int width, int height)
 
 int	get_canvas(t_vars *vars)
 {
-	if (fill_t_data(&vars->ui.mini_map, vars, (int)(vars->render.sc_width * 0.2),
-			(int)(vars->render.sc_height * 0.2)) == NULL)
+	if (fill_t_data(&vars->ui.mini_map, vars, (int)(vars->render.sc_width * \
+		0.2), (int)(vars->render.sc_height * 0.2)) == NULL)
 		return (err("Image init error!"), 1);
 	if (!fill_t_data(&vars->img, vars, vars->render.sc_width,
 			vars->render.sc_height))
@@ -69,54 +70,6 @@ int	fill_background(t_vars *vars)
 	return (0);
 }
 
-#include <math.h>
-
-double calculate_angle(double *cam, double *pos)
-{
-    double dx = cam[X] - pos[X];
-    double dy = cam[Y] - pos[Y];
-    double angle = atan2(dy, dx);
-    double angle_degrees = angle * (180.0 / M_PI);
-    return (angle_degrees);
-}
-
-int	print_text(t_vars *vars, char *text, int *pos, double size)
-{
-	t_img_args	args;
-	int			i;
-	int			c;
-
-	if (!text)
-		return (err("Error\ntext can't be null"));
-	args.original_height = 8;
-	args.original_width = 8;
-	args.pos_x = pos[X] - ((ft_strlen(text) * 8 * size) / 2);
-	if (args.pos_x < 0)
-		args.pos_x = 0;
-	if (vars->render.sc_width < args.pos_x + (ft_strlen(text) * size))
-	args.pos_x += vars->render.sc_width - (args.pos_x + (ft_strlen(text) * size));
-	if (args.pos_x < 0)
-		return (err("Error\nText too big to fit"));
-	args.pos_y = pos[Y];
-	args.tile_size = size;
-	i = -1;
-	while (text[++i])
-	{
-		if (text[i] == ' ')
-		{
-			args.pos_x += 8 * size;
-			continue ;
-		}
-		if (!ft_isalpha(text[i]))
-			return (err("Error\nUnrecognized char in the text. All must \
-be alphabetical"));
-		c = ft_tolower(text[i]) - 97;
-		menu_printer(vars, &vars->ui.alp[c], vars->ui.ui_canvas, args);
-		args.pos_x += 8 * size;
-	}
-	return (0);
-}
-
 int	new_game(t_vars *vars)
 {
 	int	count;
@@ -138,54 +91,16 @@ int	new_game(t_vars *vars)
 	}
 	vars->game.diamond = vars->game.diamond_org;
 	vars->game.enemy_count = vars->game.enemy_org;
+	vars->ui.ammo[0] = 30;
+	vars->ui.ammo[1] = 30;
+	vars->ui.ammo[2] = 3;
 	detect_player(vars);
+	vars->d_time = get_time();
+	mlx_mouse_hide();
 	mlx_mouse_move(vars->mlx.win, vars->render.sc_width / 2,
 		vars->render.sc_height / 2);
 	vars->player.life = 100;
 	vars->ui.menu = 0;
-	return (0);
-}
-
-int	opening_menu(t_vars *vars)
-{
-	int	pos[2];
-
-	if (vars->player.life <= 0)
-	{
-		pos[X] = vars->render.sc_width / 2;
-		pos[Y] = vars->render.sc_height * 0.2;
-		if (vars->game.diamond == 0)
-		{
-			if (print_text(vars, "congratulations", pos, 8))
-				return (1);
-		}
-		else
-			if (print_text(vars, "game over", pos, 8))
-				return (1);
-		pos[X] = vars->render.sc_width / 2;
-		pos[Y] = vars->render.sc_height / 2;
-		if (print_text(vars, "new game", pos, 5))
-			return (1);
-		pos[X] = vars->render.sc_width / 2;
-		pos[Y] = vars->render.sc_height / 2 + 80;
-		if (print_text(vars, "Quit", pos, 5))
-			return (1);
-		mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui.ui_canvas.img, 0, 0);
-		return (0);
-	}
-	pos[X] = vars->render.sc_width / 2;
-	pos[Y] = vars->render.sc_height * 0.2;
-	if (print_text(vars, "cube game", pos, 8))
-		return (1);
-	pos[X] = vars->render.sc_width / 2;
-	pos[Y] = vars->render.sc_height / 2;
-	if (print_text(vars, "start", pos, 5))
-		return (1);
-	pos[X] = vars->render.sc_width / 2;
-	pos[Y] = vars->render.sc_height / 2 + 80;
-	if (print_text(vars, "quit", pos, 5))
-		return (1);
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui.ui_canvas.img, 0, 0);
 	return (0);
 }
 
@@ -217,23 +132,23 @@ void	collect_diamond(t_vars *vars, t_player player, t_sprite *sprites)
 		return ;
 	if (vars->game.enemy_count != 0)
 	{
-		if ((sprites->spr_pos[X] <= (player.camera[X] / TILE_SIZE) + 0.5
+		if ((sprites->spr_pos[X] <= (player.camera[X] / TILE_SIZE) + 0.5 \
 			&& sprites->spr_pos[X] >= (player.camera[X] / TILE_SIZE) - 0.5)
-			&& (sprites->spr_pos[Y] <= (player.camera[Y] / TILE_SIZE) + 0.5
+			&& (sprites->spr_pos[Y] <= (player.camera[Y] / TILE_SIZE) + 0.5 \
 			&& sprites->spr_pos[Y] >= (player.camera[Y] / TILE_SIZE) - 0.5))
 			vars->d_time = get_time();
 		pos[X] = vars->render.sc_width / 2;
 		pos[Y] = vars->render.sc_height * 0.22;
-		if ( get_time() - vars->d_time < 3000)
+		if (get_time() - vars->d_time < 3000)
 		{
 			print_text(vars, "kill all the martians", pos, 3);
 			mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui.ui_canvas.img, 0, 0);
 		}
 		return ;
 	}
-	if ((sprites->spr_pos[X] <= (player.camera[X] / TILE_SIZE) + 0.5
+	if ((sprites->spr_pos[X] <= (player.camera[X] / TILE_SIZE) + 0.5 \
 		&& sprites->spr_pos[X] >= (player.camera[X] / TILE_SIZE) - 0.5)
-		&& (sprites->spr_pos[Y] <= (player.camera[Y] / TILE_SIZE) + 0.5
+		&& (sprites->spr_pos[Y] <= (player.camera[Y] / TILE_SIZE) + 0.5 \
 		&& sprites->spr_pos[Y] >= (player.camera[Y] / TILE_SIZE) - 0.5))
 	{
 		vars->game.diamond--;
@@ -247,32 +162,67 @@ void	collect_diamond(t_vars *vars, t_player player, t_sprite *sprites)
 		mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui.ui_canvas.img, 0, 0);
 	}
 }
-#include <signal.h>
-#include <unistd.h>
-int	music(t_vars *vars)
+
+int	find(double num)
 {
-	static int	s = -1;
-	char		*sound;
+	return (num +((num / fabs(num)) * 0.25f));
+}
 
+void	spr_move(t_vars *vars, double *pos, int i)
+{
+	int	x;
+	int	y;
 
-	if (s != -1 && s == vars->ui.menu)
-		return (0);
-	else if (s != -1)
-		kill(vars->game.pid + 1, SIGKILL);
-	vars->game.pid = fork();
-	if (vars->game.pid < 0)
-		return (err("Fork error"), close_windows(vars, 1, 0));
-	if (vars->game.pid == 0)
+	x = 0;
+	y = 0;
+	if (pos[X] > (vars->player.pos[X] / TILE_SIZE - 0.5))
+		x -= 0.025;
+	else
+		x += 0.025;
+	if (pos[Y] > (vars->player.pos[Y] / TILE_SIZE - 0.5))
+		y -= 0.025;
+	else
+		y += 0.025;
+	if (vars->map[(int)(round(pos[Y] + find(y)))][(int)(round(pos[X]))] != '1'
+		&& vars->map[(int)(round(pos[Y] + find(y)))][(int)(round(pos[X]))]
+		!= 'B')
+		if (fabs((pos[Y] + y) - (vars->player.pos[Y] / TILE_SIZE - 0.5)) >= 0.1)
+			vars->sprites[i].spr_pos[Y] += y;
+	if (vars->map[(int)(round(pos[Y]))][(int)(round(pos[X] + find(x)))] != '1'
+		&& vars->map[(int)(round(pos[Y]))][(int)(round(pos[X] + find(x)))]
+		!= 'B')
+		if (fabs((pos[X] + x) - (vars->player.pos[X] / TILE_SIZE - 0.5)) >= 0.1)
+			vars->sprites[i].spr_pos[X] += x;
+}
+
+void	sprite_func(t_vars *vars)
+{
+	int		i;
+	double	*pos;
+	double	x;
+	double	y;
+	double	dist;
+
+	i = -1;
+	while (++i < vars->game.spr_count)
 	{
-		if (vars->ui.menu == 1)
-			sound = vars->ui.sound[0];
-		else
-			sound = vars->ui.sound[1];
-		system(sound);
-		close_windows(vars, 1, 1);
+		if (vars->sprites[i].life <= 0)
+			continue ;
+		collect_diamond(vars, vars->player, &(vars->sprites[i]));
+		dist = euclid_dist(vars->player.pos, vars->sprites[i].spr_pos);
+		pos = vars->sprites[i].spr_pos;
+		if (dist < 7 && dist > 0.75f && vars->sprites[i].is_enemy)
+			spr_move(vars, pos, i);
 	}
-	s = vars->ui.menu;
-	return (0);
+}
+
+void	destroy_canvases(t_vars *vars)
+{
+	mlx_destroy_image(vars->mlx.mlx, vars->img.img);
+	mlx_destroy_image(vars->mlx.mlx, vars->ui.mini_map.img);
+	mlx_destroy_image(vars->mlx.mlx, vars->ui.gun_canvas.img);
+	mlx_destroy_image(vars->mlx.mlx, vars->ui.sprites_canvas.img);
+	mlx_destroy_image(vars->mlx.mlx, vars->ui.ui_canvas.img);
 }
 
 int	render(void *ptr)
@@ -280,76 +230,32 @@ int	render(void *ptr)
 	t_vars	*vars;
 
 	vars = (t_vars *)ptr;
-	if (vars->player.running != 1 && vars->fov_angle >= 64)
-		vars->fov_angle--;
-	else if (vars->player.running == 1 && vars->fov_angle < 66)
-		vars->fov_angle++;
 	vars->player.fov = vars->fov_angle * (M_PI / 180);
-	if (get_canvas(vars))
+	if (get_canvas(vars) )//|| music(vars))
 		return (close_windows(vars, 1, 0));
-	if (music(vars))
-		return (1);
 	if (vars->ui.menu)
 	{
 		mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
-		if (opening_menu(vars))
-			return (close_windows(vars, 1, 0));
-		mlx_destroy_image(vars->mlx.mlx, vars->img.img);
-		mlx_destroy_image(vars->mlx.mlx, vars->ui.mini_map.img);
-		mlx_destroy_image(vars->mlx.mlx, vars->ui.gun_canvas.img);
-		mlx_destroy_image(vars->mlx.mlx, vars->ui.sprites_canvas.img);
-		mlx_destroy_image(vars->mlx.mlx, vars->ui.ui_canvas.img);
+		if (menu(vars))
+			return (destroy_canvases(vars), close_windows(vars, 1, 0));
+		destroy_canvases(vars);
 		return (0);
 	}
-	fill_background(vars);
 	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
+	fill_background(vars);
 	make_transparent(vars, vars->ui.sprites_canvas);
 	cast_rays(vars);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->ui.sprites_canvas.img, 0, 0);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
+		vars->ui.sprites_canvas.img, 0, 0);
 	render_mini_map(vars);
 	if (render_gun(vars))
 		return (close_windows(vars, 1, 0));
 	render_ui(vars);
 	move_player(vars, 0.0, 0.0);
 	if (vars->game.spr_count)
-	{
-		int i = -1;
-		double x;
-		double y;
-	
-		while (++i < vars->game.spr_count)
-		{
-			x = 0;
-			y = 0;
-			if (vars->sprites[i].life <= 0)
-				continue ;
-			collect_diamond(vars, vars->player, &(vars->sprites[i]));
-			double dist = euclid_dist(vars->player.pos, vars->sprites[i].spr_pos);
-			if (dist < 7 && dist > 0.75f && vars->sprites[i].is_enemy)
-			{
-				if (vars->sprites[i].spr_pos[X] > (vars->player.pos[X] / TILE_SIZE - 0.5))
-					x -= 0.025;
-				else
-					x += 0.025;
-				if (vars->sprites[i].spr_pos[Y] > (vars->player.pos[Y] / TILE_SIZE - 0.5))
-					y -= 0.025;
-				else
-					y += 0.025;
-				if (vars->map[(int)(round(vars->sprites[i].spr_pos[Y] + y +((y / fabs(y)) * 0.25f)))][(int)(round(vars->sprites[i].spr_pos[X]))] != '1' && vars->map[(int)(round(vars->sprites[i].spr_pos[Y] + y +((y / fabs(y)) * 0.25f)))][(int)(round(vars->sprites[i].spr_pos[X]))] != 'B')
-					if (fabs((vars->sprites[i].spr_pos[Y] + y) - (vars->player.pos[Y] / TILE_SIZE - 0.5)) >= 0.1)
-						vars->sprites[i].spr_pos[Y] += y;
-				if (vars->map[(int)(round(vars->sprites[i].spr_pos[Y]))][(int)(round(vars->sprites[i].spr_pos[X] + x + ((x / fabs(x)) * 0.25f)))] != '1' && vars->map[(int)(round(vars->sprites[i].spr_pos[Y]))][(int)(round(vars->sprites[i].spr_pos[X] + x + ((x / fabs(x)) * 0.25f)))] != 'B')
-					if (fabs((vars->sprites[i].spr_pos[X] + x) - (vars->player.pos[X] / TILE_SIZE - 0.5)) >= 0.1)
-						vars->sprites[i].spr_pos[X] += x;
-			}
-		}
-	}
+		sprite_func(vars);
 	vars->player.p_angle = nor_angle(vars->player.p_angle);
-	mlx_destroy_image(vars->mlx.mlx, vars->img.img);
-	mlx_destroy_image(vars->mlx.mlx, vars->ui.mini_map.img);
-	mlx_destroy_image(vars->mlx.mlx, vars->ui.gun_canvas.img);
-	mlx_destroy_image(vars->mlx.mlx, vars->ui.sprites_canvas.img);
-	mlx_destroy_image(vars->mlx.mlx, vars->ui.ui_canvas.img);
+	destroy_canvases(vars);
 	return (0);
 }

@@ -71,7 +71,12 @@ int	move_player(t_vars *vars, double x, double y)
 	new_y = (vars->player.pos[Y] + y) / TILE_SIZE;
 	map_x = (vars->player.pos[X]) / TILE_SIZE;
 	map_y = (vars->player.pos[Y]) / TILE_SIZE;
-	if (double_counter(vars->map) < (new_y) || vars->map[new_y][map_x] == '1' || vars->map[new_y][map_x] == 'B')
+	if (vars->player.running != 1 && vars->fov_angle >= 64)
+		vars->fov_angle--;
+	else if (vars->player.running == 1 && vars->fov_angle < 66)
+		vars->fov_angle++;
+	if (double_counter(vars->map) < (new_y) || vars->map[new_y][map_x] == '1'
+		|| vars->map[new_y][map_x] == 'B')
 		y = 0;
 	if ((int)ft_strlen(vars->map[map_y]) < (new_x)
 		|| vars->map[map_y][new_x] == '1' || vars->map[map_y][new_x] == 'B')
@@ -81,6 +86,7 @@ int	move_player(t_vars *vars, double x, double y)
 	check_camera(vars);
 	return (0);
 }
+
 
 int	key_release(int keycode, t_vars *vars)
 {
@@ -101,11 +107,27 @@ int	key_release(int keycode, t_vars *vars)
 	return (0);
 }
 
+static void	check_other(int keycode, t_vars *vars)
+{
+	if (keycode == SHIFT && (vars->keys.key_d || vars->keys.key_s \
+		|| vars->keys.key_w || vars->keys.key_a))
+		vars->player.running = 2.50;
+	if (keycode == 18)
+		vars->player.gun_type = 0;
+	if (keycode == 19)
+		vars->player.gun_type = 1;
+	if (keycode == 20)
+		vars->player.gun_type = 2;
+}
+
 int	key_capture(int keycode, t_vars *vars)
 {
 	if (keycode == ESC)
 	{
+		if (vars->ui.menu == 1)
+			close_windows(vars, 1, 0);
 		mlx_mouse_show();
+		vars->ui.time = get_time();
 		vars->ui.menu = 1;
 	}
 	if (keycode == ARROW_R)
@@ -120,14 +142,5 @@ int	key_capture(int keycode, t_vars *vars)
 		vars->keys.key_a = 1;
 	if (keycode == D)
 		vars->keys.key_d = 1;
-	if (keycode == SHIFT && (vars->keys.key_d || vars->keys.key_s
-		|| vars->keys.key_w || vars->keys.key_a))
-		vars->player.running = 2.50;
-	if (keycode == 18)
-		vars->player.gun_type = 0;
-	if (keycode == 19)
-		vars->player.gun_type = 1;
-	if (keycode == 20)
-		vars->player.gun_type = 2;
 	return (0);
 }
