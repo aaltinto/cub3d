@@ -1,17 +1,30 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   gun.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaltinto <aaltinto@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/12 15:06:05 by aaltinto          #+#    #+#             */
+/*   Updated: 2024/08/12 15:06:08 by aaltinto         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../includes/bonus.h"
 #include "../../minilibx/mlx.h"
 #include <stdlib.h>
 #include <unistd.h>
 
-int	enemy_hit(t_vars *vars, int	*map_grid)
+int	enemy_hit(t_vars *vars, int	*map_grid, int *hit)
 {
-	static int	hit = 0;
+	int			i;
 
-	while (vars->game.spr_count && vars->render.ray_angle + 0.09 \
-	>= vars->player.p_angle && vars->render.ray_angle - 0.09 <= \
-	vars->player.p_angle && vars->player.shoot && hit == 0 && ++i \
-	< vars->game.spr_count)
+	i = -1;
+	while (vars->game.spr_count && vars->render.ray_angle + 0.09
+		>= vars->player.p_angle
+		&& vars->render.ray_angle - 0.09 <= vars->player.p_angle
+		&& vars->player.shoot
+		&& *hit == 0 && ++i < vars->game.spr_count)
 	{
 		if (vars->sprites[i].spr_pos[X] <= map_grid[X] + 0.5 \
 		&& vars->sprites[i].spr_pos[X] >= map_grid[X] - 0.5 \
@@ -19,11 +32,9 @@ int	enemy_hit(t_vars *vars, int	*map_grid)
 		&& vars->sprites[i].spr_pos[Y] >= map_grid[Y] - 0.5)
 		{
 			if (vars->player.gun_type != 2)
-				hit = 1;
+				*hit = 1;
 			if (vars->sprites[i].is_enemy)
 				vars->sprites[i].hit = 1;
-			if (hit)
-				break ;
 		}
 	}
 	return (0);

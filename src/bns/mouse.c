@@ -48,13 +48,17 @@ int	mouse_func(int button, int x, int y, t_vars *vars)
 	{
 		if (vars->ui.menu)
 			button_press(vars, x, y);
+		else
+		{
+			if (vars->ui.ammo[vars->player.gun_type] > 0
+				&& vars->player.shoot == 0)
+				vars->ui.ammo[vars->player.gun_type]--;
+			if (vars->player.shoot == 0)
+				vars->player.shoot = 1;
+		}
 		if (vars->ui.ammo[vars->player.gun_type] == 0)
 			return (0);
 		vars->s_time = get_time();
-		if (vars->ui.ammo[vars->player.gun_type] > 0 && vars->player.shoot == 0)
-			vars->ui.ammo[vars->player.gun_type]--;
-		if (vars->player.shoot == 0)
-			vars->player.shoot = 1;
 	}
 	return (0);
 }

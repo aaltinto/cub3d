@@ -6,7 +6,7 @@
 /*   By: aaltinto <aaltinto@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 23:05:14 by aaltinto          #+#    #+#             */
-/*   Updated: 2024/07/12 23:05:15 by aaltinto         ###   ########.fr       */
+/*   Updated: 2024/08/12 15:07:01 by aaltinto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ int	move_player(t_vars *vars, double x, double y)
 	return (0);
 }
 
-
 int	key_release(int keycode, t_vars *vars)
 {
 	if (keycode == ARROW_R)
@@ -142,5 +141,6 @@ int	key_capture(int keycode, t_vars *vars)
 		vars->keys.key_a = 1;
 	if (keycode == D)
 		vars->keys.key_d = 1;
+	check_other(keycode, vars);
 	return (0);
 }

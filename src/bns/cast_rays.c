@@ -41,13 +41,13 @@ int	find_side_dist(t_vars *vars, t_ray *ray)
 int	check_hit(t_vars *vars, t_ray *ray)
 {
 	int	map_grid[2];
-	int	i;
+	int	hit;
 
+	hit = 0;
 	map_grid[X] = (int)(vars->player.camera[X] / TILE_SIZE);
 	map_grid[Y] = (int)(vars->player.camera[Y] / TILE_SIZE);
 	while (vars->map[map_grid[Y]][map_grid[X]] != '1')
 	{
-		i = -1;
 		if (ray->side_dist[X] < ray->side_dist[Y])
 		{
 			ray->side_dist[X] += ray->delta_dist[X];
@@ -60,7 +60,7 @@ int	check_hit(t_vars *vars, t_ray *ray)
 			map_grid[Y] += ray->step[Y];
 			vars->render.flag = 1;
 		}
-		enemy_hit(vars, map_grid);
+		enemy_hit(vars, map_grid, &hit);
 	}
 	return (0);
 }
@@ -145,7 +145,7 @@ int	cast_rays(t_vars *vars)
 		vars->render.ray_angle += vars->player.fov / vars->render.sc_width;
 	}
 	if (vars->game.spr_count)
-		cast_spr(vars, wall_dist);
-	null_free(wall_dist);
-	return (0);
+		if (cast_spr(vars, wall_dist))
+			return (err("Cast sprites error"));
+	return (null_free(wall_dist), 0);
 }

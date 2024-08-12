@@ -72,8 +72,6 @@ int	marche(t_vars *vars)
 	vars->gun = NULL;
 	vars->ui.map_arrow.img = NULL;
 	vars->enemy.sprites = NULL;
-	vars->ui.alp = NULL;
-	vars->ui.num = NULL;
 	vars->ui.ammo = NULL;
 	vars->gun_name = NULL;
 	vars->sprites = NULL;
@@ -131,18 +129,15 @@ int	main(int ac, char **argv)
 		return (abort_mission(&vars, 1, 0), 1);
 	vars.mlx.mlx = mlx_init();
 	if (!vars.mlx.mlx)
-		return (abort_mission(&vars ,1, 0), err("Mlx init error"));
+		return (abort_mission(&vars, 1, 0), err("Mlx init error"));
 	vars.mlx.win = mlx_new_window(vars.mlx.mlx, vars.render.sc_width,
 			vars.render.sc_height, "cub3d");
 	if (!vars.mlx.win)
-		return (null_free(vars.mlx.mlx), abort_mission(&vars, 1, 0), err("Mlx window error"));
-	if (get_textures(&vars))
-		return (close_windows(&vars, 1, 0), 1);
-	if (get_magnum_sprites(&vars))
+		return (abort_mission(&vars, 1, 0), err("Mlx window error"));
+	if (get_textures(&vars) || get_magnum_sprites(&vars))
 		return (close_windows(&vars, 1, 0), 1);
 	if (get_num_sprites(&vars, 7, 10))
 		return (close_windows(&vars, 1, 0), 1);
-	mlx_mouse_move(vars.mlx.win, vars.render.sc_width / 2, vars.render.sc_height / 2);
 	mlx_hook(vars.mlx.win, 17, 0, close_windows, &vars);
 	mlx_hook(vars.mlx.win, 02, 0, key_capture, &vars);
 	mlx_hook(vars.mlx.win, 03, 0, key_release, &vars);

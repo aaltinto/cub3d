@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cub3d.h                                            :+:      :+:    :+:   */
+/*   bonus.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aaltinto <aaltinto@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 22:29:45 by aaltinto          #+#    #+#             */
-/*   Updated: 2024/07/13 01:33:23 by aaltinto         ###   ########.fr       */
+/*   Updated: 2024/08/12 15:08:50 by aaltinto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,9 +141,9 @@ typedef struct s_ui
 	t_data	gun_canvas;
 	t_data	ui_canvas;
 	t_data	music[2];
-	t_data	*num;
-	t_data	*mars;
-	t_data	*alp;
+	t_data	num[10];
+	t_data	mars[27];
+	t_data	alp[26];
 	t_data	map_arrow;
 	int		*ammo;
 	int		menu;
@@ -265,6 +265,12 @@ void		set_null(void ***thing, int count);
 void		make_transparent(t_vars *vars, t_data canvas);
 int			menu(t_vars *vars);
 int			print_text(t_vars *vars, char *text, int *pos, double size);
-int			enemy_hit(t_vars *vars, int	*map_grid);
+int			enemy_hit(t_vars *vars, int	*map_grid, int *hit);
+int			xpm_file_init(t_vars *vars, t_data *data, char *filename, int *len);
+void		set_len(int *arr, int x, int y);
+int			count_d(t_vars *vars, char *map);
+int			music(t_vars *vars);
+void		destroy_canvases(t_vars *vars);
+void		sprite_func(t_vars *vars);
 
 #endif

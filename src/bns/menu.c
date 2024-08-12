@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   menu.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaltinto <aaltinto@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/12 15:05:56 by aaltinto          #+#    #+#             */
+/*   Updated: 2024/08/12 15:06:00 by aaltinto         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../includes/bonus.h"
 #include "../../minilibx/mlx.h"
@@ -109,10 +120,10 @@ int	menu(t_vars *vars)
 	t_img_args	args;
 
 	menu_background(vars);
-	if (vars->player.life <= 0)
-		return (finish_menu(vars));
-	else
-		return (start_menu(vars));
+	if (vars->player.life <= 0 && finish_menu(vars))
+		return (close_windows(vars, 1, 0));
+	else if (vars->player.life > 0 && start_menu(vars))
+		return (close_windows(vars, 1, 0));
 	args.original_height = 155;
 	args.original_width = 155;
 	args.pos_x = 40;

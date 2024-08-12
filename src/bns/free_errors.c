@@ -14,6 +14,7 @@
 #include "../../includes/bonus.h"
 #include "../../minilibx/mlx.h"
 #include <signal.h>
+#include <unistd.h>
 
 int	err(char *str)
 {
@@ -70,8 +71,9 @@ void	abort_mission(t_vars *vars, int close, int child)
 	free_doubles2((void **)vars->ui.sound, 3);
 	free_doubles2((void **)vars->enemy.filename, 5);
 	null_free(vars->ui.ammo);
-	if (!child)
-		system("leaks cub3d");
+	(void)child;
+	// if (!child)
+	// 	system("leaks cub3d");
 }
 
 int	close_windows(t_vars *vars, int close, int child)
@@ -124,12 +126,6 @@ int	close_windows(t_vars *vars, int close, int child)
 		null_free(vars->enemy.sprites[i]);
 	}
 	null_free(vars->enemy.sprites);
-	i = -1;
-	while (vars->ui.alp && ++i < 26 && vars->ui.alp[i].img != NULL)
-		mlx_destroy_image(vars->mlx.mlx, vars->ui.alp[i].img);
-	i = -1;
-	while (vars->ui.num && ++i < 10 && vars->ui.num[i].img != NULL)
-		mlx_destroy_image(vars->mlx.mlx, vars->ui.num[i].img);
 	abort_mission(vars, close, child);
 	mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
 	if (!close)

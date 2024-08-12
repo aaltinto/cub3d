@@ -1,6 +1,6 @@
 CC = gcc
 RM = rm -f
-CFLAGS =  -g #-Wall -Werror -Wextra -g #-fsanitize=address -g
+CFLAGS =  -Wall -Werror -Wextra -g #-fsanitize=address -g
 OpenGL = -framework OpenGL -framework AppKit
 SRC = src/mandatory/main.c\
 		src/mandatory/map_reader.c\
@@ -34,7 +34,10 @@ SRC_BNS = src/bns/main.c\
 		src/bns/cast_rays.c\
 		src/bns/menu.c\
 		src/bns/text.c\
+		src/bns/setup_utl.c\
+		src/bns/detect_player.c\
 		src/bns/gun.c\
+		src/bns/game.c\
 		src/bns/cast_rays_spr.c
 
 LIB = libft/libft.a

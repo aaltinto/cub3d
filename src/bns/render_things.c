@@ -96,8 +96,6 @@ int	music(t_vars *vars)
 
 void	render_ui(t_vars *vars)
 {
-	int			x;
-	int			y;
 	int			i;
 	t_img_args	args;
 
