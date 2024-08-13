@@ -120,7 +120,5 @@ int	render_gun(t_vars *vars)
 		gun = vars->player.gun_type;
 	scale_up_image(&vars->gun[gun][vars->player.ani_i], vars->ui.gun_canvas,
 		args);
-	return (mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, \
-		vars->ui.gun_canvas.img, (vars->render.sc_width / 2) - ((64 * TILE_GUN) \
-		/ 2), vars->render.sc_height - (64 * TILE_GUN)), 0);
+	return (0);
 }

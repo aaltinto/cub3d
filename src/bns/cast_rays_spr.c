@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cast_rays.c                                        :+:      :+:    :+:   */
+/*   cast_rays_spr.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aaltinto <aaltinto@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 23:05:03 by aaltinto          #+#    #+#             */
-/*   Updated: 2024/07/12 23:05:04 by aaltinto         ###   ########.fr       */
+/*   Updated: 2024/08/13 13:49:36 by aaltinto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,36 +114,39 @@ int	sprite_display(t_vars *vars, t_sprite *sprite, t_spr_vars spr_vars)
 	return (texture_color(&sprite->sprite, spr_vars.tex[X], spr_vars.tex[Y]));
 }
 
-void	draw_sprite(t_vars *vars, t_spr_vars spr_vars, t_sprite *sprite, double *ddist)
+void	advence_p_put(t_vars *vars, t_sprite *sprite, t_spr_vars spr_vars, int *pos)
 {
-	int	stripe;
-	int	y;
 	int	d;
-	int	t;
-	int color;
+	int	color;
 
-	stripe = spr_vars.draw_s[X] - 1;
-	while (++stripe < spr_vars.draw_e[X])
+	pos[Y] = spr_vars.draw_s[Y] - 1;
+	while (++pos[Y] < spr_vars.draw_e[Y])
 	{
-		t = 64;
+		d = (pos[Y]) * 256 - vars->render.sc_height * 128 + spr_vars.height
+			* 128;
+		spr_vars.tex[Y] = ((d * pos[2]) / spr_vars.height) / 256;
+		color = sprite_display(vars, sprite, spr_vars);
+		if (color != -16777216)
+			pixel_put(&vars->ui.sprites_canvas, pos[X], pos[Y], color);
+	}
+}
+
+void	draw_sprite(t_vars *vars, t_spr_vars spr_vars, t_sprite *sprite,
+	double *ddist)
+{
+	int	pos[3];
+
+	pos[X] = spr_vars.draw_s[X] - 1;
+	while (++pos[X] < spr_vars.draw_e[X])
+	{
+		pos[2] = 64;
 		if (sprite->is_enemy)
-			t = 128;
-		spr_vars.tex[X] = (int)((stripe - ((-1 * spr_vars.width) / 2 \
-			+ spr_vars.screen_x)) * t / spr_vars.width);
-		if (spr_vars.transform[Y] > 0 && stripe > 0 && stripe < \
-		vars->render.sc_width && spr_vars.transform[Y] < ddist[stripe])
-		{
-			y = spr_vars.draw_s[Y] - 1;
-			while (++y < spr_vars.draw_e[Y])
-			{
-				d = (y) * 256 - vars->render.sc_height * 128 + spr_vars.height
-					* 128;
-				spr_vars.tex[Y] = ((d * t) / spr_vars.height) / 256;
-				color = sprite_display(vars, sprite, spr_vars);
-				if (color != -16777216)
-					pixel_put(&vars->ui.sprites_canvas, stripe, y, color);
-			}
-		}
+			pos[2] = 128;
+		spr_vars.tex[X] = (int)((pos[X] - ((-1 * spr_vars.width) / 2 \
+			+ spr_vars.screen_x)) * pos[2] / spr_vars.width);
+		if (spr_vars.transform[Y] > 0 && pos[X] > 0 && pos[X] < \
+		vars->render.sc_width && spr_vars.transform[Y] < ddist[pos[X]])
+			advence_p_put(vars, sprite, spr_vars, pos);
 	}
 }
 

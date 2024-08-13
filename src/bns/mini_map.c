@@ -78,6 +78,5 @@ int	render_mini_map(t_vars *vars)
 	pos[Y] = (vars->player.camera[Y] / TILE_SIZE) * MAP_TILE
 		- vars->render.sc_height * 0.10;
 	put_tiles(vars, pos, cos_angle, sin_angle);
-	return (mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
-			vars->ui.mini_map.img, 0, 0), 0);
+	return (0);
 }

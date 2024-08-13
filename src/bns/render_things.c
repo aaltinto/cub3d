@@ -114,6 +114,4 @@ void	render_ui(t_vars *vars)
 	args.tile_size = 0.5;
 	i = select_index(vars);
 	scale_up_image(&vars->ui.healt_bar[i], vars->ui.ui_canvas, args);
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
-		vars->ui.ui_canvas.img, 0, 0);
 }

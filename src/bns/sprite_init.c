@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sprite_init.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaltinto <aaltinto@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/13 13:37:48 by aaltinto          #+#    #+#             */
+/*   Updated: 2024/08/13 13:37:49 by aaltinto         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../includes/bonus.h"
 #include "../../libft/libft.h"
 
@@ -49,7 +61,7 @@ int	assign_sprites(t_vars *vars, t_sprite *sprites, int x, int y)
 	if (vars->map[y][x] == 'X')
 		sprites->is_enemy = 1;
 	else
-		sprites->is_enemy = 1;
+		sprites->is_enemy = 0;
 	sprites->hit = 0;
 	sprites->life = 500;
 	sprites->emy_ani = 0;
@@ -66,9 +78,9 @@ int	assign_sprites(t_vars *vars, t_sprite *sprites, int x, int y)
 
 t_sprite	*count_sprites(t_vars *vars)
 {
-	int	count;
-	int	x;
-	int	y;
+	int			count;
+	int			x;
+	int			y;
 	t_sprite	*sprites;
 
 	count = 0;
@@ -116,6 +128,5 @@ t_sprite	*detect_sprites(t_vars *vars)
 		if (count == -1)
 			break ;
 	}
-	sort_sprites(vars, &sprites);
-	return (sprites);
+	return (sort_sprites(vars, &sprites), sprites);
 }

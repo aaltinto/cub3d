@@ -91,7 +91,7 @@ int	render(void *ptr)
 	if (get_canvas(vars) || music(vars))
 		return (close_windows(vars, 1, 0));
 	ret = render_things(vars);
-	if (ret)
+	if (ret == 1)
 		return (close_windows(vars, 1, 0));
 	if (ret == 2)
 		return (0);
@@ -99,6 +99,13 @@ int	render(void *ptr)
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
 	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
 		vars->ui.sprites_canvas.img, 0, 0);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, \
+		vars->ui.gun_canvas.img, (vars->render.sc_width / 2) - ((64 * TILE_GUN) \
+		/ 2), vars->render.sc_height - (64 * TILE_GUN));
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
+		vars->ui.mini_map.img, 0, 0);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
+		vars->ui.ui_canvas.img, 0, 0);
 	move_player(vars, 0.0, 0.0);
 	if (vars->game.spr_count)
 		sprite_func(vars);
