@@ -22,45 +22,6 @@ double	euclid_dist(double *cam, double *pos2)
 			+ pow((cam[Y] / TILE_SIZE) - pos2[Y], 2)));
 }
 
-int	sort_sprites(t_vars *vars, t_sprite **sprites)
-{
-	t_sprite	tmp;
-	int			i;
-	int			j;
-
-	i = 0;
-	while (i < vars->game.spr_count - 1)
-	{
-		j = 0;
-		while (j < vars->game.spr_count - i - 1)
-		{
-			if (euclid_dist(vars->player.pos, (*sprites)[j].spr_pos)
-				< euclid_dist(vars->player.pos, (*sprites)[j + 1].spr_pos))
-			{
-				tmp = (*sprites)[j];
-				(*sprites)[j] = (*sprites)[j + 1];
-				(*sprites)[j + 1] = tmp;
-			}
-			j++;
-		}
-		i++;
-	}
-	return (0);
-}
-
-char	*choose_texture(char c)
-{
-	char	*text;
-
-	if (c == 'X')
-		text = ft_strdup("./textures/barrel.xpm");
-	if (c == 'B')
-		text = ft_strdup("./textures/barrel.xpm");
-	if (c == 'D')
-		text = ft_strdup("./textures/collectible_img.xpm");
-	return (text);
-}
-
 int	texture_fill(t_vars *vars, t_sprite *sprite, char c)
 {
 	int		x;
@@ -82,86 +43,6 @@ int	texture_fill(t_vars *vars, t_sprite *sprite, char c)
 		return (null_free(text), err("get_data_addr error"));
 	return (null_free(text), 0);
 }
-
-t_sprite	*detect_barrels(t_vars *vars)
-{
-	int	count;
-	int	x;
-	int	y;
-	t_sprite	*sprites;
-
-	count = 0;
-	y = -1;
-	while (vars->map[++y] != NULL)
-	{
-		x = -1;
-		while (vars->map[y][++x] != '\0')
-			if (vars->map[y][x] == 'X' || vars->map[y][x] == 'B' || vars->map[y][x] == 'D')
-				count++;
-	}
-	if (count == 0)
-		return (NULL);
-	vars->game.spr_count = count;
-	sprites = malloc(sizeof(t_sprite) * (count));
-	if (!sprites)
-		return (err("Malloc error"), NULL);
-	y = -1;
-	while (vars->map[++y] != NULL)
-	{
-		x = -1;
-		while (vars->map[y][++x] != '\0')
-		{
-			if (vars->map[y][x] == 'X')
-			{
-				count--;
-				sprites[count].spr_pos[X] = (double)x;
-				sprites[count].spr_pos[Y] = (double)y;
-				sprites[count].org_pos[X] = (double)x;
-				sprites[count].org_pos[Y] = (double)y;
-				sprites[count].is_enemy = 1;
-				sprites[count].hit = 0;
-				sprites[count].life = 500;
-				sprites[count].emy_ani = 0;
-				sprites[count].spr_ani = 0;
-				sprites[count].is_diamond = 0;
-				sprites[count].time = 0;
-				if (texture_fill(vars, &sprites[count], vars->map[y][x]))
-					return (NULL);
-			}
-			if (vars->map[y][x] == 'B' || vars->map[y][x] == 'D')
-			{
-				count--;
-				sprites[count].spr_pos[X] = (double)x;
-				sprites[count].spr_pos[Y] = (double)y;
-				sprites[count].life = 500;
-				sprites[count].hit = 0;
-				if (vars->map[y][x] == 'D')
-					sprites[count].is_diamond = 1;
-				sprites[count].is_enemy = 0;
-				if (texture_fill(vars, &sprites[count], vars->map[y][x]))
-					return (NULL);
-			}
-		}
-		if (count == -1)
-			break ;
-	}
-	sort_sprites(vars, &sprites);
-	return (sprites);
-}
-
-typedef struct s_spr_vars
-{
-	double	sprite[2];
-	double	transform[2];
-	double	inv_det;
-	int		screen_x;
-	int		width;
-	int		height;
-	int		draw_s[2];
-	int		draw_e[2];
-	int		tex[2];
-
-}	t_spr_vars;
 
 void	calculate_draw_borders(t_render render, t_spr_vars *spr_vars)
 {
@@ -224,9 +105,11 @@ int	sprite_display(t_vars *vars, t_sprite *sprite, t_spr_vars spr_vars)
 		}
 		else
 			sprite->emy_ani = 2;
-		if ((sprite->emy_ani == 0 || sprite->emy_ani == 3) && sprite->spr_ani > 3)
+		if ((sprite->emy_ani == 0 || sprite->emy_ani == 3)
+			&& sprite->spr_ani > 3)
 			sprite->spr_ani = 0;
-		return (texture_color(&vars->enemy.sprites[sprite->emy_ani][sprite->spr_ani], spr_vars.tex[X], spr_vars.tex[Y]));
+		return (texture_color(&vars->enemy.sprites[sprite->emy_ani] \
+			[sprite->spr_ani], spr_vars.tex[X], spr_vars.tex[Y]));
 	}
 	return (texture_color(&sprite->sprite, spr_vars.tex[X], spr_vars.tex[Y]));
 }
@@ -245,13 +128,16 @@ void	draw_sprite(t_vars *vars, t_spr_vars spr_vars, t_sprite *sprite, double *dd
 		t = 64;
 		if (sprite->is_enemy)
 			t = 128;
-		spr_vars.tex[X] = (int)((stripe - ((-1 * spr_vars.width) / 2 + spr_vars.screen_x)) * t / spr_vars.width);
-		if (spr_vars.transform[Y] > 0 && stripe > 0 && stripe < vars->render.sc_width && spr_vars.transform[Y] < ddist[stripe])
+		spr_vars.tex[X] = (int)((stripe - ((-1 * spr_vars.width) / 2 \
+			+ spr_vars.screen_x)) * t / spr_vars.width);
+		if (spr_vars.transform[Y] > 0 && stripe > 0 && stripe < \
+		vars->render.sc_width && spr_vars.transform[Y] < ddist[stripe])
 		{
 			y = spr_vars.draw_s[Y] - 1;
 			while (++y < spr_vars.draw_e[Y])
 			{
-				d = (y) * 256 - vars->render.sc_height * 128 + spr_vars.height * 128;
+				d = (y) * 256 - vars->render.sc_height * 128 + spr_vars.height
+					* 128;
 				spr_vars.tex[Y] = ((d * t) / spr_vars.height) / 256;
 				color = sprite_display(vars, sprite, spr_vars);
 				if (color != -16777216)
@@ -280,50 +166,47 @@ int cast_spr(t_vars *vars, double *ddist)
 			continue ;
 		spr_vars = fill_spr(vars, sprite[i]);
 		sprite[i].dist = euclid_dist(vars->player.camera, sprite[i].spr_pos);
-		if (1)
+		if (sprite[i].time == 0 || get_time() - sprite[i].time > 100)
 		{
-			if (sprite[i].time == 0 || get_time() - sprite[i].time > 100)
+			sprite[i].time = get_time();
+			if (sprite[i].emy_ani == 0 && sprite[i].spr_ani < 3)
+				sprite[i].spr_ani++;
+			else if (sprite[i].emy_ani == 1 && sprite[i].spr_ani < 5)
+				sprite[i].spr_ani++;
+			else if (sprite[i].emy_ani == 2 && sprite[i].spr_ani < 5)
+				sprite[i].spr_ani++;
+			else if (sprite[i].emy_ani == 3 && sprite[i].spr_ani < 3)
+				sprite[i].spr_ani++;
+			else if (sprite[i].emy_ani == 4 && sprite[i].spr_ani < 8)
+				sprite[i].spr_ani++;
+			else
 			{
-				sprite[i].time = get_time();
-				if (sprite[i].emy_ani == 0 && sprite[i].spr_ani < 3)
-					sprite[i].spr_ani++;
-				else if (sprite[i].emy_ani == 1 && sprite[i].spr_ani < 5)
-					sprite[i].spr_ani++;
-				else if (sprite[i].emy_ani == 2 && sprite[i].spr_ani < 5)
-					sprite[i].spr_ani++;
-				else if (sprite[i].emy_ani == 3 && sprite[i].spr_ani < 3)
-					sprite[i].spr_ani++;
-				else if (sprite[i].emy_ani == 4 && sprite[i].spr_ani < 8)
-					sprite[i].spr_ani++;
-				else
+				if (sprite[i].emy_ani == 1 && sprite[i].dist <= 1)
+					vars->player.life -= 25;
+				if (sprite[i].hit)
 				{
-					if (sprite[i].emy_ani == 1 && sprite[i].dist <= 1)
-						vars->player.life -= 25;
-					if (sprite[i].hit)
+					sprite[i].hit = 0;
+					if (vars->player.gun_type == 2)
+						sprite[i].life -= 250;
+					else if (vars->player.gun_type == 1)
+						sprite[i].life -= 150;
+					else
+						sprite[i].life -= 50;
+					if (sprite[i].life <= 0)
 					{
-						sprite[i].hit = 0;
-						if (vars->player.gun_type == 2)
-							sprite[i].life -= 250;
-						else if (vars->player.gun_type == 1)
-							sprite[i].life -= 150;
-						else
-							sprite[i].life -= 50;
-						if (sprite[i].life <= 0)
-						{
-							vars->game.enemy_count--;
-							if (vars->game.enemy_count == 0)
-								vars->d_time = get_time();
-						}
+						vars->game.enemy_count--;
+						if (vars->game.enemy_count == 0)
+							vars->d_time = get_time();
 					}
-					if (vars->player.life <= 0)
-					{
-						mlx_mouse_show();
-						vars->ui.menu = 1;
-					}
-					if (sprite[i].life > 0)
-						sprite[i].spr_ani = 0;
-					vars->game.end_ani = 1;
 				}
+				if (vars->player.life <= 0)
+				{
+					mlx_mouse_show();
+					vars->ui.menu = 1;
+				}
+				if (sprite[i].life > 0)
+					sprite[i].spr_ani = 0;
+				vars->game.end_ani = 1;
 			}
 		}
 		draw_sprite(vars, spr_vars, &sprite[i], ddist);

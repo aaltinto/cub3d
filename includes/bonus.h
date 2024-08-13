@@ -211,6 +211,20 @@ typedef struct s_args
 	int		pos[2];
 }	t_img_args;
 
+typedef struct s_spr_vars
+{
+	double	sprite[2];
+	double	transform[2];
+	double	inv_det;
+	int		screen_x;
+	int		width;
+	int		height;
+	int		draw_s[2];
+	int		draw_e[2];
+	int		tex[2];
+
+}	t_spr_vars;
+
 //error
 int			err(char *str);
 int			null_free(void *ptr);
@@ -254,7 +268,7 @@ void		render_ui(t_vars *vars);
 t_data		*fill_t_data(t_data *data, t_vars *vars, int width, int height);
 char		*get_xpm_filename(char *filename, int i);
 int			cast_spr(t_vars *vars, double *ddist);
-t_sprite	*detect_barrels(t_vars *vars);
+t_sprite	*detect_sprites(t_vars *vars);
 double		euclid_dist(double *cam, double *pos2);
 void		scale_up_image(t_data *data, t_data canvas, t_img_args args);
 void		menu_printer(t_vars *vars, t_data *data, t_data canvas,
@@ -272,5 +286,8 @@ int			count_d(t_vars *vars, char *map);
 int			music(t_vars *vars);
 void		destroy_canvases(t_vars *vars);
 void		sprite_func(t_vars *vars);
+char		*choose_texture(char c);
+int			sort_sprites(t_vars *vars, t_sprite **sprites);
+int			texture_fill(t_vars *vars, t_sprite *sprite, char c);
 
 #endif

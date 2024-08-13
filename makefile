@@ -38,6 +38,8 @@ SRC_BNS = src/bns/main.c\
 		src/bns/detect_player.c\
 		src/bns/gun.c\
 		src/bns/game.c\
+		src/bns/free_vars.c\
+		src/bns/sprite_init.c\
 		src/bns/cast_rays_spr.c
 
 LIB = libft/libft.a

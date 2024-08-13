@@ -118,6 +118,6 @@ int	get_textures(t_vars *vars)
 		return (1);
 	set_len(len, 128, 128);
 	set_enemy(vars, &vars->enemy, len);
-	vars->sprites = detect_barrels(vars);
+	vars->sprites = detect_sprites(vars);
 	return (!vars->sprites && vars->game.spr_count);
 }

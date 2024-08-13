@@ -45,37 +45,8 @@ int	set_guns(t_vars *vars)
 	return (0);
 }
 
-int	marche(t_vars *vars)
+int	claim_resources(t_vars *vars)
 {
-	int	i;
-
-	vars->map = NULL;
-	vars->textures.ceiling = NULL;
-	vars->textures.floor = NULL;
-	i = -1;
-	while (++i < 5)
-		vars->textures.walls[i] = NULL;
-	vars->mlx.mlx = NULL;
-	vars->mlx.win = NULL;
-	vars->render.sc_height = 900;
-	vars->render.sc_width = 1090;
-	vars->render.flag = 0;
-	vars->keys.key_a = 0;
-	vars->keys.key_s = 0;
-	vars->keys.key_d = 0;
-	vars->keys.key_w = 0;
-	vars->keys.key_la = 0;
-	vars->keys.key_ra = 0;
-	vars->ui.music_on = 1;
-	vars->game.start = 0;
-	vars->ui.sound = NULL;
-	vars->gun = NULL;
-	vars->ui.map_arrow.img = NULL;
-	vars->enemy.sprites = NULL;
-	vars->ui.ammo = NULL;
-	vars->gun_name = NULL;
-	vars->sprites = NULL;
-	vars->new_game = 1;
 	vars->d_time = get_time();
 	if (vars->d_time == 0)
 		return (err("Get_time error"));
@@ -87,6 +58,57 @@ int	marche(t_vars *vars)
 	vars->ui.sound[2] = NULL;
 	if (!vars->ui.sound[0] || !vars->ui.sound[1])
 		return (err("Strdup error"));
+	vars->enemy.filename = malloc(sizeof(char *) * 6);
+	if (!vars->enemy.filename)
+		return (err("Malloc error"));
+	vars->enemy.filename[0] = ft_strdup("./enemy/idle/idle");
+	vars->enemy.filename[1] = ft_strdup("./enemy/attack/attack");
+	vars->enemy.filename[2] = ft_strdup("./enemy/walk/walk");
+	vars->enemy.filename[3] = ft_strdup("./enemy/damage/damaged");
+	vars->enemy.filename[4] = ft_strdup("./enemy/death/death");
+	vars->enemy.filename[5] = NULL;
+	if (!vars->enemy.filename[0] || !vars->enemy.filename[1]
+		|| !vars->enemy.filename[2] || !vars->enemy.filename[3]
+		|| !vars->enemy.filename[4])
+		return (err("Strdup error"));
+	return (0);
+}
+
+void	set_default(t_vars *vars)
+{
+	int	i;
+
+	vars->map = NULL;
+	vars->textures.ceiling = NULL;
+	vars->textures.floor = NULL;
+	i = -1;
+	while (++i < 5)
+		vars->textures.walls[i] = NULL;
+	vars->mlx.mlx = NULL;
+	vars->mlx.win = NULL;
+	vars->ui.sound = NULL;
+	vars->gun = NULL;
+	vars->ui.map_arrow.img = NULL;
+	vars->enemy.sprites = NULL;
+	vars->ui.ammo = NULL;
+	vars->gun_name = NULL;
+	vars->sprites = NULL;
+	vars->render.flag = 0;
+	vars->keys.key_a = 0;
+	vars->keys.key_s = 0;
+	vars->keys.key_d = 0;
+	vars->keys.key_w = 0;
+	vars->keys.key_la = 0;
+	vars->keys.key_ra = 0;
+}
+
+int	marche(t_vars *vars)
+{
+	vars->render.sc_height = 900;
+	vars->render.sc_width = 1090;
+	vars->ui.music_on = 1;
+	vars->game.start = 0;
+	vars->new_game = 1;
 	vars->player.running = 1;
 	vars->fov_angle = 60;
 	vars->game.spr_count = 0;
@@ -101,20 +123,8 @@ int	marche(t_vars *vars)
 	vars->enemy.index[2] = 6;
 	vars->enemy.index[3] = 4;
 	vars->enemy.index[4] = 9;
-	vars->enemy.filename = malloc(sizeof(char *) * 6);
-	if (!vars->enemy.filename)
-		return (err("Malloc error"));
-	vars->enemy.filename[0] = ft_strdup("./enemy/idle/idle");
-	vars->enemy.filename[1] = ft_strdup("./enemy/attack/attack");
-	vars->enemy.filename[2] = ft_strdup("./enemy/walk/walk");
-	vars->enemy.filename[3] = ft_strdup("./enemy/damage/damaged");
-	vars->enemy.filename[4] = ft_strdup("./enemy/death/death");
-	vars->enemy.filename[5] = NULL;
-	if (!vars->enemy.filename[0] || !vars->enemy.filename[1]
-		|| !vars->enemy.filename[2] || !vars->enemy.filename[3]
-		|| !vars->enemy.filename[4])
-		return (err("Strdup error"));
-	if (set_guns(vars))
+	set_default(vars);
+	if (set_guns(vars) || claim_resources(vars))
 		return (1);
 	return (0);
 }

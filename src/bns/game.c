@@ -14,6 +14,18 @@
 #include "../../minilibx/mlx.h"
 #include <math.h>
 
+void	fill_sprites(t_vars *vars, int count)
+{
+	if (vars->sprites[count].is_enemy)
+	{
+		vars->sprites[count].spr_pos[X] = vars->sprites[count].org_pos[X];
+		vars->sprites[count].spr_pos[Y] = vars->sprites[count].org_pos[Y];
+		vars->sprites[count].spr_ani = 0;
+		vars->sprites[count].time = 0;
+	}
+	vars->sprites[count].life = 500;
+}
+
 int	new_game(t_vars *vars)
 {
 	int	count;
@@ -21,18 +33,7 @@ int	new_game(t_vars *vars)
 	count = vars->game.spr_count;
 	vars->new_game = 1;
 	while (--count >= 0)
-	{
-		if (vars->sprites[count].is_enemy)
-		{
-			vars->sprites[count].spr_pos[X] = vars->sprites[count].org_pos[X];
-			vars->sprites[count].spr_pos[Y] = vars->sprites[count].org_pos[Y];
-			vars->sprites[count].life = 500;
-			vars->sprites[count].spr_ani = 0;
-			vars->sprites[count].time = 0;
-		}
-		if (vars->sprites[count].is_diamond)
-			vars->sprites[count].life = 100;
-	}
+		fill_sprites(vars, count);
 	vars->game.diamond = vars->game.diamond_org;
 	vars->game.enemy_count = vars->game.enemy_org;
 	vars->ui.ammo[0] = 30;
