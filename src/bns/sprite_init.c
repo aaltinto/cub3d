@@ -127,6 +127,7 @@ t_sprite	*detect_sprites(t_vars *vars)
 		}
 		if (count == -1)
 			break ;
+
 	}
 	return (sort_sprites(vars, &sprites), sprites);
 }
