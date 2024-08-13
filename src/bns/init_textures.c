@@ -61,22 +61,11 @@ int	get_num_sprites(t_vars *vars, int x, int y)
 	return (0);
 }
 
-void	set_null(void ***thing, int count)
-{
-	int	i;
-
-	i = -1;
-	while (++i < count)
-		(*thing)[i] = NULL;
-}
-
 int	get_magnum_sprites(t_vars *vars)
 {
 	int		i;
 	int		j;
-	int		len[2];
 	int		ani_count;
-	char	*filename;
 
 	vars->gun = (t_data **)ft_calloc(sizeof(t_data *), 3);
 	if (!vars->gun)
@@ -92,29 +81,16 @@ int	get_magnum_sprites(t_vars *vars)
 			return (err("Malloc error"));
 		i = -1;
 		while (++i < 10 + ani_count)
-		{
-			vars->gun[j][i].img = NULL;
-			filename = get_xpm_filename(vars->gun_name[j], i + 1);
-			if (set_len(len, 64, 64), !filename)
+			if (fill_filename(vars, i, j))
 				return (1);
-			if (xpm_file_init(vars, &vars->gun[j][i], filename, len))
-				return (null_free(filename), 1);
-			null_free(filename);
-		}
 	}
 	return (0);
 }
 
 int	get_walls(t_textures *textures, char *tmp, int dir)
 {
-	if (dir == NO && !textures->walls[NO])
-		textures->walls[NO] = ft_substr(tmp, 2, ft_strlen(tmp));
-	else if (dir == SO && !textures->walls[SO])
-		textures->walls[SO] = ft_substr(tmp, 2, ft_strlen(tmp));
-	else if (dir == WE && !textures->walls[WE])
-		textures->walls[WE] = ft_substr(tmp, 2, ft_strlen(tmp));
-	else if (dir == EA && !textures->walls[EA])
-		textures->walls[EA] = ft_substr(tmp, 2, ft_strlen(tmp));
+	if (!textures->walls[dir])
+		textures->walls[dir] = ft_substr(tmp, 2, ft_strlen(tmp));
 	else
 		return (err("Error!\nDuplicating wall textures"));
 	if (!textures->walls[dir])

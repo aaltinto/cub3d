@@ -14,18 +14,6 @@
 #include "../../minilibx/mlx.h"
 #include <math.h>
 
-void	fill_sprites(t_vars *vars, int count)
-{
-	if (vars->sprites[count].is_enemy)
-	{
-		vars->sprites[count].spr_pos[X] = vars->sprites[count].org_pos[X];
-		vars->sprites[count].spr_pos[Y] = vars->sprites[count].org_pos[Y];
-		vars->sprites[count].spr_ani = 0;
-		vars->sprites[count].time = 0;
-	}
-	vars->sprites[count].life = 500;
-}
-
 int	new_game(t_vars *vars)
 {
 	int	count;

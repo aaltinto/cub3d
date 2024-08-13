@@ -6,7 +6,7 @@
 /*   By: aaltinto <aaltinto@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 21:58:39 by aaltinto          #+#    #+#             */
-/*   Updated: 2024/07/13 01:58:29 by aaltinto         ###   ########.fr       */
+/*   Updated: 2024/08/13 17:35:05 by aaltinto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,16 @@
 int	set_guns(t_vars *vars)
 {
 	vars->player.shoot = 0;
-	vars->gun_name = malloc(sizeof(char *) * 4);
+	vars->gun_name = ft_calloc(sizeof(char *), 4);
 	if (!vars->gun_name)
 		return (err("Malloc error"));
-	set_null((void ***)&vars->gun_name, 4);
-	vars->gun_name[0] = ft_strdup("./xpm/Hunter");
+	vars->gun_name[0] = ft_strdup("./guns/Hunter");
 	if (!vars->gun_name[0])
 		return (err("Malloc error"));
-	vars->gun_name[1] = ft_strdup("./xpm/Talon");
+	vars->gun_name[1] = ft_strdup("./guns/Talon");
 	if (!vars->gun_name[1])
 		return (err("Malloc error"));
-	vars->gun_name[2] = ft_strdup("./xpm/Therm");
+	vars->gun_name[2] = ft_strdup("./guns/Therm");
 	if (!vars->gun_name[2])
 		return (err("Malloc error"));
 	vars->gun_name[3] = NULL;
@@ -112,7 +111,6 @@ int	marche(t_vars *vars)
 	vars->player.running = 1;
 	vars->fov_angle = 60;
 	vars->game.spr_count = 0;
-	vars->ui.time = get_time();
 	vars->ui.menu = 1;
 	vars->player.life = 100;
 	vars->player.plane[X] = 0.0;
@@ -125,6 +123,9 @@ int	marche(t_vars *vars)
 	vars->enemy.index[4] = 9;
 	set_default(vars);
 	if (set_guns(vars) || claim_resources(vars))
+		return (1);
+	vars->ui.time = get_time();
+	if (vars->ui.time == 0)
 		return (1);
 	return (0);
 }

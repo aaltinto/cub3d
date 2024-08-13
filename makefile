@@ -38,6 +38,9 @@ SRC_BNS = src/bns/main.c\
 		src/bns/detect_player.c\
 		src/bns/gun.c\
 		src/bns/game.c\
+		src/bns/move_player.c\
+		src/bns/spr_utils.c\
+		src/bns/spr_logic.c\
 		src/bns/free_vars.c\
 		src/bns/sprite_init.c\
 		src/bns/cast_rays_spr.c

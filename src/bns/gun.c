@@ -6,7 +6,7 @@
 /*   By: aaltinto <aaltinto@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 15:06:05 by aaltinto          #+#    #+#             */
-/*   Updated: 2024/08/12 15:06:08 by aaltinto         ###   ########.fr       */
+/*   Updated: 2024/08/13 17:35:05 by aaltinto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,11 +77,11 @@ static int	make_sound(t_vars *vars)
 		if (pid == 0)
 		{
 			if (!vars->player.gun_type)
-				system("afplay xpm/Huntershoot.wav");
+				system("afplay guns/Huntershoot.wav");
 			else if (vars->player.gun_type == 1)
-				system("afplay xpm/Talonshoot.wav");
+				system("afplay guns/Talonshoot.wav");
 			else
-				system("afplay xpm/Thermshoot.wav");
+				system("afplay guns/Thermshoot.wav");
 		}
 	}
 	if (pid == 0)

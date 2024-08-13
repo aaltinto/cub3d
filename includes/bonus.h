@@ -6,7 +6,7 @@
 /*   By: aaltinto <aaltinto@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 22:29:45 by aaltinto          #+#    #+#             */
-/*   Updated: 2024/08/12 15:08:50 by aaltinto         ###   ########.fr       */
+/*   Updated: 2024/08/13 17:36:25 by aaltinto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@
 # define WE 2
 # define EA 3
 
-#include <stdio.h>
+# include <unistd.h>
 
 typedef struct s_render
 {
@@ -239,7 +239,7 @@ int			parse_init(t_vars *vars, char *map);
 int			init_textures(t_textures *textures, char *tmp);
 int			extract_rgb(t_vars *vars);
 int			color_init(t_vars *vars, char *tmp);
-int			cast_rays(t_vars *vars);
+int			cast_rays(t_vars *vars, int ray);
 int			rgb_to_hex(int r, int g, int b);
 void		pixel_put(t_data *data, int x, int y, int color);
 double		nor_angle(double angle);
@@ -275,7 +275,6 @@ void		menu_printer(t_vars *vars, t_data *data, t_data canvas,
 				t_img_args args);
 int			marche(t_vars *vars);
 int			new_game(t_vars *vars);
-void		set_null(void ***thing, int count);
 void		make_transparent(t_vars *vars, t_data canvas);
 int			menu(t_vars *vars);
 int			print_text(t_vars *vars, char *text, int *pos, double size);
@@ -289,5 +288,11 @@ void		sprite_func(t_vars *vars);
 char		*choose_texture(char c);
 int			sort_sprites(t_vars *vars, t_sprite **sprites);
 int			texture_fill(t_vars *vars, t_sprite *sprite, char c);
+void		advence_p_put(t_vars *vars, t_sprite *sprite, t_spr_vars spr_vars,
+				int *pos);
+void		animation_picker(t_vars *vars, t_sprite *sprite);
+int			sprite_display(t_vars *vars, t_sprite *sprite, t_spr_vars spr_vars);
+void		fill_sprites(t_vars *vars, int count);
+int			fill_filename(t_vars *vars, int i, int j);
 
 #endif

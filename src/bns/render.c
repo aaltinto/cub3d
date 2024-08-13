@@ -72,13 +72,28 @@ int	render_things(t_vars *vars)
 	make_transparent(vars, vars->ui.sprites_canvas);
 	if (vars->game.diamond == 0)
 		vars->player.life = 0;
-	if (cast_rays(vars))
+	if (cast_rays(vars, -1))
 		return (close_windows(vars, 1, 0));
 	render_mini_map(vars);
 	if (render_gun(vars))
 		return (close_windows(vars, 1, 0));
 	render_ui(vars);
 	return (0);
+}
+
+void	put_image_screen(t_vars *vars)
+{
+	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
+		vars->ui.sprites_canvas.img, 0, 0);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, \
+		vars->ui.gun_canvas.img, (vars->render.sc_width / 2) - ((64 * TILE_GUN) \
+		/ 2), vars->render.sc_height - (64 * TILE_GUN));
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
+		vars->ui.mini_map.img, 0, 0);
+	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
+		vars->ui.ui_canvas.img, 0, 0);
 }
 
 int	render(void *ptr)
@@ -95,17 +110,7 @@ int	render(void *ptr)
 		return (close_windows(vars, 1, 0));
 	if (ret == 2)
 		return (0);
-	mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, vars->img.img, 0, 0);
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
-		vars->ui.sprites_canvas.img, 0, 0);
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win, \
-		vars->ui.gun_canvas.img, (vars->render.sc_width / 2) - ((64 * TILE_GUN) \
-		/ 2), vars->render.sc_height - (64 * TILE_GUN));
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
-		vars->ui.mini_map.img, 0, 0);
-	mlx_put_image_to_window(vars->mlx.mlx, vars->mlx.win,
-		vars->ui.ui_canvas.img, 0, 0);
+	put_image_screen(vars);
 	move_player(vars, 0.0, 0.0);
 	if (vars->game.spr_count)
 		sprite_func(vars);

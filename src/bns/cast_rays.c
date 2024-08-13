@@ -116,9 +116,8 @@ void	print_wall(t_vars *vars, double dist, int ray, t_ray *ray_data)
 	}
 }
 
-int	cast_rays(t_vars *vars)
+int	cast_rays(t_vars *vars, int ray)
 {
-	int		ray;
 	t_ray	ray_data;
 	double	*wall_dist;
 
@@ -126,12 +125,10 @@ int	cast_rays(t_vars *vars)
 	if (!wall_dist)
 		return (err("Malloc error"));
 	vars->render.ray_angle = vars->player.p_angle - (vars->player.fov / 2);
-	ray = 0;
-	while (ray < vars->render.sc_width)
+	while (++ray < vars->render.sc_width)
 	{
-		if (fill_variable(vars, &ray_data) || find_side_dist(vars, &ray_data))
-			return (null_free(wall_dist), -1);
-		if (check_hit(vars, &ray_data))
+		if (fill_variable(vars, &ray_data) || find_side_dist(vars, &ray_data)
+			|| check_hit(vars, &ray_data))
 			return (null_free(wall_dist), -1);
 		if (vars->render.flag == 0)
 			wall_dist[ray] = ray_data.side_dist[X] - ray_data.delta_dist[X];
@@ -141,11 +138,9 @@ int	cast_rays(t_vars *vars)
 			return (null_free(wall_dist));
 		wall_dist[ray] *= cos(vars->render.ray_angle - vars->player.p_angle);
 		print_wall(vars, wall_dist[ray], ray, &ray_data);
-		ray++;
 		vars->render.ray_angle += vars->player.fov / vars->render.sc_width;
 	}
-	if (vars->game.spr_count)
-		if (cast_spr(vars, wall_dist))
-			return (err("Cast sprites error"));
+	if (vars->game.spr_count && cast_spr(vars, wall_dist))
+		return (null_free(wall_dist), err("Cast sprites error"));
 	return (null_free(wall_dist), 0);
 }
