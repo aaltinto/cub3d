@@ -11,11 +11,10 @@
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
-#include "../../libft/libft.h"
 #include "../../minilibx/mlx.h"
-#include <math.h>
+#include <stdlib.h>
 
-int	marche(t_vars *vars)
+void	set_null(t_vars *vars)
 {
 	int	i;
 
@@ -23,10 +22,18 @@ int	marche(t_vars *vars)
 	vars->textures.ceiling = NULL;
 	vars->textures.floor = NULL;
 	i = -1;
-	while (++i < 5)
+	while (++i < 4)
+	{
+		vars->xpm[i].img = NULL;
 		vars->textures.walls[i] = NULL;
+	}
+	vars->textures.walls[i] = NULL;
 	vars->mlx.mlx = NULL;
 	vars->mlx.win = NULL;
+}
+
+int	marche(t_vars *vars)
+{
 	vars->render.sc_height = 900;
 	vars->render.sc_width = 1090;
 	vars->render.flag = 0;
@@ -39,6 +46,7 @@ int	marche(t_vars *vars)
 	vars->player.running = 1;
 	vars->fov_angle = 66;
 	vars->player.fov = vars->fov_angle * (M_PI / 180);
+	set_null(vars);
 	return (0);
 }
 

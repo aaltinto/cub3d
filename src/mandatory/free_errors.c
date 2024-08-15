@@ -55,9 +55,16 @@ void	abort_mission(t_vars *vars)
 
 int	close_windows(t_vars *vars)
 {
+	int	i;
+
 	if (vars->mlx.mlx && vars->mlx.win)
 		mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
+	i = -1;
+	while (++i < 4)
+		if (vars->xpm[i].img)
+			mlx_destroy_image(vars->mlx.mlx, vars->xpm[i].img);
 	abort_mission(vars);
+	system("leaks cub3d");
 	exit(0);
 	return (0);
 }

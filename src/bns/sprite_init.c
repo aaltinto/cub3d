@@ -97,9 +97,9 @@ t_sprite	*count_sprites(t_vars *vars)
 	if (count == 0)
 		return (NULL);
 	vars->game.spr_count = count;
-	sprites = malloc(sizeof(t_sprite) * (count));
+	sprites = ft_calloc(sizeof(t_sprite), (count));
 	if (!sprites)
-		return (err("Malloc error"), NULL);
+		return (err("ft_calloc error"), NULL);
 	return (sprites);
 }
 
@@ -113,7 +113,7 @@ t_sprite	*detect_sprites(t_vars *vars)
 	sprites = count_sprites(vars);
 	count = vars->game.spr_count;
 	if (!sprites)
-		return (err("Malloc error"), NULL);
+		return (err("ft_calloc error"), NULL);
 	y = -1;
 	while (vars->map[++y] != NULL)
 	{

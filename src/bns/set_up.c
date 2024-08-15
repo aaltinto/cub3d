@@ -47,13 +47,13 @@ int	set_enemy(t_vars *vars, t_enemy *enemy, int *len)
 	i = -1;
 	enemy->sprites = ft_calloc(sizeof(t_data *), 6);
 	if (!enemy->sprites)
-		return (err("Malloc error"));
+		return (err("ft_calloc error"));
 	while (++i < 5)
 	{
 		j = -1;
 		enemy->sprites[i] = ft_calloc(sizeof(t_data), enemy->index[i]);
 		if (!enemy->sprites[i])
-			return (err("Malloc error"),
+			return (err("ft_calloc error"),
 				free_doubles2((void **)enemy->sprites, i));
 		while (++j < enemy->index[i])
 		{

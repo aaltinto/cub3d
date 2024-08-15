@@ -45,12 +45,12 @@ int	get_textures(t_vars *vars)
 
 	x = 64;
 	y = 64;
-	vars->xpm[NO].img = mlx_xpm_file_to_image(vars->mlx.mlx, \
-		strip(vars->textures.walls[NO]), &x, &y);
+	vars->xpm[NO].img = (mlx_xpm_file_to_image(vars->mlx.mlx, \
+		strip(vars->textures.walls[NO]), &x, &y));
 	if (!vars->xpm[NO].img)
 		return (err("can't get texture 'NO'"));
-	vars->xpm[SO].img = mlx_xpm_file_to_image(vars->mlx.mlx, \
-		strip(vars->textures.walls[SO]), &x, &y);
+	vars->xpm[SO].img = (mlx_xpm_file_to_image(vars->mlx.mlx, \
+		strip(vars->textures.walls[SO]), &x, &y));
 	if (!vars->xpm[SO].img)
 		return (err("can't get texture 'SO'"));
 	vars->xpm[WE].img = mlx_xpm_file_to_image(vars->mlx.mlx, \

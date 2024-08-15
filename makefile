@@ -1,6 +1,6 @@
 CC = gcc
 RM = rm -f
-CFLAGS =  -Wall -Werror -Wextra -g #-fsanitize=address -g
+CFLAGS = -g #-Wall -Werror -Wextra -g #-fsanitize=address -g
 OpenGL = -framework OpenGL -framework AppKit
 SRC = src/mandatory/main.c\
 		src/mandatory/map_reader.c\
@@ -38,6 +38,7 @@ SRC_BNS = src/bns/main.c\
 		src/bns/detect_player.c\
 		src/bns/gun.c\
 		src/bns/game.c\
+		src/bns/marche.c\
 		src/bns/move_player.c\
 		src/bns/spr_utils.c\
 		src/bns/spr_logic.c\

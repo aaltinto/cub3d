@@ -109,8 +109,10 @@ int	render(void *ptr)
 
 	vars = (t_vars *)ptr;
 	vars->player.fov = vars->fov_angle * (M_PI / 180);
-	if (get_canvas(vars) || music(vars))
+	if (get_canvas(vars))
 		return (close_windows(vars, 1, 0));
+	if (music(vars))
+		return (close_windows(vars, 1, 1));
 	ret = render_things(vars);
 	if (ret == 1)
 		return (close_windows(vars, 1, 0));

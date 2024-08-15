@@ -83,7 +83,7 @@ int	music(t_vars *vars)
 	m = 1;
 	vars->game.pid = fork();
 	if (vars->game.pid < 0)
-		return (err("Fork error"), close_windows(vars, 1, 0));
+		return (err("Fork error"));
 	if (vars->game.pid == 0)
 	{
 		system(pick_sound(vars));

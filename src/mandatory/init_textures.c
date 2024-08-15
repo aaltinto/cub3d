@@ -49,5 +49,5 @@ int	init_textures(t_textures *textures, char *tmp)
 		return (2);
 	if (ret == 1)
 		return (1);
-	return (err("Invalid character: "), 1);
+	return (err("Invalid character: "), err(tmp), 1);
 }

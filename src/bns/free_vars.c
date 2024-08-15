@@ -41,18 +41,22 @@ int	free_stuff(t_vars *vars)
 	i = -1;
 	while (++i < 4)
 	{
-		mlx_destroy_image(vars->mlx.mlx, vars->ui.healt_bar[i].img);
-		mlx_destroy_image(vars->mlx.mlx, vars->xpm[i].img);
+		if (vars->ui.healt_bar[i].img)
+			mlx_destroy_image(vars->mlx.mlx, vars->ui.healt_bar[i].img);
+		if (vars->xpm[i].img)
+			mlx_destroy_image(vars->mlx.mlx, vars->xpm[i].img);
 	}
 	i = -1;
 	while (++i < vars->game.spr_count)
-		mlx_destroy_image(vars->mlx.mlx, vars->sprites[i].sprite.img);
+		if (vars->sprites[i].sprite.img)
+			mlx_destroy_image(vars->mlx.mlx, vars->sprites[i].sprite.img);
 	i = -1;
 	while (vars->enemy.sprites && ++i < 5)
 	{
 		j = -1;
 		while (++j < vars->enemy.index[i])
-			mlx_destroy_image(vars->mlx.mlx, vars->enemy.sprites[i][j].img);
+			if (vars->enemy.sprites[i][j].img)
+				mlx_destroy_image(vars->mlx.mlx, vars->enemy.sprites[i][j].img);
 		null_free(vars->enemy.sprites[i]);
 	}
 	return (null_free(vars->enemy.sprites));
@@ -98,5 +102,6 @@ int	close_windows(t_vars *vars, int close, int child)
 	mlx_destroy_window(vars->mlx.mlx, vars->mlx.win);
 	if (!close)
 		return (0);
+	system("leaks cub3d");
 	return (exit(0), 0);
 }

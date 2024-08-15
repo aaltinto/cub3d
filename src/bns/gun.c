@@ -114,7 +114,8 @@ int	render_gun(t_vars *vars)
 	args.pos_x = 0;
 	args.pos_y = 0;
 	if (vars->player.shoot == 1)
-		shoot(vars, &gun);
+		if (shoot(vars, &gun))
+			return (1);
 	if (vars->player.ani_i == 0)
 		gun = vars->player.gun_type;
 	scale_up_image(&vars->gun[gun][vars->player.ani_i], vars->ui.gun_canvas,

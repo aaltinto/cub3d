@@ -68,15 +68,15 @@ char	**reallocate_double(char **str)
 	int		len;
 
 	len = find_longest_line(str);
-	tmp = (char **)malloc(sizeof(char *) * (double_counter(str) + 1));
+	tmp = (char **)ft_calloc(sizeof(char *), (double_counter(str) + 1));
 	if (!tmp)
-		return (err("Malloc error"), NULL);
+		return (err("ft_calloc error"), NULL);
 	i = -1;
 	while ((str)[++i])
 	{
 		tmp[i] = ft_calloc(sizeof(char), len + 1);
 		if (!tmp[i])
-			return (free_doubles(tmp), err("Malloc error"), NULL);
+			return (free_doubles(tmp), err("ft_calloc error"), NULL);
 		j = -1;
 		while ((str)[i][++j])
 			tmp[i][j] = (str)[i][j];

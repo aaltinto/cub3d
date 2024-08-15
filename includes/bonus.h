@@ -172,7 +172,6 @@ typedef struct s_vars
 	t_game		game;
 	t_mlx		mlx;
 	t_data		img;
-	t_data		sprite;
 	t_data		xpm[4];
 	t_data		**gun;
 	t_sprite	*sprites;
@@ -295,5 +294,6 @@ void		animation_picker(t_vars *vars, t_sprite *sprite);
 int			sprite_display(t_vars *vars, t_sprite *sprite, t_spr_vars spr_vars);
 void		fill_sprites(t_vars *vars, int count);
 int			fill_filename(t_vars *vars, int i, int j);
+int			marche(t_vars *vars);
 
 #endif

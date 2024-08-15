@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   cast_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaltinto <aaltinto@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bakgun <bakgun@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 23:05:03 by aaltinto          #+#    #+#             */
-/*   Updated: 2024/07/12 23:05:04 by aaltinto         ###   ########.fr       */
+/*   Updated: 2024/08/15 16:41:59 by bakgun           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/bonus.h"
+#include "../../libft/libft.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -118,9 +119,9 @@ int	cast_rays(t_vars *vars, int ray)
 	t_ray	ray_data;
 	double	*wall_dist;
 
-	wall_dist = (double *)malloc(sizeof(double) * vars->render.sc_width);
+	wall_dist = (double *)ft_calloc(sizeof(double), vars->render.sc_width);
 	if (!wall_dist)
-		return (err("Malloc error"));
+		return (err("ft_calloc error"));
 	vars->render.ray_angle = vars->player.p_angle - (vars->player.fov / 2);
 	while (++ray < vars->render.sc_width)
 	{

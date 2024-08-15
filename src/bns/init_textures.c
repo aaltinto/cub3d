@@ -69,16 +69,16 @@ int	get_magnum_sprites(t_vars *vars)
 
 	vars->gun = (t_data **)ft_calloc(sizeof(t_data *), 3);
 	if (!vars->gun)
-		return (err("Malloc error"));
+		return (err("ft_calloc error"));
 	j = -1;
 	while (++j < 3)
 	{
 		ani_count = 0;
 		if (j == 1)
 			ani_count = 5;
-		vars->gun[j] = (t_data *)malloc(sizeof(t_data) * (10 + ani_count));
+		vars->gun[j] = (t_data *)ft_calloc(sizeof(t_data), (10 + ani_count));
 		if (!vars->gun[j])
-			return (err("Malloc error"));
+			return (err("ft_calloc error"));
 		i = -1;
 		while (++i < 10 + ani_count)
 			if (fill_filename(vars, i, j))
@@ -116,5 +116,5 @@ int	init_textures(t_textures *textures, char *tmp)
 		return (2);
 	if (ret == 1)
 		return (1);
-	return (err("Invalid character: "), 1);
+	return (err("Invalid character: "), err(tmp), 1);
 }
