@@ -10,11 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include "../../includes/cub3d.h"
 #include "../../libft/libft.h"
 #include "../../minilibx/mlx.h"
-#include <unistd.h>
 #include <math.h>
 
 int	marche(t_vars *vars)

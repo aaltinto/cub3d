@@ -14,7 +14,6 @@
 #include "../../minilibx/mlx.h"
 #include "../../libft/libft.h"
 #include <math.h>
-#include <stdlib.h>
 
 int	count_d(t_vars *vars, char *map)
 {

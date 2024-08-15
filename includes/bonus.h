@@ -112,6 +112,7 @@ typedef struct s_sprite
 	int		is_enemy;
 	int		is_diamond;
 	int		hit;
+	int		on_sc;
 	int		life;
 	int		spr_ani;
 	int		emy_ani;
@@ -278,7 +279,7 @@ int			new_game(t_vars *vars);
 void		make_transparent(t_vars *vars, t_data canvas);
 int			menu(t_vars *vars);
 int			print_text(t_vars *vars, char *text, int *pos, double size);
-int			enemy_hit(t_vars *vars, int	*map_grid, int *hit);
+int			enemy_hit(t_vars *vars);
 int			xpm_file_init(t_vars *vars, t_data *data, char *filename, int *len);
 void		set_len(int *arr, int x, int y);
 int			count_d(t_vars *vars, char *map);

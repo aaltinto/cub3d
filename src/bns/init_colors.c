@@ -12,7 +12,6 @@
 
 #include "../../includes/bonus.h"
 #include "../../libft/libft.h"
-#include <stdio.h>
 
 int	extract_floor_rgb(t_vars *vars)
 {

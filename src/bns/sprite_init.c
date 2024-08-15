@@ -63,6 +63,7 @@ int	assign_sprites(t_vars *vars, t_sprite *sprites, int x, int y)
 	else
 		sprites->is_enemy = 0;
 	sprites->hit = 0;
+	sprites->on_sc = 0;
 	sprites->life = 500;
 	sprites->emy_ani = 0;
 	sprites->spr_ani = 0;
@@ -127,7 +128,6 @@ t_sprite	*detect_sprites(t_vars *vars)
 		}
 		if (count == -1)
 			break ;
-
 	}
 	return (sort_sprites(vars, &sprites), sprites);
 }

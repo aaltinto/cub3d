@@ -13,7 +13,6 @@
 #include "../../includes/bonus.h"
 #include "../../minilibx/mlx.h"
 #include <signal.h>
-#include <unistd.h>
 #include <stdlib.h>
 
 void	abort_mission(t_vars *vars, int close, int child)

@@ -60,6 +60,8 @@ int	fill_background(t_vars *vars)
 
 int	render_things(t_vars *vars)
 {
+	int	i;
+
 	if (vars->ui.menu)
 	{
 		mlx_clear_window(vars->mlx.mlx, vars->mlx.win);
@@ -72,12 +74,16 @@ int	render_things(t_vars *vars)
 	make_transparent(vars, vars->ui.sprites_canvas);
 	if (vars->game.diamond == 0)
 		vars->player.life = 0;
+	enemy_hit(vars);
 	if (cast_rays(vars, -1))
 		return (close_windows(vars, 1, 0));
 	render_mini_map(vars);
 	if (render_gun(vars))
 		return (close_windows(vars, 1, 0));
 	render_ui(vars);
+	i = -1;
+	while (++i < vars->game.spr_count)
+		vars->sprites->on_sc = 0;
 	return (0);
 }
 

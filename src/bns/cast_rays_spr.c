@@ -13,7 +13,6 @@
 #include "../../includes/bonus.h"
 #include "../../libft/libft.h"
 #include "../../minilibx/mlx.h"
-#include <stdlib.h>
 
 void	calculate_draw_borders(t_render render, t_spr_vars *spr_vars)
 {
@@ -95,7 +94,11 @@ void	draw_sprite(t_vars *vars, t_spr_vars spr_vars, t_sprite *sprite,
 			+ spr_vars.screen_x)) * pos[2] / spr_vars.width);
 		if (spr_vars.transform[Y] > 0 && pos[X] > 0 && pos[X] < \
 		vars->render.sc_width && spr_vars.transform[Y] < ddist[pos[X]])
+		{
+			if (sprite->is_enemy)
+				sprite->on_sc = 1;
 			advence_p_put(vars, sprite, spr_vars, pos);
+		}
 	}
 }
 

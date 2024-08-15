@@ -14,7 +14,6 @@
 #include "../../minilibx/mlx.h"
 #include "../../libft/libft.h"
 #include <math.h>
-#define TILE_GUN 13
 
 int	get_canvas(t_vars *vars)
 {

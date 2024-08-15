@@ -13,30 +13,29 @@
 #include "../../includes/bonus.h"
 #include "../../minilibx/mlx.h"
 #include <stdlib.h>
-#include <unistd.h>
 
-int	enemy_hit(t_vars *vars, int	*map_grid, int *hit)
+int	enemy_hit(t_vars *vars)
 {
-	int			i;
+	int	i;
+	int	distance;
+	int	closest[2];
 
 	i = -1;
-	while (vars->game.spr_count && vars->render.ray_angle + 0.09
-		>= vars->player.p_angle
-		&& vars->render.ray_angle - 0.09 <= vars->player.p_angle
-		&& vars->player.shoot
-		&& *hit == 0 && ++i < vars->game.spr_count)
+	closest[0] = -1;
+	while (++i < vars->game.spr_count)
 	{
-		if (vars->sprites[i].spr_pos[X] <= map_grid[X] + 0.5 \
-		&& vars->sprites[i].spr_pos[X] >= map_grid[X] - 0.5 \
-		&& vars->sprites[i].spr_pos[Y] <= map_grid[Y] + 0.5 \
-		&& vars->sprites[i].spr_pos[Y] >= map_grid[Y] - 0.5)
+		if (!vars->sprites[i].is_enemy || !vars->sprites[i].on_sc)
+			continue ;
+		distance = euclid_dist(vars->player.camera, vars->sprites[i].spr_pos);
+		if (vars->sprites[i].is_enemy
+			&& (closest[0] == -1 || distance < closest[0]))
 		{
-			if (vars->player.gun_type != 2)
-				*hit = 1;
-			if (vars->sprites[i].is_enemy)
-				vars->sprites[i].hit = 1;
+			closest[0] = distance;
+			closest[1] = i;
 		}
 	}
+	if (closest[0] != -1 && vars->player.shoot)
+		vars->sprites[closest[1]].hit = 1;
 	return (0);
 }
 

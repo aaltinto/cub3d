@@ -13,7 +13,6 @@
 #include "../../includes/bonus.h"
 #include "../../minilibx/mlx.h"
 #include <stdlib.h>
-#include <unistd.h>
 #include <signal.h>
 
 void	scale_up_image(t_data *data, t_data canvas, t_img_args args)

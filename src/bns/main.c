@@ -10,12 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include "../../includes/bonus.h"
 #include "../../libft/libft.h"
 #include "../../minilibx/mlx.h"
-#include <unistd.h>
-#include <math.h>
 
 int	set_guns(t_vars *vars)
 {
